@@ -1,7 +1,14 @@
-public class Piece{
+public class piece{
   
   private int positionX;
   private int positionY;
+  
+  public piece(int x, int y){
+    
+    this.positionX = x;
+    this.positionY = y;
+    
+  }
   
   public int getX(){
     return positionX;
@@ -11,12 +18,12 @@ public class Piece{
     return positionY;
   }
   
-  public int setPosition(int x, int y){
+  public void setPosition(int x, int y){
     this.positionX = x;
     this.positionY = y;
   }
   
-  public void take(Piece p){
+  public void take(piece p){
     //save position
     int x = p.getX();
     int y = p.getY();
