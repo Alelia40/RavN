@@ -5,7 +5,9 @@ public class king extends piece{
   public king(int x, int y){
     super(x,y);
   }
+ 
   
+  //hello
    public Boolean getMoved(){
     return hasMoved;
   }
