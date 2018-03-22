@@ -1,7 +1,7 @@
 public class piece{
   
-  private int positionX;
-  private int positionY;
+  public int positionX;
+  public int positionY;
   
   public piece(int x, int y){
     
@@ -34,14 +34,6 @@ public class piece{
   }
   
   public void move(int x, int y){
-    
   }
-                   
-  
-  
-  
-  
-  
-  
-  
+           
 }
