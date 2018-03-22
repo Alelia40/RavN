@@ -4,6 +4,7 @@ public class pawn extends piece{
     super(x,y);
   }
   
+  //hello
   //all methods except for move are inherited
   
   
