@@ -4,6 +4,7 @@ public class king extends piece{
   
   public king(int x, int y){
     super(x,y);
+    hasMoved = false;
   }
  
   //method to check if the king has been moved
@@ -14,9 +15,12 @@ public class king extends piece{
   //all methods except for move are inherited, move behavior changed
   @Override
   public void move(int x, int y){
+    hasMoved = true;
     System.out.println("placeholder");
     
   }
+  
+  //method to castle
   
   
 }
