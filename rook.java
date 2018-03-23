@@ -20,4 +20,9 @@ public class rook extends piece{
     
   }
   
+  //method to castle
+  public void castle(){
+    
+  }
+  
 }

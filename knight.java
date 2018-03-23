@@ -11,9 +11,4 @@ public class knight extends piece{
     
   }
   
-  //method to castle
-  public void castle(){
-    
-  }
-  
 }
