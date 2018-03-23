@@ -21,6 +21,9 @@ public class king extends piece{
   }
   
   //method to castle
+  public void castle(){
+    
+  }
   
   
 }
