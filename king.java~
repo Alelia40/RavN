@@ -1,7 +1,15 @@
 public class king extends piece{
   
-  public pawn(int x, int y){
+  private Boolean hasMoved;
+  
+  public king(int x, int y){
     super(x,y);
+  }
+ 
+  
+  //hello
+   public Boolean getMoved(){
+    return hasMoved;
   }
   
   //all methods except for move are inherited
@@ -12,10 +20,6 @@ public class king extends piece{
     System.out.println("placeholder");
     
   }
-  
-  
-  
-  
   
   
 }
