@@ -7,7 +7,13 @@ public class knight extends piece{
   //all methods except for move are inherited, move behavior changed
   @Override
   public void move(int x, int y){
-    System.out.println("placeholder");
+    
+    if(validMove(x,y) ==false){
+      System.out.println("This is not a correct move for this piece type");
+    }
+    else{
+      super.move(x,y);
+    }
     
   }
   
