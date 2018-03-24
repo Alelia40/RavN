@@ -1,7 +1,7 @@
 public class knight extends piece{
   
-  public knight(int x, int y){
-    super(x,y);
+  public knight(int x, int y, int plr){
+    super(x,y,plr);
   }
   
   //all methods except for move are inherited, move behavior changed
@@ -9,6 +9,20 @@ public class knight extends piece{
   public void move(int x, int y){
     System.out.println("placeholder");
     
+  }
+  
+  //helper method to get the distance of any position from the current position
+  private boolean validMove(int x, int y){
+    int distA = Math.abs(this.getX() - x); 
+    int distB = Math.abs(this.getY() - y);
+    
+    //as long as one distance field is equal to 2 and another is equal to 1, this is a valid knight move
+    if(distA == 1 && distB == 2)
+      return true;
+    else if(distA ==2 && distB ==1)
+      return true;
+    else 
+      return false;
   }
   
 }
