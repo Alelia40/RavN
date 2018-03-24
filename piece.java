@@ -1,39 +1,70 @@
+
+//import math functions, which will be passed to subclasses for motion behavior
+import java.lang.Math;
+
 public class piece{
   
+  //field for player, 1 is white, 2 is black
+  public int player;
+  //position fields for x and y locations
   public int positionX;
   public int positionY;
   
-  public piece(int x, int y){
+  //constructor for piece, takes position arguments and a player argument
+  public piece(int x, int y, int plr){
+    
+    this.player = plr;
     
     this.positionX = x;
     this.positionY = y;
     
   }
   
+  //method to return the player attached to a piece
+  public int getPlayer(){
+    return player;
+  }
+  
+  //method to get the piece's x position
   public int getX(){
     return positionX;
   }
   
+  //method to get the piece's y position
   public int getY(){
     return positionY;
   }
   
+  //method to set the piece's position
   public void setPosition(int x, int y){
     this.positionX = x;
     this.positionY = y;
   }
   
+  //method to "take" another piece object by replacing it with this piece
   public void take(piece p){
     //save position
     int x = p.getX();
     int y = p.getY();
-    //remove piece
-    p.setPosition(-1,-1);
-    //place the capturing piece in the new space
-    this.setPosition(x,y);
+    
+    //if the piece is not a fiendly allow the motion
+    if(p.getPlayer() != this.getPlayer()){
+      //remove piece
+      p.setPosition(-1,-1);
+      //place the capturing piece in the new space
+      this.setPosition(x,y);
+    }
+    else{
+      //perform some error behavior
+      System.out.println("Friendly Fire! Don't attack your own Pieces");
+    }
   }
   
+  //method to move the piece
   public void move(int x, int y){
+    this.setPosition(x,y);
+    
+    //if position is occupied take the piece in the space
   }
-           
+  
 }
