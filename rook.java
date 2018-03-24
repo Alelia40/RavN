@@ -2,27 +2,44 @@ public class rook extends piece{
   
   private Boolean hasMoved;
   
-  public rook(int x, int y){
-    super(x,y);
+  public rook(int x, int y, int plr){
+    super(x,y, plr);
     hasMoved = false;
   }
   
   //method to check if the rook has been moved
-  public Boolean getMoved(){
+  public boolean getMoved(){
     return hasMoved;
   }
   
-  //all methods except for move are inherited, move behavior changed
+  //all methods from piece except for move are inherited, move behavior changed
   @Override
   public void move(int x, int y){
     hasMoved = true;
-    //do other stuff
+    
+    if(validMove(x,y) == false){
+      //error behavior
+    }
+    else{
+    //superclass move
+    super.move(x,y);
+    }
     
   }
   
-  //method to castle
-  public void castle(){
+  //helper method to check for valid move by using distance
+  private boolean validMove(int x, int y){
+    int distA = Math.abs(this.getX() - x); 
+    int distB = Math.abs(this.getY() - y);
     
+    //if the destination is only horizontally distant it is a valid move
+    if(distA == 0 && distB > 0)
+      return true;
+    //if the destination is only vertically distant it is a valid move
+    else if(distB ==0 && distA > 0)
+      return true;
+    else
+      return false;
   }
   
 }

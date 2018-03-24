@@ -5,9 +5,11 @@ public class pawn extends piece{
   }
   
   //hello
-  //all methods except for move are inherited
   
   
+  
+  
+  //all methods except for move are inherited, move behavior changed
   @Override
   public void move(int x, int y){
     System.out.println("placeholder");
