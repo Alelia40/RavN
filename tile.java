@@ -7,7 +7,7 @@ import javax.swing.*;
 public class tile extends JButton{
   
  
-  private boolean isBlack;           //represents the color of the tile, if it is null the tile is not taken up by a player piece
+  private boolean isBlack; //represents the color of the tile, if it is null the tile is not taken up by a player piece
   
 
   /**

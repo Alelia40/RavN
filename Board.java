@@ -4,7 +4,9 @@ import java.awt.*;
 public class Board extends JFrame{
   
   
-  private tile[][] tiles;
+  private tile[][] tiles; //jbuttons for the UI
+  
+  private piece[][] pieceArr = new piece[8][8]; //representation of the pieces on the board
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -28,11 +30,11 @@ public class Board extends JFrame{
         else
           tiles[index2][index1].setBackground(new Color(90,77,14));
         c.add(tiles[index2][index1]);
+      }
+      
+      this.setVisible(true);
+      
+      
     }
-    
-    this.setVisible(true);
-    
- 
-  }
   }
 }
