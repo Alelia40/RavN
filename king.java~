@@ -22,7 +22,7 @@ public class king extends piece{
     
     //if the destination is one space away in any direction then the move is valid
     if(validMove(x,y) == false){
-      //do something to indicate an error
+      System.out.println("This is not a correct move for the king");
     }
     else{
     super.move(x,y);

@@ -19,7 +19,8 @@ public class queen extends piece{
   }
   
   //helper method to check for valid move by using distance
-  private boolean validMove(int x, int y){
+  @Override
+  public boolean validMove(int x, int y){
     int distA = Math.abs(this.getX() - x); 
     int distB = Math.abs(this.getY() - y);
     

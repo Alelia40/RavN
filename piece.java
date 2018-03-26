@@ -60,6 +60,14 @@ public class piece{
     }
   }
   
+  /**
+   * method to check if a given move is a valid move for the pieces
+   */
+  public boolean validMove(int x, int y){
+    return true;
+    //will be overwritten
+  }
+  
   //method to move the piece
   public void move(int x, int y){
     this.setPosition(x,y);
