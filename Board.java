@@ -103,8 +103,10 @@ public class Board extends JFrame{
    */
   public void move( int x, int y, piece p){
     if(p.validMove(x , y)){            //case of valid move
-      getTiles()[p.getX()][p.getY()].setPiece(null);
-      getTiles()[x][y].setPiece(p);
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of theold square to null
     }
     else{
       System.out.println("This is an illegal move for this piece");
