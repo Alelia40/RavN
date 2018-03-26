@@ -73,6 +73,19 @@ public class Board extends JFrame{
     return tiles;
   }
   
+  /**
+   * Moves a piece if the move is valid
+   */
+  public void move( int x, int y, piece p){
+    if(p.validMove(x , y)){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);
+      getTiles()[x][y].setPiece(p);
+      
+    }
+     
+    
+  }
+  
   
   /**
    * Method that checks if a given tile is occupied by a piece
