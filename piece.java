@@ -23,10 +23,10 @@ public class piece{
   }
   
   /**
-   * method to set the type of piece
+   * method to get the type of piece
    */
-  public void setType(String s){
-    this.type = s;
+  public String getType(){
+    return type;
   }
   
   
@@ -76,8 +76,8 @@ public class piece{
    * method to check if a given move is a valid move for the pieces
    */
   public boolean validMove(int x, int y){
-    return true;
-    //will be overwritten
+    return false;
+    //will be overrided
   }
   
  
