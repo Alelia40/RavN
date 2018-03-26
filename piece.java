@@ -9,6 +9,8 @@ public class piece{
   //position fields for x and y locations
   public int positionX;
   public int positionY;
+  //keeps track of type of piece
+  public String type;
   
   //constructor for piece, takes position arguments and a player argument
   public piece(int x, int y, int plr){
@@ -20,7 +22,17 @@ public class piece{
     
   }
   
-  //method to return the player attached to a piece
+  /**
+   * method to set the type of piece
+   */
+  public void setType(String s){
+    this.type = s;
+  }
+  
+  
+  /**
+   * method to return the player attached to a piece
+   */
   public int getPlayer(){
     return player;
   }

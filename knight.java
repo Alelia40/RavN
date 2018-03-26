@@ -2,6 +2,7 @@ public class knight extends piece{
   
   public knight(int x, int y, int plr){
     super(x,y,plr);
+    type = "Knight";
   }
   
   //method to get the validity of any position from the current position

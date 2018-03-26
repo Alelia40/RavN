@@ -13,29 +13,19 @@ public class pawn extends piece{
     return hasMoved;
   }
   
-  //all methods from piece except for move are inherited, move behavior changed
-  @Override
-  public void move(int x, int y){
-    
-    //there are two types of pawn motion, traversal and attack, we need to account for both
-    
-    if (validMove(x,y) == false){
-      System.out.println("This is not a correct move for this piece type");
-    }
-    else{
-      hasMoved =true;
-      super.move(x,y);
-    }
-    
-  }
+   public void setMoved(){
+     this.hasMoved = true;
+   }
   
-  //helper method to check for a valid move based on distances
-  private boolean validMove(int x, int y){
+  
+  //method to check for a valid traaversal move for the pawn
+  @Override
+  public boolean validMove(int x, int y){
     int distA = Math.abs(this.getX() - x); 
     int distB = (this.getY() - y);
     
     //we need to check for valid moves for both white and black pawns
-    if( getPlayer() == 1){
+    if( getPlayer() == 0){
       //if the space is only minus one space away vertically then this is a correct traversal move
       if(distB == -1 && distA ==0 )
         return true;

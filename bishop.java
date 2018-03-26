@@ -2,6 +2,7 @@ public class bishop extends piece{
   
   public bishop(int x, int y, int plr){
     super(x,y,plr);
+    this.type = "Bishop";
   }
   
   //helper method to get the distance of any position from the current position

@@ -6,6 +6,7 @@ public class pawn extends piece{
   public pawn(int x, int y, int plr){
     super(x,y,plr);
     hasMoved = false;
+    type = "Pawn";
   }
   
   //method to check if the pawn has been moved

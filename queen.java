@@ -2,6 +2,7 @@ public class queen extends piece{
   
   public queen (int x, int y, int plr){
     super(x,y, plr);
+    type = "Queen";
   }
   
   //helper method to check for valid move by using distance

@@ -5,6 +5,7 @@ public class rook extends piece{
   public rook(int x, int y, int plr){
     super(x,y, plr);
     hasMoved = false;
+    type = "Rook";
   }
   
   //method to check if the rook has been moved

@@ -105,9 +105,10 @@ public class Board extends JFrame{
     if(p.validMove(x , y)){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);
       getTiles()[x][y].setPiece(p);
-      
     }
-     
+    else{
+      System.out.println("This is an illegal move for this piece");
+    }
     
   }
   

@@ -4,7 +4,7 @@ import java.lang.Math;
 
 public class piece{
   
-  //field for player, 1 is white, 2 is black
+  //field for player, 0 is white, 1 is black
   public int player;
   //position fields for x and y locations
   public int positionX;
@@ -60,11 +60,14 @@ public class piece{
     }
   }
   
-  //method to move the piece
-  public void move(int x, int y){
-    this.setPosition(x,y);
-    
-    //if position is occupied take the piece in the space
+  /**
+   * method to check if a given move is a valid move for the pieces
+   */
+  public boolean validMove(int x, int y){
+    return true;
+    //will be overwritten
   }
+  
+ 
   
 }
