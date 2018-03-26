@@ -68,11 +68,6 @@ public class piece{
     //will be overwritten
   }
   
-  //method to move the piece
-  public void move(int x, int y){
-    this.setPosition(x,y);
-    
-    //if position is occupied take the piece in the space
-  }
+ 
   
 }

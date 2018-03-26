@@ -13,21 +13,11 @@ public class king extends piece{
     return hasMoved;
   }
   
-  //all methods from piece except for move are inherited, move behavior changed
-  @Override
-  public void move(int x, int y){
-    hasMoved = true;
-    
-    //we need something to check for
-    
-    //if the destination is one space away in any direction then the move is valid
-    if(validMove(x,y) == false){
-      System.out.println("This is not a correct move for the king");
-    }
-    else{
-    super.move(x,y);
-    }
-    
+  /**
+   * Method to identify if the piece has moved
+   */
+  public void setMoved(){
+    this.hasMoved = true;
   }
   
   //helper method to get the distance of any position from the current position

@@ -12,19 +12,11 @@ public class rook extends piece{
     return hasMoved;
   }
   
-  //all methods from piece except for move are inherited, move behavior changed
-  @Override
-  public void move(int x, int y){
-    hasMoved = true;
-    
-    if(validMove(x,y) == false){
-      System.out.println("This is not a correct move for this piece type");
-    }
-    else{
-    //superclass move
-    super.move(x,y);
-    }
-    
+  /**
+   * Method to identify if the piece has moved
+   */
+  public void setMoved(){
+    this.hasMoved = true;
   }
   
   //helper method to check for valid move by using distance

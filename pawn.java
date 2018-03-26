@@ -13,21 +13,9 @@ public class pawn extends piece{
     return hasMoved;
   }
   
-  //all methods from piece except for move are inherited, move behavior changed
-  @Override
-  public void move(int x, int y){
-    
-    //there are two types of pawn motion, traversal and attack, we need to account for both
-    
-    if (validMove(x,y) == false){
-      System.out.println("This is not a correct move for this piece type");
-    }
-    else{
-      hasMoved =true;
-      super.move(x,y);
-    }
-    
-  }
+   public void setMoved(){
+     this.hasMoved = true;
+   }
   
   
   //method to check for a valid traaversal move for the pawn
