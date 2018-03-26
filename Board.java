@@ -64,7 +64,9 @@ public class Board extends JFrame{
                               
       this.setVisible(true);
       
-      
-    
+  }
+  
+  public tile[][] getTiles(){
+    return tiles;
   }
 }
