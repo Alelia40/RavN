@@ -4,20 +4,6 @@ public class queen extends piece{
     super(x,y, plr);
   }
   
-  //all methods from piece except for move are inherited, move behavior changed
-  @Override
-  public void move(int x, int y){
-    
-    if(validMove(x,y) == false){
-      System.out.println("This is not a correct move for this piece type");
-    }
-    else{
-    //call the superclass move
-    super.move(x,y);
-    }
-    
-  }
-  
   //helper method to check for valid move by using distance
   @Override
   public boolean validMove(int x, int y){

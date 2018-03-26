@@ -4,19 +4,6 @@ public class bishop extends piece{
     super(x,y,plr);
   }
   
-  //all methods from piece except for move are inherited, move behavior changed
-  @Override
-  public void move(int x, int y){
-    
-    if(validMove(x,y) == false){
-      System.out.println("This is not a correct move for this piece type");
-    }
-    else{
-       super.move(x,y);
-    }
-    
-  }
-  
   //helper method to get the distance of any position from the current position
   @Override
   public boolean validMove(int x, int y){
