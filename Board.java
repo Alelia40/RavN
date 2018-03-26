@@ -42,6 +42,7 @@ public class Board extends JFrame{
           tiles[i][6].setText("Black Pawn");
         }     
 
+<<<<<<< HEAD
         tiles[0][0].setPiece(new rook(0,0,1));         //make rooks
         tiles[7][0].setPiece(new rook(7,0,1));
         tiles[0][7].setPiece(new rook(0,7,0));
@@ -72,15 +73,35 @@ public class Board extends JFrame{
         tiles[5][0].setText("White Bishop");
         tiles[2][7].setText("Black Bishop");
         tiles[5][7].setText("Black Bishop");
+=======
+        tiles[0][0].setPiece(new rook(0,0,0));             //make rooks
+        tiles[7][0].setPiece(new rook(7,0,0));
+        tiles[0][7].setPiece(new rook(0,7,1));
+        tiles[7][7].setPiece(new rook(7,7,1));
+                              
+        tiles[1][0].setPiece(new knight(1,0,0));           //make knights
+        tiles[6][0].setPiece(new knight(6,0,0));
+        tiles[1][7].setPiece(new knight(1,7,1));
+        tiles[6][7].setPiece(new knight(6,7,1));
         
-        tiles[3][0].setPiece(new king(3,0,0));           //make kings
+        tiles[2][0].setPiece(new bishop(2,0,0));           // make bishops
+        tiles[5][0].setPiece(new bishop(5,0,0));
+        tiles[2][7].setPiece(new bishop(2,7,1));
+        tiles[5][7].setPiece(new bishop(5,7,1));
+>>>>>>> master
+        
+        tiles[3][0].setPiece(new king(3,0,0));             //make kings
         tiles[3][7].setPiece(new king(3,7,1));
         
+<<<<<<< HEAD
         tiles[3][0].setText("White King");
         tiles[3][7].setText("Black King");
        
         
         tiles[4][0].setPiece(new queen(4,0,0));           //make queens
+=======
+        tiles[4][0].setPiece(new queen(4,0,0));            //make queens
+>>>>>>> master
         tiles[4][7].setPiece(new queen(4,7,1));
         
         tiles[4][7].setText("Black Queen");
@@ -95,6 +116,19 @@ public class Board extends JFrame{
    */
   public tile[][] getTiles(){
     return tiles;
+  }
+  
+  /**
+   * Moves a piece if the move is valid
+   */
+  public void move( int x, int y, piece p){
+    if(p.validMove(x , y)){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);
+      getTiles()[x][y].setPiece(p);
+      
+    }
+     
+    
   }
   
   
