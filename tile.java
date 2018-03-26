@@ -6,9 +6,8 @@ import javax.swing.*;
  */
 public class tile extends JButton{
   
- 
-  private boolean isBlack; //represents the color of the tile, if it is null the tile is not taken up by a player piece
-  
+ private piece p;
+
 
   /**
    * creates a tile with no color
@@ -16,28 +15,12 @@ public class tile extends JButton{
   public tile(){
     
   }
-  /**
-   * creates the tile with a pre-determined color
-   */
-  public tile(boolean isBlack){
-    this.isBlack = isBlack;
+
+  public piece getPiece(){
+    return p;
   }
   
-  /**
-   * return if a space is black once it is taken
-   * @return type boolean
-   */
-  public boolean getIsBlack(){
-    return isBlack;
+  public void setPiece(piece p){
+    this.p = p;
   }
-  
-  /**
-   * sets a tile's color to either black or white
-   * @param trueifblack, type boolean
-   */
-  public void setIsBlack(boolean trueifblack){
-    isBlack = trueifblack;
-  }
-    
-  
 }

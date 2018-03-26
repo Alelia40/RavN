@@ -20,7 +20,7 @@ public class pawn extends piece{
     //there are two types of pawn motion, traversal and attack, we need to account for both
     
     if (validMove(x,y) == false){
-      //do some sort of error action
+      System.out.println("This is not a correct move for this piece type");
     }
     else{
       hasMoved =true;

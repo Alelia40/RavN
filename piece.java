@@ -4,7 +4,7 @@ import java.lang.Math;
 
 public class piece{
   
-  //field for player, 1 is white, 2 is black
+  //field for player, 0 is white, 1 is black
   public int player;
   //position fields for x and y locations
   public int positionX;

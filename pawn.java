@@ -35,7 +35,7 @@ public class pawn extends piece{
     int distB = (this.getY() - y);
     
     //we need to check for valid moves for both white and black pawns
-    if( getPlayer() == 1){
+    if( getPlayer() == 0){
       //if the space is only minus one space away vertically then this is a correct traversal move
       if(distB == -1 && distA ==0 )
         return true;

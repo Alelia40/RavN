@@ -6,8 +6,6 @@ public class Board extends JFrame{
   
   private tile[][] tiles; //jbuttons for the UI
   
-  private piece[][] pieceArr = new piece[8][8]; //representation of the pieces on the board
-  
   public Board(){
     try {                                               //account for apple's graphics
       UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -31,10 +29,42 @@ public class Board extends JFrame{
           tiles[index2][index1].setBackground(new Color(90,77,14));
         c.add(tiles[index2][index1]);
       }
+    }
       
+      
+        for(int i = 0; i < 8; i++){       //make white pawns
+          tiles[i][1].setPiece(new pawn(i,1,0));
+        }      
+
+        for(int i = 0; i < 8; i++){       //make black pawns
+          tiles[i][6].setPiece(new pawn(i,6,1));
+        }     
+
+        tiles[0][0].setPiece(new rook(0,0,0));         //make rooks
+        tiles[7][0].setPiece(new rook(7,0,0));
+        tiles[0][7].setPiece(new rook(0,7,1));
+        tiles[7][7].setPiece(new rook(7,7,1));
+                              
+        tiles[1][0].setPiece(new knight(1,0,0));             //make knights
+        tiles[6][0].setPiece(new knight(6,0,0));
+        tiles[1][7].setPiece(new knight(1,7,1));
+        tiles[6][7].setPiece(new knight(6,7,1));
+        
+        tiles[2][0].setPiece(new bishop(2,0,0));               // make bishops
+        tiles[5][0].setPiece(new bishop(5,0,0));
+        tiles[2][7].setPiece(new bishop(2,7,1));
+        tiles[5][7].setPiece(new bishop(5,7,1));
+        
+        tiles[3][0].setPiece(new king(3,0,0));           //make kings
+        tiles[3][7].setPiece(new king(3,7,1));
+        
+        tiles[4][0].setPiece(new queen(4,0,0));           //make queens
+        tiles[4][7].setPiece(new queen(4,7,1));
+        
+                              
       this.setVisible(true);
       
       
-    }
+    
   }
 }
