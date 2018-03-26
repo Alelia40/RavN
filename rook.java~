@@ -18,7 +18,7 @@ public class rook extends piece{
     hasMoved = true;
     
     if(validMove(x,y) == false){
-      //error behavior
+      System.out.println("This is not a correct move for this piece type");
     }
     else{
     //superclass move

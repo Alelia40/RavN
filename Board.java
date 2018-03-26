@@ -66,7 +66,24 @@ public class Board extends JFrame{
       
   }
   
+  /**
+   * Method that returns the tiles on the board
+   */
   public tile[][] getTiles(){
     return tiles;
   }
+  
+  
+  /**
+   * Method that checks if a given tile is occupied by a piece
+   */
+  public boolean isOccupied(int x, int y){
+    if(this.getTiles()[x][y].getPiece() == null){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+  
 }

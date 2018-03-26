@@ -29,8 +29,10 @@ public class pawn extends piece{
     
   }
   
-  //helper method to check for a valid move based on distances
-  private boolean validMove(int x, int y){
+  
+  //method to check for a valid traaversal move for the pawn
+  @Override
+  public boolean validMove(int x, int y){
     int distA = Math.abs(this.getX() - x); 
     int distB = (this.getY() - y);
     

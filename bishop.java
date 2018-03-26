@@ -18,7 +18,8 @@ public class bishop extends piece{
   }
   
   //helper method to get the distance of any position from the current position
-  private boolean validMove(int x, int y){
+  @Override
+  public boolean validMove(int x, int y){
     int distA = Math.abs(this.getX() - x); 
     int distB = Math.abs(this.getY() - y);
     

@@ -9,7 +9,7 @@ public class bishop extends piece{
   public void move(int x, int y){
     
     if(validMove(x,y) == false){
-      //do some sort of error behavior
+      System.out.println("This is not a correct move for this piece type");
     }
     else{
        super.move(x,y);
