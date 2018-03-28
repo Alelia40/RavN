@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.Math;
 
 public class Board extends JFrame{
   
@@ -138,7 +139,8 @@ public class Board extends JFrame{
    * Moves a piece if the move is valid
    */
   public void move( int x, int y, piece p){
-    if(p.validMove(x , y)){            //case of valid move
+    
+    if(p.validMove(x , y) && p.type == "Knight"){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
@@ -146,13 +148,132 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
     }
-    else{
-      System.out.println("This is an illegal move for this piece");
+    
+    
+    if(p.validMove(x , y) && p.type == "King"){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
     }
+    
+
+    
+    if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p )){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+  
+    if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p )){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+  
+    
+    if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p )){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+   
+    
+    if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+   
     
   }
   
-  
+  /**
+   * Method that checks if there is a clear path between the start location and end location
+   */
+  public boolean clearPath(int x, int y, piece p){
+    int initX = p.getX();
+    int initY = p.getY();
+    if(Math.abs(y - initY) == Math.abs(x - initX) ){
+      if(x > initX && y > initY){
+        for(int i = 1; i < x - initX; i++){
+           if(isOccupied(initX + i , initY + i)){
+            return false;
+          }
+        }
+      }
+      if(x > initX && y < initY){
+        for(int i = 1; i < x - initX; i++){
+           if(isOccupied(initX + i , initY - i)){
+            return false;
+          }
+        }
+      }
+      if(x < initX && y > initY){
+        for(int i = 1; i < y - initY; i++){
+           if(isOccupied(initX - i , initY + i)){
+            return false;
+          }
+        }
+      }
+      if(x < initX && y < initY){
+       for(int i = 1; i < initX - x; i++){
+           if(isOccupied(initX - i , initY - i)){
+            return false;
+          }
+        }
+      }
+      
+    }
+    else if(x - initX != 0){
+      if(x > initX){
+        for(int i = initX + 1 ; i < x ; i++){
+          if(isOccupied(i , y)){
+            return false;
+          }
+        }
+      }
+      if(x < initX){
+        for(int i = x + 1 ; i < initX ; i++){
+          if(isOccupied(i , y)){
+            return false;
+          }
+        }
+      }
+    }
+    else if(y - initY != 0){
+      System.out.println(y);
+      if(y > initY){
+        for(int i = initY + 1 ; i < y ; i++){
+          if(isOccupied(x , i)){
+            return false;
+          }
+        }
+      }
+      if(y < initY){
+        for(int i = y + 1 ; i < initY ; i++){
+          if(isOccupied(x , i)){
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
   /**
    * Method that checks if a given tile is occupied by a piece
    */
