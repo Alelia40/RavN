@@ -7,6 +7,10 @@ public class Board extends JFrame{
   
   private tile[][] tiles; //jbuttons for the UI
   
+  private tile init;  //initial button pressed with piece
+  
+  private tile dest;  //destination of that peice
+  
   public Board(){
     try {                                               //account for apple's graphics
       UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -29,7 +33,7 @@ public class Board extends JFrame{
         * What to do when a button is pressed
         */
          public void actionPerformed(ActionEvent e){
-           System.out.println(e.getSource());
+           
          }
          });
         if((index1+index2)%2 == 1)
@@ -105,6 +109,22 @@ public class Board extends JFrame{
    */
   public tile[][] getTiles(){
     return tiles;
+  }
+  
+  public tile getInit(){
+    return init;
+  }
+  
+  public void setInit(tile t){
+    init = t;
+  }
+  
+  public tile getDest(){
+    return dest;
+  }
+  
+  public void setDest(tile d){
+    dest = d;
   }
   
   /**
