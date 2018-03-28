@@ -9,7 +9,6 @@ public class Board extends JFrame{
   
   private tile init;  //initial button pressed with piece
   
-  private tile dest;  //destination of that peice
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -27,13 +26,20 @@ public class Board extends JFrame{
     int count = 1;
     for (int index1 = 0 ; index1 < 8 ; index1++){
       for (int index2 = 0 ; index2 < 8 ; index2++){
-        tiles[index2][index1] = new tile();
+        tiles[index2][index1] = new tile(index2,index1);
         tiles[index2][index1].addActionListener(new ActionListener() {
         /**
         * What to do when a button is pressed
         */
          public void actionPerformed(ActionEvent e){
-           
+            tile t = (tile)e.getSource();
+            if(getInit() != null){
+             move(t.getX(),t.getY(),getInit().getPiece());
+             setInit(null);
+            }
+            if(t.getPiece() != null && getInit() == null){
+             setInit(t);
+            }
          }
          });
         if((index1+index2)%2 == 1)
@@ -119,14 +125,7 @@ public class Board extends JFrame{
     init = t;
   }
   
-  public tile getDest(){
-    return dest;
-  }
-  
-  public void setDest(tile d){
-    dest = d;
-  }
-  
+ 
   /**
    * Moves a piece if the move is valid
    */

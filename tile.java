@@ -8,12 +8,24 @@ public class tile extends JButton{
   
  private piece p;
 
+ private int x;
+ 
+ private int y;
 
   /**
    * creates a tile with no color
    */
-  public tile(){
-    
+  public tile(int x, int y){
+    this.x = x;
+    this.y = y;
+  }
+  
+  public int getX(){
+    return x;
+  }
+  
+  public int getY(){
+    return y;
   }
 
   public piece getPiece(){
