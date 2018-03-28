@@ -24,10 +24,12 @@ public class king extends piece{
       return true;
   }
   
+  /**
   //method to castle
   public void castle(){
     
   }
+  */
   
   
 }
