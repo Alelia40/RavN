@@ -38,12 +38,12 @@ public class Board extends JFrame{
             tile t = (tile)e.getSource();        //this is the tile that was pressed
             boolean isMoved = false;             //Serves as a flag so you don't move a piece and then reassign it as init
             if(getInit() != null && t.getPiece() == null){ //Case: Move to open space
-             move(t.getX(),t.getY(),getInit().getPiece()); //moves a piece
+             move(t.grabX(),t.grabY(),getInit().getPiece()); //moves a piece
              isMoved = true;
              setInit(null);                                //forgets the piece that was moved so another can be chosen
             } 
             else if(getInit() != null && t.getPiece().getPlayer() != getInit().getPiece().getPlayer()){   //Case: Move onto enemy piece
-             move(t.getX(),t.getY(),getInit().getPiece());
+             move(t.grabX(),t.grabY(),getInit().getPiece());
              isMoved = true;
              setInit(null);
             }

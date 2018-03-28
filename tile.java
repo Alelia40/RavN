@@ -21,11 +21,11 @@ public class tile extends JButton{
   }
   
   
-  public int getX(){
+  public int grabX(){
     return x;
   }
   
-  public int getY(){
+  public int grabY(){
     return y;
   }
   
