@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class Board extends JFrame{
   
@@ -23,6 +24,14 @@ public class Board extends JFrame{
     for (int index1 = 0 ; index1 < 8 ; index1++){
       for (int index2 = 0 ; index2 < 8 ; index2++){
         tiles[index2][index1] = new tile();
+        tiles[index2][index1].addActionListener(new ActionListener() {
+        /**
+        * What to do when a button is pressed
+        */
+         public void actionPerformed(ActionEvent e){
+           System.out.println(e.getSource());
+         }
+         });
         if((index1+index2)%2 == 1)
           tiles[index2][index1].setBackground(new Color(176,160,77));
         else
@@ -106,7 +115,8 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of theold square to null
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
     }
     else{
       System.out.println("This is an illegal move for this piece");
@@ -126,5 +136,7 @@ public class Board extends JFrame{
       return true;
     }
   }
+  
+  
   
 }
