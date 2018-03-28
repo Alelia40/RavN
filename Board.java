@@ -34,7 +34,12 @@ public class Board extends JFrame{
          public void actionPerformed(ActionEvent e){
             tile t = (tile)e.getSource();        //this is the tile that was pressed
             boolean isMoved = false;
-            if(getInit() != null){
+            if(getInit() != null && t.getPiece() == null){
+             move(t.getX(),t.getY(),getInit().getPiece());
+             isMoved = true;
+             setInit(null);
+            } 
+            else if(getInit() != null && t.getPiece().getPlayer() != getInit().getPiece().getPlayer()){
              move(t.getX(),t.getY(),getInit().getPiece());
              isMoved = true;
              setInit(null);
