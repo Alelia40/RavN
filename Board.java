@@ -226,31 +226,7 @@ public class Board extends JFrame{
   }
   
   
-  /**
-   * Method that checks for a legal catle move
-   */
-  public boolean legalCastle(rook r, king k){
-    
-    int rookX = r.getX();
-    int rookY = r.getY();
-    
-    if(r.getPlayer() != k.getPlayer()){
-      return false;
-    }
-    else if(r.getMoved() == true){
-      return false;
-    }
-    else if(k.getMoved() == true){
-      return false;
-    }
-    else if(clearPath(rookX,rookY,k) == false){
-      return false;
-    }
-    else{
-      return true;
-    }
-    
-  }
+  
   
   
   
@@ -325,6 +301,7 @@ public class Board extends JFrame{
     }
     return true;
   }
+  
   /**
    * Method that checks if a given tile is occupied by a piece
    */
@@ -335,6 +312,84 @@ public class Board extends JFrame{
     else{
       return true;
     }
+  }
+  
+   /**
+   * Method that checks for a legal catle move
+   */
+  public boolean legalCastle(rook r, king k){
+    
+    int rookX = r.getX();
+    int rookY = r.getY();
+    
+    if(r.getPlayer() != k.getPlayer()){
+      return false;
+    }
+    else if(r.getMoved() == true){
+      return false;
+    }
+    else if(k.getMoved() == true){
+      return false;
+    }
+    else if(clearPath(rookX,rookY,k) == false){
+      return false;
+    }
+    else{
+      return true;
+    }
+    
+  }
+  
+  
+  /** 
+   * method that performs the castle
+   */
+  public void castle(king k, int rookX, int rookY){
+    
+    rook r = (rook)getTiles()[rookX][rookY].getPiece();
+    
+    if(legalCastle(r,k)){
+      
+      if(rookX ==0 && rookY ==0){
+        move(2,0,r);
+        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[1][0].setPiece(k);                         //sets new square piece to the piece which moved
+        getTiles()[1][0].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
+        k.setPosition(1 , 0);                                 //the piece now knows its own position
+        k.setMoved();
+      }
+      else if(rookX == 7 && rookY == 0){
+        move(5,0,r);
+        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[6][0].setPiece(k);                         //sets new square piece to the piece which moved
+        getTiles()[6][0].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
+        k.setPosition(6 , 0);                                 //the piece now knows its own position
+        k.setMoved();
+      }
+      else if(rookX == 0 && rookY ==7){
+        move(2,7,r);
+        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[1][7].setPiece(k);                         //sets new square piece to the piece which moved
+        getTiles()[1][7].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
+        k.setPosition(1 , 7);                                 //the piece now knows its own position
+        k.setMoved();
+      }
+      else{
+        move(7,5,r);
+        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[6][5].setPiece(k);                         //sets new square piece to the piece which moved
+        getTiles()[6][5].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
+        k.setPosition(6 , 5);                                 //the piece now knows its own position
+        k.setMoved();
+      }
+      
+      
+    }
+
   }
   
   
