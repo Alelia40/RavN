@@ -20,6 +20,7 @@ public class tile extends JButton{
     this.y = y;
   }
   
+  /**
   public int getX(){
     return x;
   }
@@ -27,6 +28,7 @@ public class tile extends JButton{
   public int getY(){
     return y;
   }
+  */
 
   public piece getPiece(){
     return p;
