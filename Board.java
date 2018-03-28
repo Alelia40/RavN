@@ -10,6 +10,8 @@ public class Board extends JFrame{
   
   private tile init;  //initial button pressed with piece
   
+  private int whoseMove = 0;
+  
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -140,79 +142,117 @@ public class Board extends JFrame{
    */
   public void move( int x, int y, piece p){
     
-    if(p.validMove(x , y) && p.type == "Knight"){            //case of valid move
+    if(p.validMove(x , y) && p.type == "Knight" && p.getPlayer() == whoseMove){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
+      whoseMove = (whoseMove +1) % 2;
     }
     
     
-    if(p.validMove(x , y) && p.type == "King"){            //case of valid move
+    if(p.validMove(x , y) && p.type == "King" && p.getPlayer() == whoseMove){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
+      whoseMove = (whoseMove +1) % 2;
     }
     
 
     if(x == p.getX()){
-      if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p )){            //case of valid move
+      if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p ) && p.getPlayer() == whoseMove){            //case of valid move
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
         getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
         getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
+        whoseMove = (whoseMove +1) % 2;
       }
     }
     else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
-      if(p.validMove(x , y) && p.type == "Pawn"){            //case of valid move
+      if(p.validMove(x , y) && p.type == "Pawn" && p.getPlayer() == whoseMove){            //case of valid move
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
         getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
         getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
+        whoseMove = (whoseMove +1) % 2;
       }
     }
   
     
-    if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p )){            //case of valid move
+    if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p ) && p.getPlayer() == whoseMove){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
+      whoseMove = (whoseMove +1) % 2;
     }
   
     
-    if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p )){            //case of valid move
+    if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p ) && p.getPlayer() == whoseMove){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
+      whoseMove = (whoseMove +1) % 2;
     }
    
     
-    if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )){            //case of valid move
+    if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )&& p.getPlayer() == whoseMove){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
+      whoseMove = (whoseMove +1) % 2;
     }
    
+    
+    System.out.println(whoseMove);
     
   }
+  
+  
+  /**
+   * Method that checks for a legal catle move
+   */
+  public boolean legalCastle(rook r, king k){
+    
+    int rookX = r.getX();
+    int rookY = r.getY();
+    
+    if(r.getPlayer() != k.getPlayer()){
+      return false;
+    }
+    else if(r.getMoved() == true){
+      return false;
+    }
+    else if(k.getMoved() == true){
+      return false;
+    }
+    else if(clearPath(rookX,rookY,k) == false){
+      return false;
+    }
+    else{
+      return true;
+    }
+    
+  }
+  
+  
   
   /**
    * Method that checks if there is a clear path between the start location and end location

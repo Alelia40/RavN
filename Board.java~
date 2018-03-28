@@ -1,10 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.lang.Math;
 
 public class Board extends JFrame{
   
   
   private tile[][] tiles; //jbuttons for the UI
+  
+  private tile init;  //initial button pressed with piece
+  
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -22,7 +27,29 @@ public class Board extends JFrame{
     int count = 1;
     for (int index1 = 0 ; index1 < 8 ; index1++){
       for (int index2 = 0 ; index2 < 8 ; index2++){
-        tiles[index2][index1] = new tile();
+        tiles[index2][index1] = new tile(index2,index1);
+        tiles[index2][index1].addActionListener(new ActionListener() {
+        /**
+        * What to do when a button is pressed
+        */
+         public void actionPerformed(ActionEvent e){
+            tile t = (tile)e.getSource();        //this is the tile that was pressed
+            boolean isMoved = false;             //Serves as a flag so you don't move a piece and then reassign it as init
+            if(getInit() != null && t.getPiece() == null){ //Case: Move to open space
+             move(t.getX(),t.getY(),getInit().getPiece()); //moves a piece
+             isMoved = true;
+             setInit(null);                                //forgets the piece that was moved so another can be chosen
+            } 
+            else if(getInit() != null && t.getPiece().getPlayer() != getInit().getPiece().getPlayer()){   //Case: Move onto enemy piece
+             move(t.getX(),t.getY(),getInit().getPiece());
+             isMoved = true;
+             setInit(null);
+            }
+            if(t.getPiece() != null && getInit() == null && isMoved == false){  //Case: Select Piece to move
+             setInit(t);                                //sets the piece to move
+            }
+         }
+         });
         if((index1+index2)%2 == 1)
           tiles[index2][index1].setBackground(new Color(176,160,77));
         else
@@ -32,26 +59,25 @@ public class Board extends JFrame{
     }
       
       
-        for(int i = 0; i < 8; i++){       //make white pawns
+        for(int i = 0; i < 8; i++){       //make black pawns
           tiles[i][1].setPiece(new pawn(i,1,1));
-          tiles[i][1].setText("White Pawn");
+          tiles[i][1].setText("Black Pawn");
         }      
 
-        for(int i = 0; i < 8; i++){       //make black pawns
+        for(int i = 0; i < 8; i++){       //make white pawns
           tiles[i][6].setPiece(new pawn(i,6,0));
-          tiles[i][6].setText("Black Pawn");
+          tiles[i][6].setText("White Pawn");
         }     
 
-<<<<<<< HEAD
         tiles[0][0].setPiece(new rook(0,0,1));         //make rooks
         tiles[7][0].setPiece(new rook(7,0,1));
         tiles[0][7].setPiece(new rook(0,7,0));
         tiles[7][7].setPiece(new rook(7,7,0));
         
-        tiles[0][0].setText("White Rook");
-        tiles[7][0].setText("White Rook");
-        tiles[0][7].setText("Black Rook");
-        tiles[7][7].setText("Black Rook");
+        tiles[0][0].setText("Black Rook");
+        tiles[7][0].setText("Black Rook");
+        tiles[0][7].setText("White Rook");
+        tiles[7][7].setText("White Rook");
         
                               
         tiles[1][0].setPiece(new knight(1,0,1));             //make knights
@@ -59,55 +85,37 @@ public class Board extends JFrame{
         tiles[1][7].setPiece(new knight(1,7,0));
         tiles[6][7].setPiece(new knight(6,7,0));
         
-        tiles[1][0].setText("White Knight");
-        tiles[6][0].setText("White Knight");
-        tiles[1][7].setText("Black Knight");
-        tiles[6][7].setText("Black Knight");
+        tiles[1][0].setText("Black Knight");
+        tiles[6][0].setText("Black Knight");
+        tiles[1][7].setText("White Knight");
+        tiles[6][7].setText("White Knight");
         
         tiles[2][0].setPiece(new bishop(2,0,1));               // make bishops
         tiles[5][0].setPiece(new bishop(5,0,1));
         tiles[2][7].setPiece(new bishop(2,7,0));
         tiles[5][7].setPiece(new bishop(5,7,0));
         
-        tiles[2][0].setText("White Bishop");
-        tiles[5][0].setText("White Bishop");
-        tiles[2][7].setText("Black Bishop");
-        tiles[5][7].setText("Black Bishop");
-=======
-        tiles[0][0].setPiece(new rook(0,0,0));             //make rooks
-        tiles[7][0].setPiece(new rook(7,0,0));
-        tiles[0][7].setPiece(new rook(0,7,1));
-        tiles[7][7].setPiece(new rook(7,7,1));
-                              
-        tiles[1][0].setPiece(new knight(1,0,0));           //make knights
-        tiles[6][0].setPiece(new knight(6,0,0));
-        tiles[1][7].setPiece(new knight(1,7,1));
-        tiles[6][7].setPiece(new knight(6,7,1));
+        tiles[2][0].setText("Black Bishop");
+        tiles[5][0].setText("Black Bishop");
+        tiles[2][7].setText("White Bishop");
+        tiles[5][7].setText("White Bishop");
+
+        tiles[3][0].setPiece(new king(3,0,1));             //make kings
+        tiles[3][7].setPiece(new king(3,7,0));
         
-        tiles[2][0].setPiece(new bishop(2,0,0));           // make bishops
-        tiles[5][0].setPiece(new bishop(5,0,0));
-        tiles[2][7].setPiece(new bishop(2,7,1));
-        tiles[5][7].setPiece(new bishop(5,7,1));
->>>>>>> master
-        
-        tiles[3][0].setPiece(new king(3,0,0));             //make kings
-        tiles[3][7].setPiece(new king(3,7,1));
-        
-<<<<<<< HEAD
-        tiles[3][0].setText("White King");
-        tiles[3][7].setText("Black King");
+        tiles[3][0].setText("Black King");
+        tiles[3][7].setText("White King");
        
         
-        tiles[4][0].setPiece(new queen(4,0,0));           //make queens
-=======
-        tiles[4][0].setPiece(new queen(4,0,0));            //make queens
->>>>>>> master
-        tiles[4][7].setPiece(new queen(4,7,1));
+     
+        tiles[4][0].setPiece(new queen(4,0,1));            //make queens
+        tiles[4][7].setPiece(new queen(4,7,0));
         
-        tiles[4][7].setText("Black Queen");
-        tiles[4][0].setText("White Queen");
+        tiles[4][7].setText("White Queen");
+        tiles[4][0].setText("Black Queen");
                               
       this.setVisible(true);
+      
       
   }
   
@@ -118,20 +126,165 @@ public class Board extends JFrame{
     return tiles;
   }
   
+  public tile getInit(){
+    return init;
+  }
+  
+  public void setInit(tile t){
+    init = t;
+  }
+  
+ 
   /**
    * Moves a piece if the move is valid
    */
   public void move( int x, int y, piece p){
-    if(p.validMove(x , y)){            //case of valid move
-      getTiles()[p.getX()][p.getY()].setPiece(null);
-      getTiles()[x][y].setPiece(p);
-      
+    
+    if(p.validMove(x , y) && p.type == "Knight"){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
     }
-     
+    
+    
+    if(p.validMove(x , y) && p.type == "King"){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+    
+
+    if(x == p.getX()){
+      if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p )){            //case of valid move
+        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+        p.setPosition(x , y);                                 //the piece now knows its own position
+        p.setMoved();
+      }
+    }
+    else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
+      if(p.validMove(x , y) && p.type == "Pawn"){            //case of valid move
+        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+        p.setPosition(x , y);                                 //the piece now knows its own position
+        p.setMoved();
+      }
+    }
+  
+    
+    if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p )){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+  
+    
+    if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p )){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+   
+    
+    if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+      p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
+    }
+   
     
   }
   
-  
+  /**
+   * Method that checks if there is a clear path between the start location and end location
+   */
+  public boolean clearPath(int x, int y, piece p){
+    int initX = p.getX();
+    int initY = p.getY();
+    if(Math.abs(y - initY) == Math.abs(x - initX) ){
+      if(x > initX && y > initY){
+        for(int i = 1; i < x - initX; i++){
+           if(isOccupied(initX + i , initY + i)){
+            return false;
+          }
+        }
+      }
+      if(x > initX && y < initY){
+        for(int i = 1; i < x - initX; i++){
+           if(isOccupied(initX + i , initY - i)){
+            return false;
+          }
+        }
+      }
+      if(x < initX && y > initY){
+        for(int i = 1; i < y - initY; i++){
+           if(isOccupied(initX - i , initY + i)){
+            return false;
+          }
+        }
+      }
+      if(x < initX && y < initY){
+       for(int i = 1; i < initX - x; i++){
+           if(isOccupied(initX - i , initY - i)){
+            return false;
+          }
+        }
+      }
+      
+    }
+    else if(x - initX != 0){
+      if(x > initX){
+        for(int i = initX + 1 ; i < x ; i++){
+          if(isOccupied(i , y)){
+            return false;
+          }
+        }
+      }
+      if(x < initX){
+        for(int i = x + 1 ; i < initX ; i++){
+          if(isOccupied(i , y)){
+            return false;
+          }
+        }
+      }
+    }
+    else if(y - initY != 0){
+      if(y > initY){
+        for(int i = initY + 1 ; i < y ; i++){
+          if(isOccupied(x , i)){
+            return false;
+          }
+        }
+      }
+      if(y < initY){
+        for(int i = y + 1 ; i < initY ; i++){
+          if(isOccupied(x , i)){
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
   /**
    * Method that checks if a given tile is occupied by a piece
    */
@@ -143,5 +296,7 @@ public class Board extends JFrame{
       return true;
     }
   }
+  
+  
   
 }
