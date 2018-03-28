@@ -4,8 +4,11 @@ import java.lang.Math;
 
 public class piece{
   
+  private boolean hasMoved = false;
+  
   //field for player, 0 is white, 1 is black
   public int player;
+  
   //position fields for x and y locations
   public int positionX;
   public int positionY;
@@ -22,6 +25,15 @@ public class piece{
     
   }
   
+   //method to check if the pawn has been moved
+   public boolean getMoved(){
+    return hasMoved;
+  }
+  
+   public void setMoved(){
+     this.hasMoved = true;
+   }
+   
   /**
    * method to get the type of piece
    */
@@ -80,6 +92,7 @@ public class piece{
     //will be overrided
   }
   
+ 
  
   
 }

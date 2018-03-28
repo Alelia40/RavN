@@ -1,25 +1,15 @@
 import java.lang.Math;
 public class king extends piece{
   
-  private Boolean hasMoved;
+
   
   public king(int x, int y, int plr){
     super(x,y, plr);
-    hasMoved = false;
+    
     type = "King";
   }
  
-  //method to check if the king has been moved
-   public boolean getMoved(){
-    return hasMoved;
-  }
-  
-  /**
-   * Method to identify if the piece has moved
-   */
-  public void setMoved(){
-    this.hasMoved = true;
-  }
+
   
   //helper method to get the distance of any position from the current position
   @Override

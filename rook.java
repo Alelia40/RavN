@@ -1,24 +1,13 @@
 public class rook extends piece{
   
-  private Boolean hasMoved;
+ 
   
   public rook(int x, int y, int plr){
     super(x,y, plr);
-    hasMoved = false;
+   
     type = "Rook";
   }
   
-  //method to check if the rook has been moved
-  public boolean getMoved(){
-    return hasMoved;
-  }
-  
-  /**
-   * Method to identify if the piece has moved
-   */
-  public void setMoved(){
-    this.hasMoved = true;
-  }
   
   //helper method to check for valid move by using distance
   @Override

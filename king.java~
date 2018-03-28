@@ -6,6 +6,7 @@ public class king extends piece{
   public king(int x, int y, int plr){
     super(x,y, plr);
     hasMoved = false;
+    type = "King";
   }
  
   //method to check if the king has been moved

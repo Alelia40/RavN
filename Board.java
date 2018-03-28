@@ -32,12 +32,14 @@ public class Board extends JFrame{
         * What to do when a button is pressed
         */
          public void actionPerformed(ActionEvent e){
-            tile t = (tile)e.getSource();
+            tile t = (tile)e.getSource();        //this is the tile that was pressed
+            boolean isMoved = false;
             if(getInit() != null){
              move(t.getX(),t.getY(),getInit().getPiece());
+             isMoved = true;
              setInit(null);
             }
-            if(t.getPiece() != null && getInit() == null){
+            if(t.getPiece() != null && getInit() == null && isMoved == false){
              setInit(t);
             }
          }
@@ -108,6 +110,7 @@ public class Board extends JFrame{
                               
       this.setVisible(true);
       
+      
   }
   
   /**
@@ -136,6 +139,7 @@ public class Board extends JFrame{
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       p.setPosition(x , y);                                 //the piece now knows its own position
+      p.setMoved();
     }
     else{
       System.out.println("This is an illegal move for this piece");
