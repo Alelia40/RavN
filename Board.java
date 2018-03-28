@@ -160,16 +160,28 @@ public class Board extends JFrame{
     }
     
 
-    
-    if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p )){            //case of valid move
-      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
-      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
-      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
-      p.setPosition(x , y);                                 //the piece now knows its own position
-      p.setMoved();
+    if(x == p.getX()){
+      if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p )){            //case of valid move
+        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+        p.setPosition(x , y);                                 //the piece now knows its own position
+        p.setMoved();
+      }
+    }
+    else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
+      if(p.validMove(x , y) && p.type == "Pawn"){            //case of valid move
+        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+        p.setPosition(x , y);                                 //the piece now knows its own position
+        p.setMoved();
+      }
     }
   
+    
     if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p )){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
@@ -256,7 +268,6 @@ public class Board extends JFrame{
       }
     }
     else if(y - initY != 0){
-      System.out.println(y);
       if(y > initY){
         for(int i = initY + 1 ; i < y ; i++){
           if(isOccupied(x , i)){
