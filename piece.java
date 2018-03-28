@@ -65,6 +65,7 @@ public class piece{
     this.positionY = y;
   }
   
+ /** 
   //method to "take" another piece object by replacing it with this piece
   public void take(piece p){
     //save position
@@ -83,6 +84,7 @@ public class piece{
       System.out.println("Friendly Fire! Don't attack your own Pieces");
     }
   }
+  */
   
   /**
    * method to check if a given move is a valid move for the pieces
