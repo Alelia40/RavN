@@ -5,7 +5,7 @@ import junit.framework.TestCase;
  * Every method starting with the word "test" will be called when running
  * the test with JUnit.
  */
-public class testValidMove extends TestCase {
+public class testRook extends TestPiece {
   
   /**
    * A test method.
@@ -13,27 +13,11 @@ public class testValidMove extends TestCase {
    * many "testSomething" methods in this class as you wish, and each
    * one will be called when running JUnit over this class.)
    */
-
-  public void testPawn() {
-  }
   
-
-   public void testRook() {
-  }
+  private rook r = new rook(7,7,0);
   
-
-   public void testKnight() {
-  }
-   
-
-   public void testBishop() {
-  }
+  public void testValidMove() {
     
-
-   public void testQueen() {
-  }
-
-   public void testKing() {
   }
   
 }
