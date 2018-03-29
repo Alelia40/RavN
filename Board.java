@@ -246,10 +246,12 @@ public class Board extends JFrame{
     JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
         JOptionPane.ERROR_MESSAGE);
     }
+    this.whiteChecked = false;
     if(this.blackChecked == true){
        JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
         JOptionPane.ERROR_MESSAGE);
     }
+    this.blackChecked = false;
     
   }
   
