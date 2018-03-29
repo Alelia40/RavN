@@ -403,6 +403,10 @@ public class Board extends JFrame{
 
   }
   
+  
+  /**
+   * getter setters for whoseMove
+   */
   public int getWhoseMove(){
     return whoseMove;
   }
