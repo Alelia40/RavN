@@ -12,6 +12,9 @@ public class Board extends JFrame{
   
   private int whoseMove = 0;
   
+  private boolean whiteChecked = false;
+  private boolean blackChecked = false;
+  
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -31,27 +34,27 @@ public class Board extends JFrame{
       for (int index2 = 0 ; index2 < 8 ; index2++){
         tiles[index2][index1] = new tile(index2,index1);
         tiles[index2][index1].addActionListener(new ActionListener() {
-        /**
-        * What to do when a button is pressed
-        */
-         public void actionPerformed(ActionEvent e){
+          /**
+           * What to do when a button is pressed
+           */
+          public void actionPerformed(ActionEvent e){
             tile t = (tile)e.getSource();        //this is the tile that was pressed
             boolean isMoved = false;             //Serves as a flag so you don't move a piece and then reassign it as init
             if(getInit() != null && t.getPiece() == null){ //Case: Move to open space
-             move(t.grabX(),t.grabY(),getInit().getPiece()); //moves a piece
-             isMoved = true;
-             setInit(null);                                //forgets the piece that was moved so another can be chosen
+              move(t.grabX(),t.grabY(),getInit().getPiece()); //moves a piece
+              isMoved = true;
+              setInit(null);                                //forgets the piece that was moved so another can be chosen
             } 
             else if(getInit() != null && t.getPiece().getPlayer() != getInit().getPiece().getPlayer()){   //Case: Move onto enemy piece
-             move(t.grabX(),t.grabY(),getInit().getPiece());
-             isMoved = true;
-             setInit(null);
+              move(t.grabX(),t.grabY(),getInit().getPiece());
+              isMoved = true;
+              setInit(null);
             }
             if(t.getPiece() != null && getInit() == null && isMoved == false){  //Case: Select Piece to move
-             setInit(t);                                //sets the piece to move
+              setInit(t);                                //sets the piece to move
             }
-         }
-         });
+          }
+        });
         if((index1+index2)%2 == 1)
           tiles[index2][index1].setBackground(new Color(90,77,14));
         else
@@ -59,66 +62,66 @@ public class Board extends JFrame{
         c.add(tiles[index2][index1]);
       }
     }
-      
-      
-        for(int i = 0; i < 8; i++){       //make black pawns
-          tiles[i][1].setPiece(new pawn(i,1,1));
-          tiles[i][1].setText("Black Pawn");
-        }      
-
-        for(int i = 0; i < 8; i++){       //make white pawns
-          tiles[i][6].setPiece(new pawn(i,6,0));
-          tiles[i][6].setText("White Pawn");
-        }     
-
-        tiles[0][0].setPiece(new rook(0,0,1));         //make rooks
-        tiles[7][0].setPiece(new rook(7,0,1));
-        tiles[0][7].setPiece(new rook(0,7,0));
-        tiles[7][7].setPiece(new rook(7,7,0));
-        
-        tiles[0][0].setText("Black Rook");
-        tiles[7][0].setText("Black Rook");
-        tiles[0][7].setText("White Rook");
-        tiles[7][7].setText("White Rook");
-        
-                              
-        tiles[1][0].setPiece(new knight(1,0,1));             //make knights
-        tiles[6][0].setPiece(new knight(6,0,1));
-        tiles[1][7].setPiece(new knight(1,7,0));
-        tiles[6][7].setPiece(new knight(6,7,0));
-        
-        tiles[1][0].setText("Black Knight");
-        tiles[6][0].setText("Black Knight");
-        tiles[1][7].setText("White Knight");
-        tiles[6][7].setText("White Knight");
-        
-        tiles[2][0].setPiece(new bishop(2,0,1));               // make bishops
-        tiles[5][0].setPiece(new bishop(5,0,1));
-        tiles[2][7].setPiece(new bishop(2,7,0));
-        tiles[5][7].setPiece(new bishop(5,7,0));
-        
-        tiles[2][0].setText("Black Bishop");
-        tiles[5][0].setText("Black Bishop");
-        tiles[2][7].setText("White Bishop");
-        tiles[5][7].setText("White Bishop");
-
-        tiles[4][0].setPiece(new king(4,0,1));             //make kings
-        tiles[4][7].setPiece(new king(4,7,0));
-        
-        tiles[4][0].setText("Black King");
-        tiles[4][7].setText("White King");
-       
-        
-     
-        tiles[3][0].setPiece(new queen(3,0,1));            //make queens
-        tiles[3][7].setPiece(new queen(3,7,0));
-        
-        tiles[3][7].setText("White Queen");
-        tiles[3][0].setText("Black Queen");
-                              
-      this.setVisible(true);
-      
-      
+    
+    
+    for(int i = 0; i < 8; i++){       //make black pawns
+      tiles[i][1].setPiece(new pawn(i,1,1));
+      tiles[i][1].setText("Black Pawn");
+    }      
+    
+    for(int i = 0; i < 8; i++){       //make white pawns
+      tiles[i][6].setPiece(new pawn(i,6,0));
+      tiles[i][6].setText("White Pawn");
+    }     
+    
+    tiles[0][0].setPiece(new rook(0,0,1));         //make rooks
+    tiles[7][0].setPiece(new rook(7,0,1));
+    tiles[0][7].setPiece(new rook(0,7,0));
+    tiles[7][7].setPiece(new rook(7,7,0));
+    
+    tiles[0][0].setText("Black Rook");
+    tiles[7][0].setText("Black Rook");
+    tiles[0][7].setText("White Rook");
+    tiles[7][7].setText("White Rook");
+    
+    
+    tiles[1][0].setPiece(new knight(1,0,1));             //make knights
+    tiles[6][0].setPiece(new knight(6,0,1));
+    tiles[1][7].setPiece(new knight(1,7,0));
+    tiles[6][7].setPiece(new knight(6,7,0));
+    
+    tiles[1][0].setText("Black Knight");
+    tiles[6][0].setText("Black Knight");
+    tiles[1][7].setText("White Knight");
+    tiles[6][7].setText("White Knight");
+    
+    tiles[2][0].setPiece(new bishop(2,0,1));               // make bishops
+    tiles[5][0].setPiece(new bishop(5,0,1));
+    tiles[2][7].setPiece(new bishop(2,7,0));
+    tiles[5][7].setPiece(new bishop(5,7,0));
+    
+    tiles[2][0].setText("Black Bishop");
+    tiles[5][0].setText("Black Bishop");
+    tiles[2][7].setText("White Bishop");
+    tiles[5][7].setText("White Bishop");
+    
+    tiles[4][0].setPiece(new king(4,0,1));             //make kings
+    tiles[4][7].setPiece(new king(4,7,0));
+    
+    tiles[4][0].setText("Black King");
+    tiles[4][7].setText("White King");
+    
+    
+    
+    tiles[3][0].setPiece(new queen(3,0,1));            //make queens
+    tiles[3][7].setPiece(new queen(3,7,0));
+    
+    tiles[3][7].setText("White Queen");
+    tiles[3][0].setText("Black Queen");
+    
+    this.setVisible(true);
+    
+    
   }
   
   /**
@@ -136,7 +139,7 @@ public class Board extends JFrame{
     init = t;
   }
   
- 
+  
   /**
    * Moves a piece if the move is valid
    */
@@ -162,16 +165,16 @@ public class Board extends JFrame{
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
     }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
-        castle((king)p , 0 , 0);
-        castle((king)p , 0 , 7);
-        castle((king)p , 7 , 0);
-        castle((king)p , 7 , 7);
+      castle((king)p , 0 , 0);
+      castle((king)p , 0 , 7);
+      castle((king)p , 7 , 0);
+      castle((king)p , 7 , 7);
       
     }
     
     
     
-
+    
     if(x == p.getX()){
       if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
@@ -194,7 +197,7 @@ public class Board extends JFrame{
         setWhoseMove((getWhoseMove() +1) % 2);
       }
     }
-  
+    
     
     if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
@@ -205,7 +208,7 @@ public class Board extends JFrame{
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
     }
-  
+    
     
     if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
@@ -216,7 +219,7 @@ public class Board extends JFrame{
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
     }
-   
+    
     
     if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )&& p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
@@ -227,7 +230,7 @@ public class Board extends JFrame{
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
     }
-   
+    
     
     System.out.println(whoseMove);
     
@@ -247,28 +250,28 @@ public class Board extends JFrame{
     if(Math.abs(y - initY) == Math.abs(x - initX) ){
       if(x > initX && y > initY){
         for(int i = 1; i < x - initX; i++){
-           if(isOccupied(initX + i , initY + i)){
+          if(isOccupied(initX + i , initY + i)){
             return false;
           }
         }
       }
       if(x > initX && y < initY){
         for(int i = 1; i < x - initX; i++){
-           if(isOccupied(initX + i , initY - i)){
+          if(isOccupied(initX + i , initY - i)){
             return false;
           }
         }
       }
       if(x < initX && y > initY){
         for(int i = 1; i < y - initY; i++){
-           if(isOccupied(initX - i , initY + i)){
+          if(isOccupied(initX - i , initY + i)){
             return false;
           }
         }
       }
       if(x < initX && y < initY){
-       for(int i = 1; i < initX - x; i++){
-           if(isOccupied(initX - i , initY - i)){
+        for(int i = 1; i < initX - x; i++){
+          if(isOccupied(initX - i , initY - i)){
             return false;
           }
         }
@@ -322,7 +325,7 @@ public class Board extends JFrame{
     }
   }
   
-   /**
+  /**
    * Method that checks for a legal catle move
    */
   public boolean legalCastle(rook r, king k){
@@ -397,7 +400,86 @@ public class Board extends JFrame{
       
       
     }
+    
+  }
+  
+  /**
+   * look for a player's king
+   */
+  public piece findKing(int player){
+    
+    piece king;//variable for king
+    
+    if (player != 1 || player !=0){
+      return null;
+    }
+    else{
+      
+      tile[][] board = getTiles();
+      
+      for(int i = 0; i < 8; i++){
+        for(int j = 0; j < 8; j++){
+          
+          if(board[i][j].getPiece() != null){
+            if(board[i][j].getPiece().getType().equals("King") == true && board[i][j].getPiece().getPlayer() == player){
+              return board[i][j].getPiece();
+            }
 
+          }
+          else 
+            return null;
+        }
+      }
+      return null;
+    }
+  }
+  
+  /**
+   * method looking for check
+   */
+  public void lookForCheck(){
+    
+    //find the king of the currently defending player
+    int opp; //opposition player
+    piece k; //king variable
+    if(getWhoseMove() == 0){
+      opp = 1;
+      k = findKing(opp);
+    }
+    else{
+      opp = 0;
+      k = findKing(opp);
+    }
+    
+    //location of king
+    int kingX = k.getX();
+    int kingY = k.getY();
+    
+    tile[][] board = getTiles();
+    
+    for(int i = 0; i < 8; i++){
+      for(int j = 0; j < 8; j++){
+        
+        if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() != opp){ //if we find a friendly piece check if it can attack the king next turn
+          if(board[i][j].getPiece().validMove(kingX,kingY) == true){
+            
+            if(opp == 0)
+              this.whiteChecked = true;
+            else
+              this.blackChecked = true;
+            
+          }
+          else{
+            if(opp == 0)
+              this.whiteChecked = false;
+            else
+              this.blackChecked = false;
+          }
+          
+        }
+        
+      }
+    }
   }
   
   
