@@ -251,7 +251,6 @@ public class Board extends JFrame{
        JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
         JOptionPane.ERROR_MESSAGE);
     }
-    this.blackChecked = false;
     
   }
   
@@ -483,12 +482,9 @@ public class Board extends JFrame{
     
     tile[][] board = getTiles();
     
-    if(opp == 0){
+    
         this.whiteChecked = false;
-    }
-    else{
         this.blackChecked = false;
-    }
     
     System.out.println(blackChecked);
     
