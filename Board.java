@@ -165,18 +165,11 @@ public class Board extends JFrame{
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
     }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
-<<<<<<< HEAD
+
       castle((king)p , 0 , 0);
       castle((king)p , 0 , 7);
       castle((king)p , 7 , 0);
       castle((king)p , 7 , 7);
-      
-=======
-        castle((king)p , 0 , 0);
-        castle((king)p , 0 , 7);
-        castle((king)p , 7 , 0);
-        castle((king)p , 7 , 7);
->>>>>>> 9ed4fbf94caf78561e39a099010bd2ab4dbd1054
     }
     
     
@@ -419,7 +412,7 @@ public class Board extends JFrame{
    */
   public piece findKing(int player){
     
-    piece king;//variable for king
+    piece king = null;//variable for king
     
     if (player != 1 || player !=0){
       return null;
@@ -433,16 +426,16 @@ public class Board extends JFrame{
           
           if(board[i][j].getPiece() != null){
             if(board[i][j].getPiece().getType().equals("King") == true && board[i][j].getPiece().getPlayer() == player){
-              return board[i][j].getPiece();
+              king = board[i][j].getPiece();
             }
 
           }
-          else 
-            return null;
         }
       }
-      return null;
     }
+    
+    return king;
+    
   }
   
   /**
