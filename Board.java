@@ -414,7 +414,7 @@ public class Board extends JFrame{
     
     piece king = null;//variable for king
     
-    if (player != 1 || player !=0){
+    if (player != 1 && player !=0){
       return null;
     }
     else{
