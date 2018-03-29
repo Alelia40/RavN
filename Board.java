@@ -15,6 +15,9 @@ public class Board extends JFrame{
   private boolean whiteChecked = false;
   private boolean blackChecked = false;
   
+  public static void main(String[] args){
+    Board b = new Board();
+  }
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -153,6 +156,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
     
@@ -164,12 +168,14 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
 
       castle((king)p , 0 , 0);
       castle((king)p , 0 , 7);
       castle((king)p , 7 , 0);
       castle((king)p , 7 , 7);
+      lookForCheck();
     }
     
     
@@ -184,6 +190,7 @@ public class Board extends JFrame{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+        lookForCheck();
       }
     }
     else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
@@ -195,6 +202,7 @@ public class Board extends JFrame{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+        lookForCheck();
       }
     }
     
@@ -207,6 +215,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
     
@@ -218,6 +227,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
     
@@ -229,6 +239,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
     
