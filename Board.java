@@ -166,7 +166,6 @@ public class Board extends JFrame{
         castle((king)p , 0 , 7);
         castle((king)p , 7 , 0);
         castle((king)p , 7 , 7);
-      
     }
     
     
@@ -228,8 +227,6 @@ public class Board extends JFrame{
       setWhoseMove((getWhoseMove() +1) % 2);
     }
    
-    
-    System.out.println(whoseMove);
     
   }
   
@@ -327,8 +324,10 @@ public class Board extends JFrame{
    */
   public boolean legalCastle(rook r, king k){
     
+    
     int rookX = r.getX();
     int rookY = r.getY();
+    
     
     if(r.getPlayer() != k.getPlayer()){
       return false;
@@ -359,13 +358,14 @@ public class Board extends JFrame{
     if(legalCastle(r,k)){
       
       if(rookX ==0 && rookY ==0){
-        move(2,0,r);
+        move(3,0,r);
         getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[1][0].setPiece(k);                         //sets new square piece to the piece which moved
-        getTiles()[1][0].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[2][0].setPiece(k);                         //sets new square piece to the piece which moved
+        getTiles()[2][0].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
-        k.setPosition(1 , 0);                                 //the piece now knows its own position
+        k.setPosition(2 , 0);                                 //the piece now knows its own position
         k.setMoved();
+        setWhoseMove((getWhoseMove() +1) % 2);
       }
       else if(rookX == 7 && rookY == 0){
         move(5,0,r);
@@ -375,24 +375,27 @@ public class Board extends JFrame{
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
         k.setPosition(6 , 0);                                 //the piece now knows its own position
         k.setMoved();
+        setWhoseMove((getWhoseMove() +1) % 2);
       }
       else if(rookX == 0 && rookY ==7){
-        move(2,7,r);
+        move(3,7,r);
         getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[1][7].setPiece(k);                         //sets new square piece to the piece which moved
-        getTiles()[1][7].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[2][7].setPiece(k);                         //sets new square piece to the piece which moved
+        getTiles()[2][7].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
-        k.setPosition(1 , 7);                                 //the piece now knows its own position
+        k.setPosition(2 , 7);                                 //the piece now knows its own position
         k.setMoved();
+        setWhoseMove((getWhoseMove() +1) % 2);
       }
-      else{
-        move(7,5,r);
+      else if(rookX == 7 && rookY ==7){
+        move(5,7,r);
         getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[6][5].setPiece(k);                         //sets new square piece to the piece which moved
-        getTiles()[6][5].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
+        getTiles()[6][7].setPiece(k);                         //sets new square piece to the piece which moved
+        getTiles()[6][7].setText(getTiles()[k.getX()][k.getY()].getText());  //sets the text on the new square to the text of the old square
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
-        k.setPosition(6 , 5);                                 //the piece now knows its own position
+        k.setPosition(6 , 7);                                 //the piece now knows its own position
         k.setMoved();
+        setWhoseMove((getWhoseMove() +1) % 2);
       }
       
       
