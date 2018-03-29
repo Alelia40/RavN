@@ -242,6 +242,14 @@ public class Board extends JFrame{
       lookForCheck();
     }
     
+    if(this.whiteChecked == true){
+    JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
+        JOptionPane.ERROR_MESSAGE);
+    }
+    if(this.blackChecked == true){
+       JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
+        JOptionPane.ERROR_MESSAGE);
+    }
     
   }
   
@@ -470,6 +478,7 @@ public class Board extends JFrame{
     int kingX = k.getX();
     int kingY = k.getY();
     
+    
     tile[][] board = getTiles();
     
     if(opp == 0){
@@ -478,6 +487,8 @@ public class Board extends JFrame{
     else{
         this.blackChecked = false;
     }
+    
+    System.out.println(blackChecked);
     
     for(int i = 0; i < 8; i++){
       for(int j = 0; j < 8; j++){
