@@ -67,12 +67,12 @@ public class Board extends JFrame{
     }
     
     
-    for(int i = 0; i < 8; i++){       //make black pawns
+    for(int i = 0; i < 8; i++){                   //make black pawns
       tiles[i][1].setPiece(new pawn(i,1,1));
       tiles[i][1].setText("Black Pawn");
     }      
     
-    for(int i = 0; i < 8; i++){       //make white pawns
+    for(int i = 0; i < 8; i++){                     //make white pawns
       tiles[i][6].setPiece(new pawn(i,6,0));
       tiles[i][6].setText("White Pawn");
     }     
@@ -98,7 +98,7 @@ public class Board extends JFrame{
     tiles[1][7].setText("White Knight");
     tiles[6][7].setText("White Knight");
     
-    tiles[2][0].setPiece(new bishop(2,0,1));               // make bishops
+    tiles[2][0].setPiece(new bishop(2,0,1));            // make bishops
     tiles[5][0].setPiece(new bishop(5,0,1));
     tiles[2][7].setPiece(new bishop(2,7,0));
     tiles[5][7].setPiece(new bishop(5,7,0));
