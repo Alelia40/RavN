@@ -447,11 +447,11 @@ public class Board extends JFrame{
     int opp; //opposition player
     piece k; //king variable
     if(getWhoseMove() == 0){
-      opp = 1;
+      opp = 0;
       k = findKing(opp);
     }
     else{
-      opp = 0;
+      opp = 1;
       k = findKing(opp);
     }
     
@@ -461,29 +461,51 @@ public class Board extends JFrame{
     
     tile[][] board = getTiles();
     
+    if(opp == 0){
+        this.whiteChecked = false;
+    }
+    else{
+        this.blackChecked = false;
+    }
+    
     for(int i = 0; i < 8; i++){
       for(int j = 0; j < 8; j++){
         
         if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() != opp){ //if we find a friendly piece check if it can attack the king next turn
-          if(board[i][j].getPiece().validMove(kingX,kingY) == true){
+          if(board[i][j].getPiece().validMove(kingX,kingY) == true && clearPath(kingX, kingY,board[i][j].getPiece()) && board[i][j].getPiece().getType() != "Knight"){
             
-            if(opp == 0)
+            if(opp == 0){
               this.whiteChecked = true;
-            else
+            }
+            else{
               this.blackChecked = true;
-            
+            }
+       
           }
-          else{
-            if(opp == 0)
-              this.whiteChecked = false;
-            else
-              this.blackChecked = false;
+          else if(board[i][j].getPiece().validMove(kingX,kingY) == true && board[i][j].getPiece().getType() == "Knight") {
+            
+            if(opp == 0){
+              this.whiteChecked = true;
+            }
+            else{
+              this.blackChecked = true;
+            }
+            
           }
           
         }
         
       }
     }
+    
+  }
+  
+  public boolean getwhiteChecked(){
+    return this.whiteChecked;
+  }
+  
+  public boolean getblackChecked(){
+    return this.blackChecked;
   }
   
   
