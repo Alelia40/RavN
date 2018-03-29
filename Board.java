@@ -53,9 +53,9 @@ public class Board extends JFrame{
          }
          });
         if((index1+index2)%2 == 1)
-          tiles[index2][index1].setBackground(new Color(176,160,77));
-        else
           tiles[index2][index1].setBackground(new Color(90,77,14));
+        else
+          tiles[index2][index1].setBackground(new Color(176,160,77));
         c.add(tiles[index2][index1]);
       }
     }
@@ -102,19 +102,19 @@ public class Board extends JFrame{
         tiles[2][7].setText("White Bishop");
         tiles[5][7].setText("White Bishop");
 
-        tiles[3][0].setPiece(new king(3,0,1));             //make kings
-        tiles[3][7].setPiece(new king(3,7,0));
+        tiles[4][0].setPiece(new king(4,0,1));             //make kings
+        tiles[4][7].setPiece(new king(4,7,0));
         
-        tiles[3][0].setText("Black King");
-        tiles[3][7].setText("White King");
+        tiles[4][0].setText("Black King");
+        tiles[4][7].setText("White King");
        
         
      
-        tiles[4][0].setPiece(new queen(4,0,1));            //make queens
-        tiles[4][7].setPiece(new queen(4,7,0));
+        tiles[3][0].setPiece(new queen(3,0,1));            //make queens
+        tiles[3][7].setPiece(new queen(3,7,0));
         
-        tiles[4][7].setText("White Queen");
-        tiles[4][0].setText("Black Queen");
+        tiles[3][7].setText("White Queen");
+        tiles[3][0].setText("Black Queen");
                               
       this.setVisible(true);
       
@@ -161,7 +161,15 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+    }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
+        castle((king)p , 0 , 0);
+        castle((king)p , 0 , 7);
+        castle((king)p , 7 , 0);
+        castle((king)p , 7 , 7);
+      
     }
+    
+    
     
 
     if(x == p.getX()){
