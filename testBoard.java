@@ -8,12 +8,27 @@ import junit.framework.TestCase;
 public class testBoard extends TestCase {
   
   /**
-   * A test method.
-   * (Replace "X" with a name describing the test.  You may write as
-   * many "testSomething" methods in this class as you wish, and each
-   * one will be called when running JUnit over this class.)
+   * A test method for checked getters and setters
    */
-  public void test() {
+  public void testChecked() {
+    Board x = new Board();
+    
+    assertFalse(x.getwhiteChecked());
+    assertFalse(x.getblackChecked());
+    
+    x.setwhiteChecked(true);
+    x.setblackChecked(true);
+    
+    assertTrue(x.getwhiteChecked());
+    assertTrue(x.getblackChecked());
+  }
+  
+  public void testgetTile(){
+    Board x = new Board();
+    
+    tile t = x.getTiles()[0][0];
+    assertNotNull(t);
+    
   }
   
 }
