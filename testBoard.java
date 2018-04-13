@@ -53,7 +53,7 @@ public class testBoard extends TestCase {
     
   }
   
-  public void testLegalCastle(){
+  public void testilLegalCastle(){
     
     //at start none should be legal
     
@@ -75,6 +75,49 @@ public class testBoard extends TestCase {
     
   }
   
+  /**
+   * test  method for findKing
+   */
+  public void testFindKing(){
+    
+    assertSame(x.getTiles()[4][7].getPiece(), x.findKing(0));
+    assertSame(x.getTiles()[4][0].getPiece(), x.findKing(1));
+    
+    assertNotSame(x.getTiles()[4][0].getPiece(), x.findKing(0));
+    assertNotSame(x.getTiles()[4][7].getPiece(), x.findKing(1));
+    
+  }
+  
+  /**
+   * test for the clear path method
+   */
+  public void testClearPath(){
+    
+    //to test this we can pick a pawn and check around it for clear paths.
+    
+    piece p = x.getTiles()[4][1].getPiece();
+    
+    //there should be a clear path to two spaces ahead
+    assertTrue(x.clearPath(4,3,p));
+    //and diagonally forward
+    assertTrue(x.clearPath(6,3,p));
+    assertTrue(x.clearPath(2,3,p));
+    
+    //horizontally there should be no clear path
+    assertFalse(x.clearPath(2,1,p));
+    assertFalse(x.clearPath(6,1,p));
+    
+    //we need to move the pieces to do other things
+    x.move(4,3,p);
+    
+    assertTrue(x.clearPath(4,1,p));
+    assertTrue(x.clearPath(2,3,p));
+    assertTrue(x.clearPath(6,3,p));
+    
+    assertFalse(x.clearPath(2,1,p));
+    assertFalse(x.clearPath(6,1,p));
+    
+  }
   
   
 }
