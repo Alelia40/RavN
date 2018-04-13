@@ -348,27 +348,28 @@ public class Board extends JFrame{
    */
   public boolean legalCastle(rook r, king k){
     
-    
-    int rookX = r.getX();
-    int rookY = r.getY();
-    
-    
-    if(r.getPlayer() != k.getPlayer()){
-      return false;
+    if(r != null){
+      int rookX = r.getX();
+      int rookY = r.getY();
+      
+      
+      if(r.getPlayer() != k.getPlayer()){
+        return false;
+      }
+      else if(r.getMoved() == true){
+        return false;
+      }
+      else if(k.getMoved() == true){
+        return false;
+      }
+      else if(clearPath(rookX,rookY,k) == false){
+        return false;
+      }
+      else{
+        return true;
+      }
     }
-    else if(r.getMoved() == true){
-      return false;
-    }
-    else if(k.getMoved() == true){
-      return false;
-    }
-    else if(clearPath(rookX,rookY,k) == false){
-      return false;
-    }
-    else{
-      return true;
-    }
-    
+    return false;
   }
   
   
@@ -389,7 +390,6 @@ public class Board extends JFrame{
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
         k.setPosition(2 , 0);                                 //the piece now knows its own position
         k.setMoved();
-        setWhoseMove((getWhoseMove() +1) % 2);
       }
       else if(rookX == 7 && rookY == 0){
         move(5,0,r);
@@ -399,7 +399,6 @@ public class Board extends JFrame{
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
         k.setPosition(6 , 0);                                 //the piece now knows its own position
         k.setMoved();
-        setWhoseMove((getWhoseMove() +1) % 2);
       }
       else if(rookX == 0 && rookY ==7){
         move(3,7,r);
@@ -409,7 +408,6 @@ public class Board extends JFrame{
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
         k.setPosition(2 , 7);                                 //the piece now knows its own position
         k.setMoved();
-        setWhoseMove((getWhoseMove() +1) % 2);
       }
       else if(rookX == 7 && rookY ==7){
         move(5,7,r);
@@ -419,7 +417,6 @@ public class Board extends JFrame{
         getTiles()[k.getX()][k.getY()].setText("");                          //sets the text of the old square to null
         k.setPosition(6 , 7);                                 //the piece now knows its own position
         k.setMoved();
-        setWhoseMove((getWhoseMove() +1) % 2);
       }
       
       
@@ -486,7 +483,6 @@ public class Board extends JFrame{
         this.whiteChecked = false;
         this.blackChecked = false;
     
-    System.out.println(blackChecked);
     
     for(int i = 0; i < 8; i++){
       for(int j = 0; j < 8; j++){

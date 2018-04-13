@@ -15,6 +15,9 @@ public class Board extends JFrame{
   private boolean whiteChecked = false;
   private boolean blackChecked = false;
   
+  public static void main(String[] args){
+    Board b = new Board();
+  }
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -64,12 +67,12 @@ public class Board extends JFrame{
     }
     
     
-    for(int i = 0; i < 8; i++){       //make black pawns
+    for(int i = 0; i < 8; i++){                   //make black pawns
       tiles[i][1].setPiece(new pawn(i,1,1));
       tiles[i][1].setText("Black Pawn");
     }      
     
-    for(int i = 0; i < 8; i++){       //make white pawns
+    for(int i = 0; i < 8; i++){                     //make white pawns
       tiles[i][6].setPiece(new pawn(i,6,0));
       tiles[i][6].setText("White Pawn");
     }     
@@ -95,7 +98,7 @@ public class Board extends JFrame{
     tiles[1][7].setText("White Knight");
     tiles[6][7].setText("White Knight");
     
-    tiles[2][0].setPiece(new bishop(2,0,1));               // make bishops
+    tiles[2][0].setPiece(new bishop(2,0,1));            // make bishops
     tiles[5][0].setPiece(new bishop(5,0,1));
     tiles[2][7].setPiece(new bishop(2,7,0));
     tiles[5][7].setPiece(new bishop(5,7,0));
@@ -153,6 +156,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
     
@@ -164,12 +168,14 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
 
       castle((king)p , 0 , 0);
       castle((king)p , 0 , 7);
       castle((king)p , 7 , 0);
       castle((king)p , 7 , 7);
+      lookForCheck();
     }
     
     
@@ -184,6 +190,7 @@ public class Board extends JFrame{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+        lookForCheck();
       }
     }
     else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
@@ -195,6 +202,7 @@ public class Board extends JFrame{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+        lookForCheck();
       }
     }
     
@@ -207,6 +215,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
     
@@ -218,6 +227,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
     
@@ -229,8 +239,18 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck();
     }
     
+    if(this.whiteChecked == true){
+    JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
+        JOptionPane.ERROR_MESSAGE);
+    }
+    this.whiteChecked = false;
+    if(this.blackChecked == true){
+       JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
+        JOptionPane.ERROR_MESSAGE);
+    }
     
   }
   
@@ -459,14 +479,14 @@ public class Board extends JFrame{
     int kingX = k.getX();
     int kingY = k.getY();
     
+    
     tile[][] board = getTiles();
     
-    if(opp == 0){
+    
         this.whiteChecked = false;
-    }
-    else{
         this.blackChecked = false;
-    }
+    
+    System.out.println(blackChecked);
     
     for(int i = 0; i < 8; i++){
       for(int j = 0; j < 8; j++){
