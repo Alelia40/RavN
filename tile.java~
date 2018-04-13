@@ -20,13 +20,15 @@ public class tile extends JButton{
     this.y = y;
   }
   
-  public int getX(){
+  
+  public int grabX(){
     return x;
   }
   
-  public int getY(){
+  public int grabY(){
     return y;
   }
+  
 
   public piece getPiece(){
     return p;

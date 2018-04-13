@@ -127,6 +127,7 @@ public class Board extends JFrame{
     
   }
   
+  
   /**
    * Method that returns the tiles on the board
    */
@@ -594,6 +595,10 @@ public class Board extends JFrame{
     
   }
   
+  
+  /**
+   * getter setters for checked statuses
+   */
   public boolean getwhiteChecked(){
     return this.whiteChecked;
   }
@@ -601,6 +606,15 @@ public class Board extends JFrame{
   public boolean getblackChecked(){
     return this.blackChecked;
   }
+  
+  public void setwhiteChecked(boolean x){
+    this.whiteChecked = x;
+  }
+  
+  public void setblackChecked(boolean x){
+    this.blackChecked = x;
+  }
+  
   
   
   /**
