@@ -127,6 +127,7 @@ public class Board extends JFrame{
     
   }
   
+  
   /**
    * Method that returns the tiles on the board
    */
