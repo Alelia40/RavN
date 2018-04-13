@@ -10,7 +10,7 @@ public class Board extends JFrame{
   
   private tile init;  //initial button pressed with piece
   
-  private int whoseMove = 0;
+  private int whoseMove = 0;      //whites turn to start
   
   private boolean whiteChecked = false;
   private boolean blackChecked = false;
@@ -154,10 +154,20 @@ public class Board extends JFrame{
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
-      p.setPosition(x , y);                                 //the piece now knows its own position
+                                      
+      lookForCheck(getWhoseMove());
+      System.out.println((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true));
+      if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){
+        getTiles()[p.getX()][p.getY()].setPiece(p);        
+        getTiles()[x][y].setPiece(null);    
+        getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
+        getTiles()[x][y].setText("");  
+      }else{
+      p.setPosition(x , y);         //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
-      lookForCheck();
+      lookForCheck(getWhoseMove());
+      }
     }
     
     
@@ -169,14 +179,14 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
-      lookForCheck();
+      lookForCheck(getWhoseMove());
     }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
 
       castle((king)p , 0 , 0);
       castle((king)p , 0 , 7);
       castle((king)p , 7 , 0);
       castle((king)p , 7 , 7);
-      lookForCheck();
+      lookForCheck(getWhoseMove());
     }
     
     
@@ -191,7 +201,7 @@ public class Board extends JFrame{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
-        lookForCheck();
+        lookForCheck(getWhoseMove());
       }
     }
     else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
@@ -203,7 +213,7 @@ public class Board extends JFrame{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
-        lookForCheck();
+        lookForCheck(getWhoseMove());
       }
     }
     
@@ -216,7 +226,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
-      lookForCheck();
+      lookForCheck(getWhoseMove());
     }
     
     
@@ -228,7 +238,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
-      lookForCheck();
+      lookForCheck(getWhoseMove());
     }
     
     
@@ -240,7 +250,7 @@ public class Board extends JFrame{
       p.setPosition(x , y);                                 //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
-      lookForCheck();
+      lookForCheck(getWhoseMove());
     }
     
     if(this.whiteChecked == true){
@@ -459,19 +469,14 @@ public class Board extends JFrame{
   /**
    * method looking for check
    */
-  public void lookForCheck(){
+  public void lookForCheck(int player){
     
     //find the king of the currently defending player
-    int opp; //opposition player
+    int opp = player; //opposition player
     piece k; //king variable
-    if(getWhoseMove() == 0){
-      opp = 0;
-      k = findKing(opp);
-    }
-    else{
-      opp = 1;
-      k = findKing(opp);
-    }
+    
+    k = findKing(opp);
+   
     
     //location of king
     int kingX = k.getX();
