@@ -650,7 +650,6 @@ public class Board extends JFrame{
     
   }
   
-<<<<<<< HEAD
   public boolean lookForCheckmate(int player){
     tile[][] board = getTiles();
     piece k = findKing(player);
@@ -1123,12 +1122,10 @@ public class Board extends JFrame{
     
   }
   
-=======
   
   /**
    * getter setters for checked statuses
    */
->>>>>>> 9824c8d3267861d434801649c565f80f139724ee
   public boolean getwhiteChecked(){
     return this.whiteChecked;
   }
