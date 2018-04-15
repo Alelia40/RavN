@@ -34,5 +34,4 @@ public class testPiece extends TestCase {
      assertEquals(2,p.getY());
      
    }
-   
 }

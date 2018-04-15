@@ -80,6 +80,8 @@ public class testBoard extends TestCase {
    */
   public void testFindKing(){
     
+    assertNull(x.findKing(2));
+    
     assertSame(x.getTiles()[4][7].getPiece(), x.findKing(0));
     assertSame(x.getTiles()[4][0].getPiece(), x.findKing(1));
     
@@ -118,6 +120,8 @@ public class testBoard extends TestCase {
     assertFalse(x.clearPath(6,1,p));
     
   }
+  
+  
   
   
 }
