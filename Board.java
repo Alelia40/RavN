@@ -5,6 +5,13 @@ import java.lang.Math;
 
 public class Board extends JFrame{
   
+  private piece pieceLastMoved;
+  
+  private int pieceLastMovedFromX;
+  
+  private int pieceLastMovedFromY;
+  
+  private piece pieceTakenLastTurn;
   
   private tile[][] tiles; //jbuttons for the UI
   
@@ -142,11 +149,25 @@ public class Board extends JFrame{
     init = t;
   }
   
+  public void unduMove(){
+    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
+    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
+    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setText(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getText());  //sets the text on the new square to the text of the old square
+    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setText(""); 
+  }
+  
   
   /**
    * Moves a piece if the move is valid
    */
   public void move( int x, int y, piece p){
+    //first store the piece that is about to be taken
+    pieceTakenLastTurn = null;
+    if(tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove()){
+      pieceTakenLastTurn = tiles[x][y].getPiece(); 
+    }
+    
+    if(tiles[x][y].getPiece() == null || (tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove())){
     
     if(p.validMove(x , y) && p.type == "Knight" && p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
@@ -163,10 +184,14 @@ public class Board extends JFrame{
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
+      this.pieceLastMoved = p;
+      this.pieceLastMovedFromX = p.getX();
+      this.pieceLastMovedFromY = p.getY();
       p.setPosition(x , y);         //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
       lookForCheck(getWhoseMove());
+      
       }
     }
     
@@ -177,12 +202,11 @@ public class Board extends JFrame{
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       
-      int origionalX = p.getX();
+      int origionalX = p.getX();                                          //remember origional coordinates for piece
       int origionalY = p.getY();
-      p.setPosition(x , y);  
+      p.setPosition(x , y);                                               //bc of implementation of lookForCheck we have to update the kings postion
       
       lookForCheck(getWhoseMove());
-      System.out.println(this.whiteChecked);
        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){ //Make sure the move doesn't put the player in check
         getTiles()[origionalX][origionalY].setPiece(p);        
         getTiles()[x][y].setPiece(null);    
@@ -192,6 +216,9 @@ public class Board extends JFrame{
         this.whiteChecked = false;
         p.setPosition(origionalX,origionalY);
        }else{
+         this.pieceLastMoved = p;
+         this.pieceLastMovedFromX = p.getX();
+         this.pieceLastMovedFromY = p.getY();
          p.setPosition(x , y);                                 //the piece now knows its own position
          p.setMoved();
          setWhoseMove((getWhoseMove() +1) % 2);
@@ -225,6 +252,9 @@ public class Board extends JFrame{
           this.blackChecked = false;
           this.whiteChecked = false;
         }else{
+          this.pieceLastMoved = p;
+          this.pieceLastMovedFromX = p.getX();
+          this.pieceLastMovedFromY = p.getY();
           p.setPosition(x , y);                                 //the piece now knows its own position
           p.setMoved();
           setWhoseMove((getWhoseMove() +1) % 2);
@@ -248,6 +278,9 @@ public class Board extends JFrame{
           this.blackChecked = false;
           this.whiteChecked = false;
         }else{
+          this.pieceLastMoved = p;
+          this.pieceLastMovedFromX = p.getX();
+          this.pieceLastMovedFromY = p.getY();
           p.setPosition(x , y);                                 //the piece now knows its own position
           p.setMoved();
           setWhoseMove((getWhoseMove() +1) % 2);
@@ -272,6 +305,9 @@ public class Board extends JFrame{
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
+        this.pieceLastMoved = p;
+        this.pieceLastMovedFromX = p.getX();
+        this.pieceLastMovedFromY = p.getY();
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
@@ -295,6 +331,9 @@ public class Board extends JFrame{
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
+        this.pieceLastMoved = p;
+        this.pieceLastMovedFromX = p.getX();
+        this.pieceLastMovedFromY = p.getY();
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
@@ -318,6 +357,9 @@ public class Board extends JFrame{
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
+        this.pieceLastMoved = p;
+        this.pieceLastMovedFromX = p.getX();
+        this.pieceLastMovedFromY = p.getY();
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
@@ -326,15 +368,28 @@ public class Board extends JFrame{
     }
     
     if(this.whiteChecked == true){
-    JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
-        JOptionPane.ERROR_MESSAGE);
-    }
-    this.whiteChecked = false;
-    if(this.blackChecked == true){
-       JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
-        JOptionPane.ERROR_MESSAGE);
+      if(lookForCheckmate(0) == true){
+        //end the game
+        JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
+                                      JOptionPane.ERROR_MESSAGE);
+      }else{
+        
+        JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
+                                      JOptionPane.ERROR_MESSAGE);
+      }
     }
     
+    if(this.blackChecked == true){
+      if(lookForCheckmate(1) == true){
+        //end the game
+        JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
+                                      JOptionPane.ERROR_MESSAGE);
+      }else{
+        JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
+                                      JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
   }
   
   
@@ -544,10 +599,10 @@ public class Board extends JFrame{
   public void lookForCheck(int player){
     
     //find the king of the currently defending player
-    int opp = player; //opposition player
+   
     piece k; //king variable
     
-    k = findKing(opp);
+    k = findKing(player);
    
     
     //location of king
@@ -565,10 +620,10 @@ public class Board extends JFrame{
     for(int i = 0; i < 8; i++){
       for(int j = 0; j < 8; j++){
         
-        if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() != opp){ //if we find a friendly piece check if it can attack the king next turn
+        if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() != player){ //if we find a friendly piece check if it can attack the king next turn
           if(board[i][j].getPiece().validMove(kingX,kingY) == true && clearPath(kingX, kingY,board[i][j].getPiece()) && board[i][j].getPiece().getType() != "Knight"){
             
-            if(opp == 0){
+            if(player == 0){
               this.whiteChecked = true;
             }
             else{
@@ -578,7 +633,7 @@ public class Board extends JFrame{
           }
           else if(board[i][j].getPiece().validMove(kingX,kingY) == true && board[i][j].getPiece().getType() == "Knight") {
             
-            if(opp == 0){
+            if(player == 0){
               this.whiteChecked = true;
             }
             else{
@@ -591,6 +646,478 @@ public class Board extends JFrame{
         
       }
     }
+    
+  }
+  
+  public boolean lookForCheckmate(int player){
+    tile[][] board = getTiles();
+    piece k = findKing(player);
+    int kXCoor = k.getX();
+    int kYCoor = k.getY();
+    
+    //first see if we can move the king directly out of check
+    if(kXCoor == 0 && kYCoor == 0){
+      
+      //different directions
+      move(kXCoor + 1, kYCoor , k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      
+    }else if(kXCoor == 0 && kYCoor > 0 && kYCoor < 7){
+      
+       //different directions
+      move(kXCoor + 1, kYCoor , k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      
+    }else if(kXCoor == 0 && kYCoor == 7){
+      
+      //different directions
+      move(kXCoor + 1, kYCoor , k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+    }else if(kXCoor > 0 && kXCoor < 7 && kYCoor == 0){
+      
+      //different directions
+      move(kXCoor + 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1 , kYCoor, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+    }else if(kXCoor > 0 && kXCoor < 7 && kYCoor == 7){
+      
+      //different directions
+      move(kXCoor + 1, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1 , kYCoor, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+    }else if(kXCoor > 0 && kXCoor < 7 && kYCoor > 0 && kYCoor < 7){
+      
+      //different directions
+      move(kXCoor + 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1 , kYCoor, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor , kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+    }else if(kXCoor == 7 && kYCoor == 0){
+      
+      //different directions
+      move(kXCoor - 1, kYCoor , k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+    }else if(kXCoor == 7 && kYCoor == 7){
+      
+      //different directions
+      move(kXCoor - 1, kYCoor , k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+    }else if(kXCoor == 7 && kYCoor > 0 && kYCoor < 7){
+      
+      //different directions
+      move(kXCoor , kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor - 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor + 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+      move(kXCoor - 1, kYCoor + 1, k);
+      lookForCheck(player);
+      if(whiteChecked == false && player == 0){
+        return false;
+      }else if(blackChecked == false && player == 1){
+        return false;
+      }
+      unduMove();
+      
+    }
+    
+    
+    //next we can see if any piece can take the attacking piece
+    
+    
+    
+    
+    
+    //finally we see if a piece can block
+    for(int i = 0; i < 8; i++){
+      for(int j = 0; j < 8; j++){
+        //for every space we need to see if there is a piece 
+        if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() == player){
+          //and if there is see if any possible moves take the king out of check
+          
+          
+         
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          // Following code is glitchy and causes stack overflow exceptions  */
+      /*    for(int k = 0; k < 8; k++){
+            for(int c = 0; c < 8; c++){
+              if(board[i][j].getPiece() != null && board[i][j].getPiece().validMove(k,c) == true){
+                
+                if(board[k][c].getPiece() != null && board[k][c].getPiece().getPlayer() != board[i][j].getPiece().getPlayer()){
+                  
+                  move(k,c,board[i][j].getPiece());                                      
+                  lookForCheck(player);
+                  if(this.whiteChecked == false && player == 0){
+                    return false;
+                  }
+                  if(this.blackChecked == false && player == 1){
+                    return false;
+                  }
+                  whiteChecked = false;
+                  blackChecked = false;
+                  unduMove();
+                }
+                if(board[k][c].getPiece() == null){
+                  
+                  move(k,c,board[i][j].getPiece());                                      
+                  lookForCheck(player);
+                  if(this.whiteChecked == false && player == 0){
+                    return false;
+                  }
+                  if(this.blackChecked == false && player == 1){
+                    return false;
+                  }
+                  whiteChecked = false;
+                  blackChecked = false;
+                  unduMove();
+                }
+                
+              }
+            }
+          } */
+          
+          
+        }
+       
+      }
+    }
+    
+    return true;
+    
     
   }
   
