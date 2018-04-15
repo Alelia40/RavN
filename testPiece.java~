@@ -7,34 +7,32 @@ import junit.framework.TestCase;
  */
 public class testPiece extends TestCase {
   
-  /**
-   * A test method.
-   * (Replace "X" with a name describing the test.  You may write as
-   * many "testSomething" methods in this class as you wish, and each
-   * one will be called when running JUnit over this class.)
-   */
+  private piece p = new piece(1,1,0);
 
-  public void testPawn() {
-    pawn p = new pawn(
+  public void testGetPlayer() {
+    assertEquals(0,p.getPlayer());
   }
   
 
-   public void testRook() {
+   public void testMoved() {
+     
+     assertFalse(p.getMoved());
+     
+     p.setMoved();
+     
+     assertTrue(p.getMoved());
+     
   }
   
-
-   public void testKnight() {
-  }
-   
-
-   public void testBishop() {
-  }
+   public void testPositionMethods(){
+     assertEquals(1,p.getX());
+     assertEquals(1,p.getY());
+     
+     p.setPosition(2, 2);
     
-
-   public void testQueen() {
-  }
-
-   public void testKing() {
-  }
-  
+     assertEquals(2,p.getX());
+     assertEquals(2,p.getY());
+     
+   }
+   
 }
