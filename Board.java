@@ -153,11 +153,16 @@ public class Board extends JFrame{
     init = t;
   }
   
+  /**
+   * Method that undoes the last move
+   */
   public void unduMove(){
     getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
     getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
-    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setText(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getText());  //sets the text on the new square to the text of the old square
-    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setText(""); 
+    
+    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null); 
+    
   }
   
   
@@ -180,8 +185,6 @@ public class Board extends JFrame{
        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
-      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
                                       
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){      //Make sure the move doesn't put the player in check
@@ -191,8 +194,6 @@ public class Board extends JFrame{
         getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
         getTiles()[x][y].setIcon(null);
         
-        getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");
         
         this.blackChecked = false;
         this.whiteChecked = false;
@@ -216,8 +217,6 @@ public class Board extends JFrame{
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
-      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       
       int origionalX = p.getX();                                          //remember origional coordinates for piece
       int origionalY = p.getY();
@@ -228,11 +227,9 @@ public class Board extends JFrame{
         getTiles()[origionalX][origionalY].setPiece(p);        
         getTiles()[x][y].setPiece(null);
         
-        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[origionalX][origionalY].setIcon(getTiles()[x][y].getIcon()); 
         getTiles()[x][y].setIcon(null);
         
-        getTiles()[origionalX][origionalY].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText(""); 
         
         this.blackChecked = false;
         this.whiteChecked = false;
@@ -267,19 +264,14 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
         
         
-        getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-        getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
-        
         lookForCheck(getWhoseMove());
         if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
           getTiles()[p.getX()][p.getY()].setPiece(p);        
           getTiles()[x][y].setPiece(null);
           
           getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-        getTiles()[x][y].setIcon(null);
+          getTiles()[x][y].setIcon(null);
           
-          getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-          getTiles()[x][y].setText("");
           
           this.blackChecked = false;
           this.whiteChecked = false;
@@ -303,9 +295,6 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
         
         
-        getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-        getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
-        
         lookForCheck(getWhoseMove());
         if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
           getTiles()[p.getX()][p.getY()].setPiece(p);        
@@ -313,9 +302,6 @@ public class Board extends JFrame{
           
           getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
         getTiles()[x][y].setIcon(null);
-          
-          getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-          getTiles()[x][y].setText("");
           
           this.blackChecked = false;
           this.whiteChecked = false;
@@ -339,8 +325,6 @@ public class Board extends JFrame{
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
-      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
@@ -373,10 +357,7 @@ public class Board extends JFrame{
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
-      
-      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
-      
+ 
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
         getTiles()[p.getX()][p.getY()].setPiece(p);        
@@ -408,9 +389,7 @@ public class Board extends JFrame{
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
-      
-      getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
+
       
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){    //Make sure the move doesn't put the player in check
@@ -458,6 +437,7 @@ public class Board extends JFrame{
                                       JOptionPane.ERROR_MESSAGE);
       }
     }
+    
   }
   }
   
