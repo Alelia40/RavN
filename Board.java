@@ -211,8 +211,11 @@ public class Board extends JFrame{
     
     
     if(p.validMove(x , y) && p.type == "King" && p.getPlayer() == getWhoseMove()){            //case of valid move
+      piece takenPiece = getTiles()[x][y].getPiece(); //save piece to be taken
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
@@ -225,10 +228,10 @@ public class Board extends JFrame{
       lookForCheck(getWhoseMove());
        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){ //Make sure the move doesn't put the player in check
         getTiles()[origionalX][origionalY].setPiece(p);        
-        getTiles()[x][y].setPiece(null);
+        getTiles()[x][y].setPiece(takenPiece);
         
         getTiles()[origionalX][origionalY].setIcon(getTiles()[x][y].getIcon()); 
-        getTiles()[x][y].setIcon(null);
+        getTiles()[x][y].setIcon(takenPieceIcon);
         
         
         this.blackChecked = false;
@@ -416,27 +419,30 @@ public class Board extends JFrame{
     }
     
     if(this.whiteChecked == true){
+      /**
       if(lookForCheckmate(0) == true){
         //end the game
         JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }else{
-        
+        */
         JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }
-    }
+    //}
     
     if(this.blackChecked == true){
+      /**
       if(lookForCheckmate(1) == true){
         //end the game
         JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }else{
+      */
         JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }
-    }
+    //}
     
   }
   }
