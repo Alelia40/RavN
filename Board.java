@@ -76,12 +76,12 @@ public class Board extends JFrame{
     
     for(int i = 0; i < 8; i++){                   //make black pawns
       tiles[i][1].setPiece(new pawn(i,1,1));
-      tiles[i][1].setText("Black Pawn");
+      tiles[i][1].setIcon(new ImageIcon("Chess Icons/blackPawn.png"));
     }      
     
     for(int i = 0; i < 8; i++){                     //make white pawns
       tiles[i][6].setPiece(new pawn(i,6,0));
-      tiles[i][6].setText("White Pawn");
+      tiles[i][6].setIcon(new ImageIcon("Chess Icons/whitePawn.png"));
     }     
     
     tiles[0][0].setPiece(new rook(0,0,1));         //make rooks
@@ -89,10 +89,10 @@ public class Board extends JFrame{
     tiles[0][7].setPiece(new rook(0,7,0));
     tiles[7][7].setPiece(new rook(7,7,0));
     
-    tiles[0][0].setText("Black Rook");
-    tiles[7][0].setText("Black Rook");
-    tiles[0][7].setText("White Rook");
-    tiles[7][7].setText("White Rook");
+    tiles[0][0].setIcon(new ImageIcon("Chess Icons/blackRook.png"));
+    tiles[7][0].setIcon(new ImageIcon("Chess Icons/blackRook.png"));
+    tiles[0][7].setIcon(new ImageIcon("Chess Icons/whiteRook.png"));
+    tiles[7][7].setIcon(new ImageIcon("Chess Icons/whiteRook.png"));
     
     
     tiles[1][0].setPiece(new knight(1,0,1));             //make knights
@@ -100,34 +100,37 @@ public class Board extends JFrame{
     tiles[1][7].setPiece(new knight(1,7,0));
     tiles[6][7].setPiece(new knight(6,7,0));
     
-    tiles[1][0].setText("Black Knight");
-    tiles[6][0].setText("Black Knight");
-    tiles[1][7].setText("White Knight");
-    tiles[6][7].setText("White Knight");
+    tiles[1][0].setIcon(new ImageIcon("Chess Icons/blackKnight.png"));
+    tiles[6][0].setIcon(new ImageIcon("Chess Icons/blackKnight.png"));
+    tiles[1][7].setIcon(new ImageIcon("Chess Icons/whiteKnight.png"));
+    tiles[6][7].setIcon(new ImageIcon("Chess Icons/whiteKnight.png"));
+    
     
     tiles[2][0].setPiece(new bishop(2,0,1));            // make bishops
     tiles[5][0].setPiece(new bishop(5,0,1));
     tiles[2][7].setPiece(new bishop(2,7,0));
     tiles[5][7].setPiece(new bishop(5,7,0));
     
-    tiles[2][0].setText("Black Bishop");
-    tiles[5][0].setText("Black Bishop");
-    tiles[2][7].setText("White Bishop");
-    tiles[5][7].setText("White Bishop");
+    tiles[2][0].setIcon(new ImageIcon("Chess Icons/blackBishop.png"));
+    tiles[5][0].setIcon(new ImageIcon("Chess Icons/blackBishop.png"));
+    tiles[2][7].setIcon(new ImageIcon("Chess Icons/whiteBishop.png"));
+    tiles[5][7].setIcon(new ImageIcon("Chess Icons/whiteBishop.png"));
+    
+    
     
     tiles[4][0].setPiece(new king(4,0,1));             //make kings
     tiles[4][7].setPiece(new king(4,7,0));
     
-    tiles[4][0].setText("Black King");
-    tiles[4][7].setText("White King");
+    tiles[4][0].setIcon(new ImageIcon("Chess Icons/blackKing.png"));
+    tiles[4][7].setIcon(new ImageIcon("Chess Icons/whiteKing.png"));
     
     
-    
+  
     tiles[3][0].setPiece(new queen(3,0,1));            //make queens
     tiles[3][7].setPiece(new queen(3,7,0));
     
-    tiles[3][7].setText("White Queen");
-    tiles[3][0].setText("Black Queen");
+    tiles[3][0].setIcon(new ImageIcon("Chess Icons/blackQueen.png"));
+    tiles[3][7].setIcon(new ImageIcon("Chess Icons/whiteQueen.png"));
     
     this.setVisible(true);
     
@@ -173,15 +176,24 @@ public class Board extends JFrame{
     if(p.validMove(x , y) && p.type == "Knight" && p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
                                       
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){      //Make sure the move doesn't put the player in check
         getTiles()[p.getX()][p.getY()].setPiece(p);        
-        getTiles()[x][y].setPiece(null);    
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(null);
+        
         getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");  
+        getTiles()[x][y].setText("");
+        
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
@@ -200,6 +212,10 @@ public class Board extends JFrame{
     if(p.validMove(x , y) && p.type == "King" && p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       
@@ -210,9 +226,14 @@ public class Board extends JFrame{
       lookForCheck(getWhoseMove());
        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){ //Make sure the move doesn't put the player in check
         getTiles()[origionalX][origionalY].setPiece(p);        
-        getTiles()[x][y].setPiece(null);    
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(null);
+        
         getTiles()[origionalX][origionalY].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");  
+        getTiles()[x][y].setText(""); 
+        
         this.blackChecked = false;
         this.whiteChecked = false;
         p.setPosition(origionalX,origionalY);
@@ -241,15 +262,25 @@ public class Board extends JFrame{
       if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        
+        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+        
+        
         getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
         getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
         
         lookForCheck(getWhoseMove());
         if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
           getTiles()[p.getX()][p.getY()].setPiece(p);        
-          getTiles()[x][y].setPiece(null);    
+          getTiles()[x][y].setPiece(null);
+          
+          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(null);
+          
           getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-          getTiles()[x][y].setText("");  
+          getTiles()[x][y].setText("");
+          
           this.blackChecked = false;
           this.whiteChecked = false;
         }else{
@@ -267,15 +298,25 @@ public class Board extends JFrame{
       if(p.validMove(x , y) && p.type == "Pawn" && p.getPlayer() == getWhoseMove()){            //case of valid move
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        
+        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+        
+        
         getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
         getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
         
         lookForCheck(getWhoseMove());
         if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
           getTiles()[p.getX()][p.getY()].setPiece(p);        
-          getTiles()[x][y].setPiece(null);    
+          getTiles()[x][y].setPiece(null);
+          
+          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(null);
+          
           getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-          getTiles()[x][y].setText("");  
+          getTiles()[x][y].setText("");
+          
           this.blackChecked = false;
           this.whiteChecked = false;
         }else{
@@ -294,15 +335,24 @@ public class Board extends JFrame{
     if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
         getTiles()[p.getX()][p.getY()].setPiece(p);        
-        getTiles()[x][y].setPiece(null);    
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(null);
+        
         getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");  
+        getTiles()[x][y].setText("");
+        
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
@@ -320,15 +370,24 @@ public class Board extends JFrame{
     if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
         getTiles()[p.getX()][p.getY()].setPiece(p);        
-        getTiles()[x][y].setPiece(null);    
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(null);
+        
         getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");  
+        getTiles()[x][y].setText(""); 
+        
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
@@ -346,15 +405,24 @@ public class Board extends JFrame{
     if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )&& p.getPlayer() == getWhoseMove()){            //case of valid move
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
       getTiles()[x][y].setText(getTiles()[p.getX()][p.getY()].getText());  //sets the text on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setText("");                          //sets the text of the old square to null
       
       lookForCheck(getWhoseMove());
       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){    //Make sure the move doesn't put the player in check
         getTiles()[p.getX()][p.getY()].setPiece(p);        
-        getTiles()[x][y].setPiece(null);    
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(null);
+        
         getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");  
+        getTiles()[x][y].setText("");
+        
         this.blackChecked = false;
         this.whiteChecked = false;
       }else{
