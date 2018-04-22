@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.lang.Math;
 
-public class Board extends JFrame{
+public class Board extends JPanel{
   
   private piece pieceLastMoved;
   
@@ -22,9 +22,6 @@ public class Board extends JFrame{
   private boolean whiteChecked = false;
   private boolean blackChecked = false;
   
-  public static void main(String[] args){
-    Board b = new Board();
-  }
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -34,10 +31,10 @@ public class Board extends JFrame{
     catch (Exception e) {
     }
     
-    Container c = this.getContentPane();                //formats the JFrame to have the grid of game tiles over the information of who's turn it is
+    //Container c = this.getContentPane();                //formats the JPanel to have the grid of game tiles over the information of who's turn it is
     this.setSize(800,800);
     this.tiles = new tile[8][8];     //creates as many tiles as there are spaces on the board 
-    c.setLayout(new GridLayout(8,8)); //create a gridlayout on the container     
+    this.setLayout(new GridLayout(8,8)); //create a gridlayout on the container     
     
     int count = 1;
     for (int index1 = 0 ; index1 < 8 ; index1++){
@@ -65,11 +62,12 @@ public class Board extends JFrame{
             }
           }
         });
+        
         if((index1+index2)%2 == 1)
           tiles[index2][index1].setBackground(new Color(90,77,14));
         else
           tiles[index2][index1].setBackground(new Color(176,160,77));
-        c.add(tiles[index2][index1]);
+        this.add(tiles[index2][index1]);
       }
     }
     
@@ -134,7 +132,6 @@ public class Board extends JFrame{
     
     this.setVisible(true);
     
-    
   }
   
   
@@ -153,6 +150,7 @@ public class Board extends JFrame{
     init = t;
   }
   
+  
   /**
    * Method that undoes the last move
    */
@@ -164,6 +162,7 @@ public class Board extends JFrame{
     getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null); 
     
   }
+  
   
   
   /**
