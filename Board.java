@@ -155,12 +155,32 @@ public class Board extends JPanel{
    * Method that undoes the last move
    */
   public void unduMove(){
-    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
-    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
-    
-    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null); 
-    
+    if(pieceLastMoved != null){
+      
+      
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
+      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
+
+      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
+    }
+  }
+  
+   /**
+   * Method that undoes the last move and switches the player turn
+   */
+  public void unduMoveButton(){
+    if(pieceLastMoved != null){
+      
+      
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
+      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
+
+      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
+      
+       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
+    }
   }
   
   
@@ -418,30 +438,30 @@ public class Board extends JPanel{
     }
     
     if(this.whiteChecked == true){
-      /**
+      
       if(lookForCheckmate(0) == true){
         //end the game
         JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }else{
-        */
+        
         JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }
-    //}
+    }
     
     if(this.blackChecked == true){
-      /**
+      
       if(lookForCheckmate(1) == true){
         //end the game
         JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }else{
-      */
+      
         JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }
-    //}
+    }
     
   }
   }
@@ -667,8 +687,8 @@ public class Board extends JPanel{
     tile[][] board = getTiles();
     
     
-        this.whiteChecked = false;
-        this.blackChecked = false;
+        setwhiteChecked(false);
+        setblackChecked(false);
     
     
     for(int i = 0; i < 8; i++){
@@ -702,13 +722,18 @@ public class Board extends JPanel{
     }
     
   }
+
+
+
   
+
   public boolean lookForCheckmate(int player){
     tile[][] board = getTiles();
     piece k = findKing(player);
     int kXCoor = k.getX();
     int kYCoor = k.getY();
-    
+    piece plm = pieceLastMoved;
+    this.pieceLastMoved = null;     //set last piece moved to null in order to not make it dissapear 
     //first see if we can move the king directly out of check
     if(kXCoor == 0 && kYCoor == 0){
       
@@ -716,26 +741,32 @@ public class Board extends JPanel{
       move(kXCoor + 1, kYCoor , k);
       lookForCheck(player);
       if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -746,45 +777,55 @@ public class Board extends JPanel{
        //different directions
       move(kXCoor + 1, kYCoor , k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -795,27 +836,33 @@ public class Board extends JPanel{
       //different directions
       move(kXCoor + 1, kYCoor , k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -825,45 +872,55 @@ public class Board extends JPanel{
       //different directions
       move(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1 , kYCoor, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -873,45 +930,61 @@ public class Board extends JPanel{
       //different directions
       move(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
-      
-      move(kXCoor, kYCoor - 1, k);
-      lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+       if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
       }else if(blackChecked == false && player == 1){
+        unduMove();
+        return false;
+      }
+      move(kXCoor, kYCoor - 1, k);
+      lookForCheck(player);
+     if(whiteChecked == false && player == 0){
+        unduMove();
+        return false;
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
       }else if(blackChecked == false && player == 1){
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1 , kYCoor, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -921,72 +994,88 @@ public class Board extends JPanel{
       //different directions
       move(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1 , kYCoor, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor , kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -995,27 +1084,33 @@ public class Board extends JPanel{
       //different directions
       move(kXCoor - 1, kYCoor , k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -1025,27 +1120,33 @@ public class Board extends JPanel{
       //different directions
       move(kXCoor - 1, kYCoor , k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -1055,45 +1156,55 @@ public class Board extends JPanel{
       //different directions
       move(kXCoor , kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
       
       move(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
-      if(whiteChecked == false && player == 0){
+     if(whiteChecked == false && player == 0){
+        unduMove();
         return false;
-      }else if(blackChecked == false && player == 1){
+      }else if(blackChecked == false && player == 1){ 
+        unduMove();
         return false;
       }
       unduMove();
@@ -1101,26 +1212,33 @@ public class Board extends JPanel{
     }
     
     
-    //next we can see if any piece can take the attacking piece
+    //next we can see if any piece can take the attacking piece or block
     
     
     
-    
-    
-    //finally we see if a piece can block
     for(int i = 0; i < 8; i++){
       for(int j = 0; j < 8; j++){
         //for every space we need to see if there is a piece 
         if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() == player){
           //and if there is see if any possible moves take the king out of check
+          /**
+          System.out.println(plm);
+          if(board[i][j].getPiece().validMove(plm.getX() , plm.getY())){
+            move(plm.getX() , plm.getY() , board[i][j].getPiece());
+            lookForCheck(player);
+            if(whiteChecked == false && player == 0){
+              return false;
+            }else if(blackChecked == false && player == 1){
+              return false;
+            }
+            unduMove();
+          }
+          */
           
           
-         
           
           
-          
-          
-          
+        
           
           
           
@@ -1169,16 +1287,19 @@ public class Board extends JPanel{
        
       }
     }
-    
     return true;
     
     
   }
   
+
+
+
   
   /**
    * getter setters for checked statuses
    */
+
   public boolean getwhiteChecked(){
     return this.whiteChecked;
   }
