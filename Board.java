@@ -166,12 +166,15 @@ public class Board extends JPanel{
       int originalX = pieceLastMoved.getX();
       int originalY= pieceLastMoved.getY();
       
+      System.out.println(pieceLastMovedFromX + "," + pieceLastMovedFromY);
+      
       getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to the piece taken last time
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
 
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[originalX][originalY].setIcon(takenPieceIcon);
       
+      //updates the location info for the pieces
       if(pieceTakenLastTurn != null){
       pieceTakenLastTurn.setPosition(originalX,originalY);
       }
@@ -287,8 +290,8 @@ public class Board extends JPanel{
         p.setPosition(origionalX,origionalY);
        }else{
          this.pieceLastMoved = p;
-         this.pieceLastMovedFromX = p.getX();
-         this.pieceLastMovedFromY = p.getY();
+         this.pieceLastMovedFromX = origionalX;
+         this.pieceLastMovedFromY = origionalY;
          p.setPosition(x , y);                                 //the piece now knows its own position
          p.setMoved();
          setWhoseMove((getWhoseMove() +1) % 2);
