@@ -182,7 +182,7 @@ public class Board extends JPanel{
       
       this.pieceLastMoved = null;
       
-       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
+       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move back
     }
   }
   
@@ -211,7 +211,7 @@ public class Board extends JPanel{
       this.pieceLastMoved = null;
       
       
-      setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
+      setWhoseMove((getWhoseMove() +1) % 2);    //switch player move back
     }
   }
   
