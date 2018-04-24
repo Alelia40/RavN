@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.lang.Math;
 
-public class Board extends JFrame{
+public class Board extends JPanel{
   
   private piece pieceLastMoved;
   
@@ -22,9 +22,6 @@ public class Board extends JFrame{
   private boolean whiteChecked = false;
   private boolean blackChecked = false;
   
-  public static void main(String[] args){
-    Board b = new Board();
-  }
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -34,10 +31,10 @@ public class Board extends JFrame{
     catch (Exception e) {
     }
     
-    Container c = this.getContentPane();                //formats the JFrame to have the grid of game tiles over the information of who's turn it is
+    //Container c = this.getContentPane();                //formats the JPanel to have the grid of game tiles over the information of who's turn it is
     this.setSize(800,800);
     this.tiles = new tile[8][8];     //creates as many tiles as there are spaces on the board 
-    c.setLayout(new GridLayout(8,8)); //create a gridlayout on the container     
+    this.setLayout(new GridLayout(8,8)); //create a gridlayout on the container     
     
     int count = 1;
     for (int index1 = 0 ; index1 < 8 ; index1++){
@@ -65,11 +62,12 @@ public class Board extends JFrame{
             }
           }
         });
+        
         if((index1+index2)%2 == 1)
           tiles[index2][index1].setBackground(new Color(90,77,14));
         else
           tiles[index2][index1].setBackground(new Color(176,160,77));
-        c.add(tiles[index2][index1]);
+        this.add(tiles[index2][index1]);
       }
     }
     
@@ -134,7 +132,6 @@ public class Board extends JFrame{
     
     this.setVisible(true);
     
-    
   }
   
   
@@ -153,27 +150,39 @@ public class Board extends JFrame{
     init = t;
   }
   
+  
   /**
    * Method that undoes the last move
    */
   public void unduMove(){
-<<<<<<< HEAD
-    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
-    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
-    
-    getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-    getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null); 
-    
-=======
     if(pieceLastMoved != null){
+      
+      
       getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
-      
+
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null); 
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
     }
->>>>>>> master
   }
+  
+   /**
+   * Method that undoes the last move and switches the player turn
+   */
+  public void unduMoveButton(){
+    if(pieceLastMoved != null){
+      
+      
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
+      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
+
+      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
+      
+       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
+    }
+  }
+  
   
   
   /**
@@ -429,46 +438,30 @@ public class Board extends JFrame{
     }
     
     if(this.whiteChecked == true){
-<<<<<<< HEAD
-      /**
-=======
       
->>>>>>> master
       if(lookForCheckmate(0) == true){
         //end the game
         JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }else{
-        */
+        
         JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }
-    //}
+    }
     
     if(this.blackChecked == true){
-<<<<<<< HEAD
-      /**
-=======
       
->>>>>>> master
       if(lookForCheckmate(1) == true){
         //end the game
         JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }else{
-<<<<<<< HEAD
-      */
-        JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
-                                      JOptionPane.ERROR_MESSAGE);
-      }
-    //}
-=======
       
         JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
                                       JOptionPane.ERROR_MESSAGE);
       }
     }
->>>>>>> master
     
   }
   }
@@ -945,7 +938,13 @@ public class Board extends JFrame{
         return false;
       }
       unduMove();
-      
+       if(whiteChecked == false && player == 0){
+        unduMove();
+        return false;
+      }else if(blackChecked == false && player == 1){
+        unduMove();
+        return false;
+      }
       move(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
