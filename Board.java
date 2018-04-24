@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.lang.Math;
 
-public class Board extends JFrame{
+public class Board extends JPanel{
   
   private piece pieceLastMoved;
   
@@ -12,6 +12,10 @@ public class Board extends JFrame{
   private int pieceLastMovedFromY;
   
   private piece pieceTakenLastTurn;
+  
+  private Icon takenPieceIcon;
+  
+  private Icon movedPieceIcon;
   
   private tile[][] tiles; //jbuttons for the UI
   
@@ -22,9 +26,6 @@ public class Board extends JFrame{
   private boolean whiteChecked = false;
   private boolean blackChecked = false;
   
-  public static void main(String[] args){
-    Board b = new Board();
-  }
   
   public Board(){
     try {                                               //account for apple's graphics
@@ -34,10 +35,10 @@ public class Board extends JFrame{
     catch (Exception e) {
     }
     
-    Container c = this.getContentPane();                //formats the JFrame to have the grid of game tiles over the information of who's turn it is
+    //Container c = this.getContentPane();                //formats the JPanel to have the grid of game tiles over the information of who's turn it is
     this.setSize(800,800);
     this.tiles = new tile[8][8];     //creates as many tiles as there are spaces on the board 
-    c.setLayout(new GridLayout(8,8)); //create a gridlayout on the container     
+    this.setLayout(new GridLayout(8,8)); //create a gridlayout on the container     
     
     int count = 1;
     for (int index1 = 0 ; index1 < 8 ; index1++){
@@ -65,11 +66,12 @@ public class Board extends JFrame{
             }
           }
         });
+        
         if((index1+index2)%2 == 1)
           tiles[index2][index1].setBackground(new Color(90,77,14));
         else
           tiles[index2][index1].setBackground(new Color(176,160,77));
-        c.add(tiles[index2][index1]);
+        this.add(tiles[index2][index1]);
       }
     }
     
@@ -134,7 +136,6 @@ public class Board extends JFrame{
     
     this.setVisible(true);
     
-    
   }
   
   
@@ -153,18 +154,30 @@ public class Board extends JFrame{
     init = t;
   }
   
+  
   /**
    * Method that undoes the last move
    */
   public void unduMove(){
+     System.out.println("last moved" + pieceLastMoved);
+    System.out.println("last taken" + pieceTakenLastTurn);
     if(pieceLastMoved != null){
       
+      int originalX = pieceLastMoved.getX();
+      int originalY= pieceLastMoved.getY();
       
-      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to the piece taken last time
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
 
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
+      getTiles()[originalX][originalY].setIcon(takenPieceIcon);
+      
+      if(pieceTakenLastTurn != null){
+      pieceTakenLastTurn.setPosition(originalX,originalY);
+      }
+      pieceLastMoved.setPosition(pieceLastMovedFromX, pieceLastMovedFromY);
+      
+      this.pieceLastMoved = null;
     }
   }
   
@@ -172,18 +185,31 @@ public class Board extends JFrame{
    * Method that undoes the last move and switches the player turn
    */
   public void unduMoveButton(){
+    System.out.println("last moved" + pieceLastMoved);
+    System.out.println("last taken" + pieceTakenLastTurn);
     if(pieceLastMoved != null){
       
+      int originalX = pieceLastMoved.getX();
+      int originalY= pieceLastMoved.getY();
       
-      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to null
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to the piece taken last time
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
 
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
+      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(takenPieceIcon);
       
-       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
+      if(pieceTakenLastTurn != null){
+      pieceTakenLastTurn.setPosition(originalX,originalY);
+      }
+      pieceLastMoved.setPosition(pieceLastMovedFromX, pieceLastMovedFromY);
+      
+      this.pieceLastMoved = null;
+      
+      
+      setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
     }
   }
+  
   
   
   /**
@@ -202,6 +228,8 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
@@ -212,7 +240,7 @@ public class Board extends JFrame{
         getTiles()[x][y].setPiece(null);
         
         getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-        getTiles()[x][y].setIcon(null);
+        getTiles()[x][y].setIcon(takenPieceIcon);
         
         
         this.blackChecked = false;
@@ -235,7 +263,7 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
-      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
@@ -283,6 +311,8 @@ public class Board extends JFrame{
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
         
+        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+        
         getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
         
@@ -293,7 +323,7 @@ public class Board extends JFrame{
           getTiles()[x][y].setPiece(null);
           
           getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-          getTiles()[x][y].setIcon(null);
+          getTiles()[x][y].setIcon(takenPieceIcon);
           
           
           this.blackChecked = false;
@@ -314,6 +344,8 @@ public class Board extends JFrame{
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
         
+        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+        
         getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
         
@@ -324,7 +356,7 @@ public class Board extends JFrame{
           getTiles()[x][y].setPiece(null);
           
           getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-        getTiles()[x][y].setIcon(null);
+        getTiles()[x][y].setIcon(takenPieceIcon);
           
           this.blackChecked = false;
           this.whiteChecked = false;
@@ -345,6 +377,8 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
@@ -355,10 +389,8 @@ public class Board extends JFrame{
         getTiles()[x][y].setPiece(null);
         
         getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-        getTiles()[x][y].setIcon(null);
+        getTiles()[x][y].setIcon(takenPieceIcon);
         
-        getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");
         
         this.blackChecked = false;
         this.whiteChecked = false;
@@ -378,6 +410,8 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
  
@@ -387,10 +421,7 @@ public class Board extends JFrame{
         getTiles()[x][y].setPiece(null);
         
         getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-        getTiles()[x][y].setIcon(null);
-        
-        getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText(""); 
+        getTiles()[x][y].setIcon(takenPieceIcon);
         
         this.blackChecked = false;
         this.whiteChecked = false;
@@ -410,6 +441,8 @@ public class Board extends JFrame{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
+      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
 
@@ -420,10 +453,8 @@ public class Board extends JFrame{
         getTiles()[x][y].setPiece(null);
         
         getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-        getTiles()[x][y].setIcon(null);
+        getTiles()[x][y].setIcon(takenPieceIcon);
         
-        getTiles()[p.getX()][p.getY()].setText(getTiles()[x][y].getText()); 
-        getTiles()[x][y].setText("");
         
         this.blackChecked = false;
         this.whiteChecked = false;
@@ -939,13 +970,7 @@ public class Board extends JFrame{
         return false;
       }
       unduMove();
-       if(whiteChecked == false && player == 0){
-        unduMove();
-        return false;
-      }else if(blackChecked == false && player == 1){
-        unduMove();
-        return false;
-      }
+      
       move(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
