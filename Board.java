@@ -181,6 +181,8 @@ public class Board extends JPanel{
       pieceLastMoved.setPosition(pieceLastMovedFromX, pieceLastMovedFromY);
       
       this.pieceLastMoved = null;
+      
+       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
     }
   }
   
