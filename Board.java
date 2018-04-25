@@ -164,21 +164,7 @@ public class Board extends JFrame{
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
 
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-<<<<<<< HEAD
       getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
-=======
-      getTiles()[originalX][originalY].setIcon(takenPieceIcon);
-      
-      //updates the location info for the pieces
-      if(pieceTakenLastTurn != null){
-      pieceTakenLastTurn.setPosition(originalX,originalY);
-      }
-      pieceLastMoved.setPosition(pieceLastMovedFromX, pieceLastMovedFromY);
-      
-      this.pieceLastMoved = null;
-      
-       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
->>>>>>> parent of ad6bd7a... undumove changes
     }
   }
   
@@ -195,11 +181,7 @@ public class Board extends JFrame{
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(null);
       
-<<<<<<< HEAD
        setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
-=======
-      setWhoseMove((getWhoseMove() +1) % 2);    //switch player move
->>>>>>> parent of ad6bd7a... undumove changes
     }
   }
   
