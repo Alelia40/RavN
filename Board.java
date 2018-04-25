@@ -771,6 +771,8 @@ public class Board extends JPanel{
     int kYCoor = k.getY();
     piece plm = pieceLastMoved;
     this.pieceLastMoved = null;     //set last piece moved to null in order to not make it dissapear 
+    
+    
     //first see if we can move the king directly out of check
     if(kXCoor == 0 && kYCoor == 0){
       
@@ -1243,7 +1245,7 @@ public class Board extends JPanel{
     }
     
     
-    //next we can see if any piece can take the attacking piece or block
+    //Next we can see if any piece can take the attacking piece or block
     
     
     
@@ -1252,56 +1254,39 @@ public class Board extends JPanel{
         //for every space we need to see if there is a piece 
         if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() == player){
           //and if there is see if any possible moves take the king out of check
-          /**
-          System.out.println(plm);
-          if(board[i][j].getPiece().validMove(plm.getX() , plm.getY())){
-            move(plm.getX() , plm.getY() , board[i][j].getPiece());
-            lookForCheck(player);
-            if(whiteChecked == false && player == 0){
-              return false;
-            }else if(blackChecked == false && player == 1){
-              return false;
-            }
-            unduMove();
-          }
-          */
-          
-          
-          
-          
-        
-          
-          
-          
-          
+      
           
           // Following code is glitchy and causes stack overflow exceptions  */
-      /*    for(int k = 0; k < 8; k++){
+          for(int v = 0; v < 8; v++){
             for(int c = 0; c < 8; c++){
-              if(board[i][j].getPiece() != null && board[i][j].getPiece().validMove(k,c) == true){
+              if(board[i][j].getPiece() != null && board[i][j].getPiece().validMove(v,c) == true){
                 
-                if(board[k][c].getPiece() != null && board[k][c].getPiece().getPlayer() != board[i][j].getPiece().getPlayer()){
+                if(board[v][c].getPiece() != null && board[v][c].getPiece().getPlayer() != board[i][j].getPiece().getPlayer()){
                   
-                  move(k,c,board[i][j].getPiece());                                      
+                  move(v,c,board[i][j].getPiece());                                      
                   lookForCheck(player);
                   if(this.whiteChecked == false && player == 0){
+                    unduMove();
                     return false;
                   }
                   if(this.blackChecked == false && player == 1){
+                    unduMove();
                     return false;
                   }
                   whiteChecked = false;
                   blackChecked = false;
                   unduMove();
                 }
-                if(board[k][c].getPiece() == null){
+                if(board[v][c].getPiece() == null){
                   
-                  move(k,c,board[i][j].getPiece());                                      
+                  move(v,c,board[i][j].getPiece());                                      
                   lookForCheck(player);
                   if(this.whiteChecked == false && player == 0){
+                    unduMove();
                     return false;
                   }
                   if(this.blackChecked == false && player == 1){
+                    unduMove();
                     return false;
                   }
                   whiteChecked = false;
@@ -1311,7 +1296,7 @@ public class Board extends JPanel{
                 
               }
             }
-          } */
+          } 
           
           
         }
