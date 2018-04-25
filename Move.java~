@@ -1,0 +1,15 @@
+Public Class Move{
+  
+  private piece pieceLastMoved;
+  
+  private int pieceLastMovedFromX;
+  
+  private int pieceLastMovedFromY;
+  
+  private piece pieceTakenLastTurn;
+  
+  private Icon takenPieceIcon;
+  
+  private Icon movedPieceIcon;
+  
+}

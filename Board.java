@@ -5,6 +5,8 @@ import java.lang.Math;
 
 public class Board extends JPanel{
   
+  private Move[] moveList = new Move[300];
+  
   private piece pieceLastMoved;
   
   private int pieceLastMovedFromX;
