@@ -161,8 +161,6 @@ public class Board extends JPanel{
    * Method that undoes the last move
    */
   public void unduMove(){
-     System.out.println("last moved" + pieceLastMoved);
-    System.out.println("last taken" + pieceTakenLastTurn);
     if(pieceLastMoved != null){
       
       int originalX = pieceLastMoved.getX();
@@ -192,8 +190,6 @@ public class Board extends JPanel{
    * Method that undoes the last move and switches the player turn
    */
   public void unduMoveButton(){
-    System.out.println("last moved" + pieceLastMoved);
-    System.out.println("last taken" + pieceTakenLastTurn);
     if(pieceLastMoved != null){
       
       int originalX = pieceLastMoved.getX();
@@ -220,9 +216,9 @@ public class Board extends JPanel{
   
   
   /**
-   * Moves a piece if the move is valid
+   * Moves a piece if the move is valid (for checkmate only)
    */
-  public void move( int x, int y, piece p){
+  private void move( int x, int y, piece p){
     //first store the piece that is about to be taken
     pieceTakenLastTurn = null;
     if(tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove()){
@@ -763,7 +759,265 @@ public class Board extends JPanel{
   }
 
 
+ 
+  /**
+   * Moves a piece if the move is valid
+   */
+  public void testMove( int x, int y, piece p){
+    //first store the piece that is about to be taken
+    pieceTakenLastTurn = null;
+    if(tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove()){
+      pieceTakenLastTurn = tiles[x][y].getPiece(); 
+    }
+    
+    if(tiles[x][y].getPiece() == null || (tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove())){
+    
+    if(p.validMove(x , y) && p.type == "Knight" && p.getPlayer() == getWhoseMove()){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
+       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
+                                      
+      lookForCheck(getWhoseMove());
+      if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){      //Make sure the move doesn't put the player in check
+        getTiles()[p.getX()][p.getY()].setPiece(p);        
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(takenPieceIcon);
+        
+        
+        this.blackChecked = false;
+        this.whiteChecked = false;
+      }else{
+      this.pieceLastMoved = p;
+      this.pieceLastMovedFromX = p.getX();
+      this.pieceLastMovedFromY = p.getY();
+      p.setPosition(x , y);         //the piece now knows its own position
+      p.setMoved();
+      setWhoseMove((getWhoseMove() +1) % 2);
+      lookForCheck(getWhoseMove());
+      
+      }
+    }
+    
+    
+    if(p.validMove(x , y) && p.type == "King" && p.getPlayer() == getWhoseMove()){            //case of valid move
+      piece takenPiece = getTiles()[x][y].getPiece(); //save piece to be taken
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
+      
+      int origionalX = p.getX();                                          //remember origional coordinates for piece
+      int origionalY = p.getY();
+      p.setPosition(x , y);                                               //bc of implementation of lookForCheck we have to update the kings postion
+      
+      lookForCheck(getWhoseMove());
+       if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){ //Make sure the move doesn't put the player in check
+        getTiles()[origionalX][origionalY].setPiece(p);        
+        getTiles()[x][y].setPiece(takenPiece);
+        
+        getTiles()[origionalX][origionalY].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(takenPieceIcon);
+        
+        
+        this.blackChecked = false;
+        this.whiteChecked = false;
+        p.setPosition(origionalX,origionalY);
+       }else{
+         this.pieceLastMoved = p;
+         this.pieceLastMovedFromX = origionalX;
+         this.pieceLastMovedFromY = origionalY;
+         p.setPosition(x , y);                                 //the piece now knows its own position
+         p.setMoved();
+         setWhoseMove((getWhoseMove() +1) % 2);
+         lookForCheck(getWhoseMove());
+       }
+    }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
 
+      castle((king)p , 0 , 0);
+      castle((king)p , 0 , 7);
+      castle((king)p , 7 , 0);
+      castle((king)p , 7 , 7);
+      lookForCheck(getWhoseMove());
+    }
+    
+    
+    
+    
+    if(x == p.getX()){
+      if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
+        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        
+        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+        
+        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+        
+        
+        lookForCheck(getWhoseMove());
+        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+          getTiles()[p.getX()][p.getY()].setPiece(p);        
+          getTiles()[x][y].setPiece(null);
+          
+          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+          getTiles()[x][y].setIcon(takenPieceIcon);
+          
+          
+          this.blackChecked = false;
+          this.whiteChecked = false;
+        }else{
+          this.pieceLastMoved = p;
+          this.pieceLastMovedFromX = p.getX();
+          this.pieceLastMovedFromY = p.getY();
+          p.setPosition(x , y);                                 //the piece now knows its own position
+          p.setMoved();
+          setWhoseMove((getWhoseMove() +1) % 2);
+          lookForCheck(getWhoseMove());
+        }
+      }
+    }
+    else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
+      if(p.validMove(x , y) && p.type == "Pawn" && p.getPlayer() == getWhoseMove()){            //case of valid move
+        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+        
+        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+        
+        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+        
+        
+        lookForCheck(getWhoseMove());
+        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+          getTiles()[p.getX()][p.getY()].setPiece(p);        
+          getTiles()[x][y].setPiece(null);
+          
+          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(takenPieceIcon);
+          
+          this.blackChecked = false;
+          this.whiteChecked = false;
+        }else{
+          this.pieceLastMoved = p;
+          this.pieceLastMovedFromX = p.getX();
+          this.pieceLastMovedFromY = p.getY();
+          p.setPosition(x , y);                                 //the piece now knows its own position
+          p.setMoved();
+          setWhoseMove((getWhoseMove() +1) % 2);
+          lookForCheck(getWhoseMove());
+        }
+      }
+    }
+    
+    
+    if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+      
+      
+      lookForCheck(getWhoseMove());
+      if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+        getTiles()[p.getX()][p.getY()].setPiece(p);        
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(takenPieceIcon);
+        
+        
+        this.blackChecked = false;
+        this.whiteChecked = false;
+      }else{
+        this.pieceLastMoved = p;
+        this.pieceLastMovedFromX = p.getX();
+        this.pieceLastMovedFromY = p.getY();
+        p.setPosition(x , y);                                 //the piece now knows its own position
+        p.setMoved();
+        setWhoseMove((getWhoseMove() +1) % 2);
+        lookForCheck(getWhoseMove());
+      }
+    }
+    
+    
+    if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+ 
+      lookForCheck(getWhoseMove());
+      if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+        getTiles()[p.getX()][p.getY()].setPiece(p);        
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(takenPieceIcon);
+        
+        this.blackChecked = false;
+        this.whiteChecked = false;
+      }else{
+        this.pieceLastMoved = p;
+        this.pieceLastMovedFromX = p.getX();
+        this.pieceLastMovedFromY = p.getY();
+        p.setPosition(x , y);                                 //the piece now knows its own position
+        p.setMoved();
+        setWhoseMove((getWhoseMove() +1) % 2);
+        lookForCheck(getWhoseMove());
+      }
+    }
+    
+    
+    if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )&& p.getPlayer() == getWhoseMove()){            //case of valid move
+      getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+      getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      
+      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      
+      getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+
+      
+      lookForCheck(getWhoseMove());
+      if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){    //Make sure the move doesn't put the player in check
+        getTiles()[p.getX()][p.getY()].setPiece(p);        
+        getTiles()[x][y].setPiece(null);
+        
+        getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+        getTiles()[x][y].setIcon(takenPieceIcon);
+        
+        
+        this.blackChecked = false;
+        this.whiteChecked = false;
+      }else{
+        this.pieceLastMoved = p;
+        this.pieceLastMovedFromX = p.getX();
+        this.pieceLastMovedFromY = p.getY();
+        p.setPosition(x , y);                                 //the piece now knows its own position
+        p.setMoved();
+        setWhoseMove((getWhoseMove() +1) % 2);
+        lookForCheck(getWhoseMove());
+      }
+    }
+    }
+  }
   
 
   public boolean lookForCheckmate(int player){
@@ -779,7 +1033,7 @@ public class Board extends JPanel{
     if(kXCoor == 0 && kYCoor == 0){
       
       //different directions
-      move(kXCoor + 1, kYCoor , k);
+      testMove(kXCoor + 1, kYCoor , k);
       lookForCheck(player);
       if(whiteChecked == false && player == 0){
         unduMove();
@@ -790,7 +1044,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor + 1, k);
+      testMove(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -801,7 +1055,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor + 1, k);
+      testMove(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -816,7 +1070,7 @@ public class Board extends JPanel{
     }else if(kXCoor == 0 && kYCoor > 0 && kYCoor < 7){
       
        //different directions
-      move(kXCoor + 1, kYCoor , k);
+      testMove(kXCoor + 1, kYCoor , k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -827,7 +1081,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor + 1, k);
+      testMove(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -838,7 +1092,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor - 1, k);
+      testMove(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -849,7 +1103,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor + 1, k);
+      testMove(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -860,7 +1114,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor - 1, k);
+      testMove(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -875,7 +1129,7 @@ public class Board extends JPanel{
     }else if(kXCoor == 0 && kYCoor == 7){
       
       //different directions
-      move(kXCoor + 1, kYCoor , k);
+      testMove(kXCoor + 1, kYCoor , k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -886,7 +1140,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor - 1, k);
+      testMove(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -897,7 +1151,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor - 1, k);
+      testMove(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -911,7 +1165,7 @@ public class Board extends JPanel{
     }else if(kXCoor > 0 && kXCoor < 7 && kYCoor == 0){
       
       //different directions
-      move(kXCoor + 1, kYCoor + 1, k);
+      testMove(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -922,7 +1176,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor + 1, k);
+      testMove(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -933,7 +1187,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1, kYCoor + 1, k);
+      testMove(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -944,7 +1198,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor, k);
+      testMove(kXCoor + 1, kYCoor, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -955,7 +1209,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1 , kYCoor, k);
+      testMove(kXCoor - 1 , kYCoor, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -969,7 +1223,7 @@ public class Board extends JPanel{
     }else if(kXCoor > 0 && kXCoor < 7 && kYCoor == 7){
       
       //different directions
-      move(kXCoor + 1, kYCoor - 1, k);
+      testMove(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -980,7 +1234,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor - 1, k);
+      testMove(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -991,7 +1245,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1, kYCoor - 1, k);
+      testMove(kXCoor - 1, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1002,7 +1256,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor, k);
+      testMove(kXCoor + 1, kYCoor, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1013,7 +1267,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1 , kYCoor, k);
+      testMove(kXCoor - 1 , kYCoor, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1027,7 +1281,7 @@ public class Board extends JPanel{
     }else if(kXCoor > 0 && kXCoor < 7 && kYCoor > 0 && kYCoor < 7){
       
       //different directions
-      move(kXCoor + 1, kYCoor + 1, k);
+      testMove(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1038,7 +1292,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor + 1, k);
+      testMove(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1049,7 +1303,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1, kYCoor + 1, k);
+      testMove(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1060,7 +1314,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor, k);
+      testMove(kXCoor + 1, kYCoor, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1071,7 +1325,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1 , kYCoor, k);
+      testMove(kXCoor - 1 , kYCoor, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1082,7 +1336,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor - 1, k);
+      testMove(kXCoor + 1, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1093,7 +1347,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor , kYCoor - 1, k);
+      testMove(kXCoor , kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1104,7 +1358,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1, kYCoor - 1, k);
+     testMove(kXCoor - 1, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1117,7 +1371,7 @@ public class Board extends JPanel{
     }else if(kXCoor == 7 && kYCoor == 0){
       
       //different directions
-      move(kXCoor - 1, kYCoor , k);
+      testMove(kXCoor - 1, kYCoor , k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1128,7 +1382,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor + 1, k);
+     testMove(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1139,7 +1393,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1, kYCoor + 1, k);
+      testMove(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1153,7 +1407,7 @@ public class Board extends JPanel{
     }else if(kXCoor == 7 && kYCoor == 7){
       
       //different directions
-      move(kXCoor - 1, kYCoor , k);
+      testMove(kXCoor - 1, kYCoor , k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1164,7 +1418,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor - 1, k);
+     testMove(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1175,7 +1429,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1, kYCoor - 1, k);
+      testMove(kXCoor - 1, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1189,7 +1443,7 @@ public class Board extends JPanel{
     }else if(kXCoor == 7 && kYCoor > 0 && kYCoor < 7){
       
       //different directions
-      move(kXCoor , kYCoor + 1, k);
+      testMove(kXCoor , kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1200,7 +1454,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor - 1, k);
+      testMove(kXCoor, kYCoor - 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1211,7 +1465,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor + 1, kYCoor + 1, k);
+      testMove(kXCoor + 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1222,7 +1476,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor, kYCoor + 1, k);
+      testMove(kXCoor, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1233,7 +1487,7 @@ public class Board extends JPanel{
       }
       unduMove();
       
-      move(kXCoor - 1, kYCoor + 1, k);
+      testMove(kXCoor - 1, kYCoor + 1, k);
       lookForCheck(player);
      if(whiteChecked == false && player == 0){
         unduMove();
@@ -1256,7 +1510,6 @@ public class Board extends JPanel{
         //for every space we need to see if there is a piece 
         if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() == player){
           //and if there is see if any possible moves take the king out of check
-      
           
           // Following code is glitchy and causes stack overflow exceptions  */
           for(int v = 0; v < 8; v++){
@@ -1265,7 +1518,7 @@ public class Board extends JPanel{
                 
                 if(board[v][c].getPiece() != null && board[v][c].getPiece().getPlayer() != board[i][j].getPiece().getPlayer()){
                   
-                  move(v,c,board[i][j].getPiece());                                      
+                  testMove(v,c,board[i][j].getPiece());                                      
                   lookForCheck(player);
                   if(this.whiteChecked == false && player == 0){
                     unduMove();
@@ -1281,7 +1534,7 @@ public class Board extends JPanel{
                 }
                 if(board[v][c].getPiece() == null){
                   
-                  move(v,c,board[i][j].getPiece());                                      
+                  testMove(v,c,board[i][j].getPiece());                                      
                   lookForCheck(player);
                   if(this.whiteChecked == false && player == 0){
                     unduMove();
