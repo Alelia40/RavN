@@ -186,7 +186,13 @@ public class Board extends JPanel{
       
       this.pieceLastMoved = null;
       
-       setWhoseMove((getWhoseMove() +1) % 2);    //switch player move back
+       setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}    //switch player move back
     }
   }
   
@@ -225,11 +231,49 @@ public class Board extends JPanel{
       moveList[mv].getPieceLastMoved().setPosition(moveList[mv].getPieceLastMovedFromX(), moveList[mv].getPieceLastMovedFromY());
       
       
-      setWhoseMove((getWhoseMove() +1) % 2);    //switch player move back
+      setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}    //switch player move back
     }
   }
   
   
+  /**
+   * Method that undoes the last move and switches the player turn
+   */
+  public void forwardButton(){
+    if(pieceLastMoved != null){
+      
+    }
+  }
+  
+  
+  /**
+   * helper method to promote the pawn at the end
+   */
+  public void promotePawn(piece p){
+    System.out.println("hi");
+    if(p.getType() == "Pawn"){
+    int pieceX = p.getX();
+    int pieceY = p.getY();
+    
+    int plr = p.getPlayer();
+    
+    getTiles()[pieceX][pieceY].setPiece(new queen(pieceX,pieceY,plr));
+    
+    if(plr == 1){
+      getTiles()[pieceX][pieceY].setIcon(new ImageIcon("Chess Icons/blackQueen.png"));
+    }
+    else if(plr == 0){
+      getTiles()[pieceX][pieceY].setIcon(new ImageIcon("Chess Icons/whiteQueen.png"));
+    }
+    
+    }
+  }
   
   /**
    * Moves a piece if the move is valid (for checkmate only)
@@ -277,6 +321,12 @@ public class Board extends JPanel{
       p.setPosition(x , y);         //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
       lookForCheck(getWhoseMove());
       mv++;
       }
@@ -322,6 +372,12 @@ public class Board extends JPanel{
          p.setPosition(x , y);                                 //the piece now knows its own position
          p.setMoved();
          setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
          lookForCheck(getWhoseMove());
          mv++;
        }
@@ -370,8 +426,19 @@ public class Board extends JPanel{
           this.pieceLastMovedFromY = p.getY();
           moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);                                 //the piece now knows its own position
+          
+          if(p.getY()==7 || p.getY() ==0){
+            this.promotePawn(p);
+          }
+          
           p.setMoved();
           setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
           lookForCheck(getWhoseMove());
           mv++;
         }
@@ -409,8 +476,19 @@ public class Board extends JPanel{
           this.pieceLastMovedFromY = p.getY();
           moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);                                 //the piece now knows its own position
+          
+          if(p.getY()==7 || p.getY() ==0){
+            this.promotePawn(p);
+          }
+          
           p.setMoved();
           setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
           lookForCheck(getWhoseMove());
           mv++;
         }
@@ -450,6 +528,12 @@ public class Board extends JPanel{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
         lookForCheck(getWhoseMove());
         mv++;
       }
@@ -487,6 +571,12 @@ public class Board extends JPanel{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
         lookForCheck(getWhoseMove());
         mv++;
       }
@@ -526,6 +616,12 @@ public class Board extends JPanel{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
         lookForCheck(getWhoseMove());
         mv++;
       }
@@ -559,10 +655,6 @@ public class Board extends JPanel{
     
   }
   }
-  
-  
-  
-  
   
   
   /**
@@ -859,6 +951,12 @@ public class Board extends JPanel{
       p.setPosition(x , y);         //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
       lookForCheck(getWhoseMove());
       
       }
@@ -902,6 +1000,12 @@ public class Board extends JPanel{
          p.setPosition(x , y);                                 //the piece now knows its own position
          p.setMoved();
          setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
          lookForCheck(getWhoseMove());
        }
     }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
@@ -945,6 +1049,12 @@ public class Board extends JPanel{
           p.setPosition(x , y);                                 //the piece now knows its own position
           p.setMoved();
           setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
           lookForCheck(getWhoseMove());
         }
       }
@@ -977,6 +1087,12 @@ public class Board extends JPanel{
           p.setPosition(x , y);                                 //the piece now knows its own position
           p.setMoved();
           setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
           lookForCheck(getWhoseMove());
         }
       }
@@ -1011,6 +1127,12 @@ public class Board extends JPanel{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
         lookForCheck(getWhoseMove());
       }
     }
@@ -1042,6 +1164,12 @@ public class Board extends JPanel{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
         lookForCheck(getWhoseMove());
       }
     }
@@ -1051,7 +1179,7 @@ public class Board extends JPanel{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
-      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
@@ -1075,6 +1203,12 @@ public class Board extends JPanel{
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
+if(this.getWhoseMove() ==0){
+actionMenu.setMoveText("White's Move");
+}
+else{
+actionMenu.setMoveText("Black's Move");
+}
         lookForCheck(getWhoseMove());
       }
     }
