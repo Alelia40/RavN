@@ -7,6 +7,8 @@ public class Board extends JPanel{
   
   private Move[] moveList = new Move[300];
   
+  private int mv = 0;
+  
   private piece pieceLastMoved;
   
   private int pieceLastMovedFromX;
@@ -36,7 +38,9 @@ public class Board extends JPanel{
     
     catch (Exception e) {
     }
-    
+    for(int i = 0; i < 300; i++){
+      moveList[i] = new Move();
+    }
     //Container c = this.getContentPane();                //formats the JPanel to have the grid of game tiles over the information of who's turn it is
     this.setSize(800,800);
     this.tiles = new tile[8][8];     //creates as many tiles as there are spaces on the board 
@@ -196,23 +200,35 @@ actionMenu.setMoveText("Black's Move");
    * Method that undoes the last move and switches the player turn
    */
   public void unduMoveButton(){
-    if(pieceLastMoved != null){
+    
+    /**System.out.println(moveList[0].getPieceLastMoved());
+    System.out.println(moveList[0].getPieceLastMovedFromX()); 
+    System.out.println(moveList[0].getPieceLastMovedFromY());
+    System.out.println(moveList[0].getTakenPieceIcon());
+    System.out.println(moveList[0].getMovedPieceIcon());
+    
+    System.out.println(moveList[1].getPieceLastMoved());
+    System.out.println(moveList[2].getPieceLastMoved()); */
+    if(mv > 0){  // go back to the last move that was made
+      mv--;
+    }
+    if(moveList[mv].getPieceLastMoved() != null){
       
-      int originalX = pieceLastMoved.getX();
-      int originalY= pieceLastMoved.getY();
+      int originalX = moveList[mv].getPieceLastMoved().getX();
+      int originalY= moveList[mv].getPieceLastMoved().getY();
       
-      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to the piece taken last time
-      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
+      
+      getTiles()[originalX][originalY].setPiece(moveList[mv].getPieceTakenLastTurn());        //sets origional square piece to the piece taken last time
+      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setPiece(moveList[mv].getPieceLastMoved());                         //sets new square piece to the piece which moved
 
-      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setIcon(takenPieceIcon);
+     
+      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setIcon(getTiles()[originalX][originalY].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[originalX][originalY].setIcon(takenPieceIcon);
       
-      if(pieceTakenLastTurn != null){
-      pieceTakenLastTurn.setPosition(originalX,originalY);
+      if(moveList[mv].getPieceTakenLastTurn() != null){
+        moveList[mv].getPieceTakenLastTurn().setPosition(originalX,originalY);
       }
-      pieceLastMoved.setPosition(pieceLastMovedFromX, pieceLastMovedFromY);
-      
-      this.pieceLastMoved = null;
+      moveList[mv].getPieceLastMoved().setPosition(moveList[mv].getPieceLastMovedFromX(), moveList[mv].getPieceLastMovedFromY());
       
       
       setWhoseMove((getWhoseMove() +1) % 2);
@@ -267,6 +283,7 @@ actionMenu.setMoveText("Black's Move");
     pieceTakenLastTurn = null;
     if(tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove()){
       pieceTakenLastTurn = tiles[x][y].getPiece(); 
+      moveList[mv].setPieceTakenLastTurn(tiles[x][y].getPiece());
     }
     
     if(tiles[x][y].getPiece() == null || (tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove())){
@@ -276,8 +293,10 @@ actionMenu.setMoveText("Black's Move");
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
       takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
       
        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+       moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
                                       
@@ -294,8 +313,11 @@ actionMenu.setMoveText("Black's Move");
         this.whiteChecked = false;
       }else{
       this.pieceLastMoved = p;
+      moveList[mv].setPieceLastMoved(p);
       this.pieceLastMovedFromX = p.getX();
+      moveList[mv].setPieceLastMovedFromX(p.getX());
       this.pieceLastMovedFromY = p.getY();
+      moveList[mv].setPieceLastMovedFromY(p.getY());
       p.setPosition(x , y);         //the piece now knows its own position
       p.setMoved();
       setWhoseMove((getWhoseMove() +1) % 2);
@@ -306,7 +328,7 @@ else{
 actionMenu.setMoveText("Black's Move");
 }
       lookForCheck(getWhoseMove());
-      
+      mv++;
       }
     }
     
@@ -317,8 +339,10 @@ actionMenu.setMoveText("Black's Move");
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
       takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
       
@@ -340,8 +364,11 @@ actionMenu.setMoveText("Black's Move");
         p.setPosition(origionalX,origionalY);
        }else{
          this.pieceLastMoved = p;
-         this.pieceLastMovedFromX = origionalX;
-         this.pieceLastMovedFromY = origionalY;
+         moveList[mv].setPieceLastMoved(p);
+         this.pieceLastMovedFromX = p.getX();
+         moveList[mv].setPieceLastMovedFromX(p.getX());
+         this.pieceLastMovedFromY = p.getY();
+         moveList[mv].setPieceLastMovedFromY(p.getY());
          p.setPosition(x , y);                                 //the piece now knows its own position
          p.setMoved();
          setWhoseMove((getWhoseMove() +1) % 2);
@@ -352,6 +379,7 @@ else{
 actionMenu.setMoveText("Black's Move");
 }
          lookForCheck(getWhoseMove());
+         mv++;
        }
     }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
 
@@ -371,9 +399,12 @@ actionMenu.setMoveText("Black's Move");
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
         
         takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+        moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
         
         getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-      getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+        moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
+        
+        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
         
         
         lookForCheck(getWhoseMove());
@@ -389,8 +420,11 @@ actionMenu.setMoveText("Black's Move");
           this.whiteChecked = false;
         }else{
           this.pieceLastMoved = p;
+          moveList[mv].setPieceLastMoved(p);
           this.pieceLastMovedFromX = p.getX();
+          moveList[mv].setPieceLastMovedFromX(p.getX());
           this.pieceLastMovedFromY = p.getY();
+          moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);                                 //the piece now knows its own position
           
           if(p.getY()==7 || p.getY() ==0){
@@ -406,6 +440,7 @@ else{
 actionMenu.setMoveText("Black's Move");
 }
           lookForCheck(getWhoseMove());
+          mv++;
         }
       }
     }
@@ -414,9 +449,12 @@ actionMenu.setMoveText("Black's Move");
         getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
         getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
         
+        
         takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+        moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
         
         getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+        moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
         getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
         
         
@@ -432,8 +470,11 @@ actionMenu.setMoveText("Black's Move");
           this.whiteChecked = false;
         }else{
           this.pieceLastMoved = p;
+          moveList[mv].setPieceLastMoved(p);
           this.pieceLastMovedFromX = p.getX();
+          moveList[mv].setPieceLastMovedFromX(p.getX());
           this.pieceLastMovedFromY = p.getY();
+          moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);                                 //the piece now knows its own position
           
           if(p.getY()==7 || p.getY() ==0){
@@ -449,6 +490,7 @@ else{
 actionMenu.setMoveText("Black's Move");
 }
           lookForCheck(getWhoseMove());
+          mv++;
         }
       }
     }
@@ -461,6 +503,7 @@ actionMenu.setMoveText("Black's Move");
       takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
       
       
@@ -477,8 +520,11 @@ actionMenu.setMoveText("Black's Move");
         this.whiteChecked = false;
       }else{
         this.pieceLastMoved = p;
+        moveList[mv].setPieceLastMoved(p);
         this.pieceLastMovedFromX = p.getX();
+        moveList[mv].setPieceLastMovedFromX(p.getX());
         this.pieceLastMovedFromY = p.getY();
+        moveList[mv].setPieceLastMovedFromY(p.getY());
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
@@ -489,6 +535,7 @@ else{
 actionMenu.setMoveText("Black's Move");
 }
         lookForCheck(getWhoseMove());
+        mv++;
       }
     }
     
@@ -498,8 +545,10 @@ actionMenu.setMoveText("Black's Move");
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
       takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
  
       lookForCheck(getWhoseMove());
@@ -514,8 +563,11 @@ actionMenu.setMoveText("Black's Move");
         this.whiteChecked = false;
       }else{
         this.pieceLastMoved = p;
+        moveList[mv].setPieceLastMoved(p);
         this.pieceLastMovedFromX = p.getX();
+        moveList[mv].setPieceLastMovedFromX(p.getX());
         this.pieceLastMovedFromY = p.getY();
+        moveList[mv].setPieceLastMovedFromY(p.getY());
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
@@ -526,6 +578,7 @@ else{
 actionMenu.setMoveText("Black's Move");
 }
         lookForCheck(getWhoseMove());
+        mv++;
       }
     }
     
@@ -535,8 +588,10 @@ actionMenu.setMoveText("Black's Move");
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
       takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+      moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
 
       
@@ -553,8 +608,11 @@ actionMenu.setMoveText("Black's Move");
         this.whiteChecked = false;
       }else{
         this.pieceLastMoved = p;
+        moveList[mv].setPieceLastMoved(p);
         this.pieceLastMovedFromX = p.getX();
+        moveList[mv].setPieceLastMovedFromX(p.getX());
         this.pieceLastMovedFromY = p.getY();
+        moveList[mv].setPieceLastMovedFromY(p.getY());
         p.setPosition(x , y);                                 //the piece now knows its own position
         p.setMoved();
         setWhoseMove((getWhoseMove() +1) % 2);
@@ -565,6 +623,7 @@ else{
 actionMenu.setMoveText("Black's Move");
 }
         lookForCheck(getWhoseMove());
+        mv++;
       }
     }
     
@@ -933,8 +992,11 @@ actionMenu.setMoveText("Black's Move");
         p.setPosition(origionalX,origionalY);
        }else{
          this.pieceLastMoved = p;
-         this.pieceLastMovedFromX = origionalX;
-         this.pieceLastMovedFromY = origionalY;
+      moveList[mv].setPieceLastMoved(p);
+      this.pieceLastMovedFromX = p.getX();
+      moveList[mv].setPieceLastMovedFromX(p.getX());
+      this.pieceLastMovedFromY = p.getY();
+      moveList[mv].setPieceLastMovedFromY(p.getY());
          p.setPosition(x , y);                                 //the piece now knows its own position
          p.setMoved();
          setWhoseMove((getWhoseMove() +1) % 2);

@@ -989,7 +989,11 @@ public class Board extends JPanel{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
+<<<<<<< HEAD
+      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+=======
       takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+>>>>>>> origin/master
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
