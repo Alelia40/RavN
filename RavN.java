@@ -21,7 +21,9 @@ public class RavN extends JFrame{
     
      actionMenu.setRollover(true);  
      JButton undoButton = new JButton("Undo Move");  
+     JButton forwardButton = new JButton("Fast Forward");
      actionMenu.add(undoButton);
+     actionMenu.add(forwardButton);
      undoButton.addActionListener(new ActionListener() {
           /**
            * What to do when the undo button is pressed

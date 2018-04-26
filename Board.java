@@ -190,6 +190,9 @@ public class Board extends JPanel{
    * Method that undoes the last move and switches the player turn
    */
   public void unduMoveButton(){
+    System.out.println(pieceLastMoved);
+    System.out.println(pieceTakenLastTurn);
+    System.out.println(takenPieceIcon);
     if(pieceLastMoved != null){
       
       int originalX = pieceLastMoved.getX();
@@ -213,6 +216,15 @@ public class Board extends JPanel{
     }
   }
   
+  
+  /**
+   * Method that undoes the last move and switches the player turn
+   */
+  public void forwardButton(){
+    if(pieceLastMoved != null){
+      
+    }
+  }
   
   
   /**
@@ -444,7 +456,7 @@ public class Board extends JPanel{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
-      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
@@ -989,7 +1001,7 @@ public class Board extends JPanel{
       getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
       getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
       
-      Icon takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+      takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
       
       getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
       getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
