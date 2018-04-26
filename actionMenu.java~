@@ -1,0 +1,36 @@
+/**
+ * a class that represents a toolbar with fast forward, and undo buttons and a display of whose move it is 
+ */
+public class actionMenu extends JToolBar{
+  
+   private JButton undoButton;
+   private JButton forwardButton;
+   private JTextArea playerMove;
+  
+  public actionMenu(){
+    undoButton = new JButton("Undo Move");  
+     forwardButton = new JButton("Fast Forward");
+     playerMove = new JTextArea();
+      actionMenu.add(playerMove);
+     playerMove.setText("White's Move");
+     actionMenu.add(undoButton);
+     actionMenu.add(forwardButton);
+     undoButton.addActionListener(new ActionListener() {
+          /**
+           * What to do when the undo button is pressed
+           */
+          public void actionPerformed(ActionEvent e){
+            chessBoard.unduMoveButton();
+          }
+     });
+     
+     actionMenu.addSeparator();
+     actionMenu.setBackground(new Color(207,220,227));
+    
+  }
+  
+  public void setMoveText(String s){
+    playerMove.setText(s);
+  }
+  
+}

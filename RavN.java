@@ -7,7 +7,7 @@ public class RavN extends JFrame{
   
   private Board chessBoard;
   
-  private JToolBar actionMenu;
+  private actionMenu actionBar;
   
   public RavN(){
     this.setSize(1000,1000);
@@ -17,14 +17,8 @@ public class RavN extends JFrame{
     this.getContentPane().add(chessBoard,BorderLayout.CENTER);
     
     //add the action menu
-    actionMenu = new JToolBar();
-    
-     actionMenu.setRollover(true);  
-     JButton undoButton = new JButton("Undo Move");  
-     JButton forwardButton = new JButton("Fast Forward");
-     actionMenu.add(undoButton);
-     actionMenu.add(forwardButton);
-     undoButton.addActionListener(new ActionListener() {
+     actionBar = new actionMenu(); 
+     actionBar.getundoButton().addActionListener(new ActionListener() {
           /**
            * What to do when the undo button is pressed
            */
@@ -33,10 +27,7 @@ public class RavN extends JFrame{
           }
      });
      
-     actionMenu.addSeparator();
-     actionMenu.setBackground(new Color(207,220,227));
-     
-     this.getContentPane().add(actionMenu, BorderLayout.SOUTH);
+     this.getContentPane().add(actionBar, BorderLayout.SOUTH);
      
      this.setVisible(true);
   }
