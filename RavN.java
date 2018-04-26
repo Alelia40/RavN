@@ -27,6 +27,15 @@ public class RavN extends JFrame{
           }
      });
      
+     actionBar.getforwardButton().addActionListener(new ActionListener() {
+          /**
+           * What to do when the undo button is pressed
+           */
+          public void actionPerformed(ActionEvent e){
+            chessBoard.forwardButton();
+          }
+     });
+     
      this.getContentPane().add(actionBar, BorderLayout.SOUTH);
      
      this.setVisible(true);
