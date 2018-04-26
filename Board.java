@@ -201,14 +201,7 @@ actionMenu.setMoveText("Black's Move");
    */
   public void unduMoveButton(){
     
-    /**System.out.println(moveList[0].getPieceLastMoved());
-    System.out.println(moveList[0].getPieceLastMovedFromX()); 
-    System.out.println(moveList[0].getPieceLastMovedFromY());
-    System.out.println(moveList[0].getTakenPieceIcon());
-    System.out.println(moveList[0].getMovedPieceIcon());
-    
-    System.out.println(moveList[1].getPieceLastMoved());
-    System.out.println(moveList[2].getPieceLastMoved()); */
+   
     if(mv > 0){  // go back to the last move that was made
       mv--;
     }
@@ -232,12 +225,12 @@ actionMenu.setMoveText("Black's Move");
       
       
       setWhoseMove((getWhoseMove() +1) % 2);
-if(this.getWhoseMove() ==0){
-actionMenu.setMoveText("White's Move");
-}
-else{
-actionMenu.setMoveText("Black's Move");
-}    //switch player move back
+      if(this.getWhoseMove() ==0){
+        actionMenu.setMoveText("White's Move");
+      }
+      else{
+        actionMenu.setMoveText("Black's Move");
+      }    //switch player move back
     }
   }
   
@@ -246,9 +239,9 @@ actionMenu.setMoveText("Black's Move");
    * Method that undoes the last move and switches the player turn
    */
   public void forwardButton(){
-    if(pieceLastMoved != null){
-      
-    }
+   
+   
+    
   }
   
   
