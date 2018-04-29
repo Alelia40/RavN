@@ -9,6 +9,8 @@ public class Board extends JPanel{
   
   private int mv = 0;
   
+  private boolean isCheckMate = false;
+  
   private piece pieceLastMoved;
   
   private int pieceLastMovedFromX;
@@ -165,7 +167,7 @@ public class Board extends JPanel{
    * Method that undoes the last move
    */
   public void unduMove(){
-    if(pieceLastMoved != null){
+    if(pieceLastMoved != null && this.isCheckMate == false){
       
       int originalX = pieceLastMoved.getX();
       int originalY= pieceLastMoved.getY();
@@ -205,37 +207,37 @@ public class Board extends JPanel{
    */
   public void unduMoveButton(){
     
-     System.out.println(mv);
-     if(mv > 0){  // go back to the last move that was made
-     mv--;
-     }
-     if(moveList[mv].getPieceLastMoved() != null){
-     
-     int originalX = moveList[mv].getPieceLastMoved().getX();
-     int originalY= moveList[mv].getPieceLastMoved().getY();
-     
-     
-     getTiles()[originalX][originalY].setPiece(moveList[mv].getPieceTakenLastTurn());        //sets origional square piece to the piece taken last time
-     getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setPiece(moveList[mv].getPieceLastMoved());                         //sets new square piece to the piece which moved
-     
-     
-     getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setIcon(getTiles()[originalX][originalY].getIcon());  //sets the icon on the new square to the text of the old square
-     getTiles()[originalX][originalY].setIcon(takenPieceIcon);
-     
-     if(moveList[mv].getPieceTakenLastTurn() != null){
-     moveList[mv].getPieceTakenLastTurn().setPosition(originalX,originalY);
-     }
-     moveList[mv].getPieceLastMoved().setPosition(moveList[mv].getPieceLastMovedFromX(), moveList[mv].getPieceLastMovedFromY());
-     
-     
-     setWhoseMove((getWhoseMove() +1) % 2);
-     if(this.getWhoseMove() ==0){
-     actionMenu.setMoveText("White's Move");
-     }
-     else{
-     actionMenu.setMoveText("Black's Move");
-     }    //switch player move back
-     }
+    System.out.println(mv);
+    if(mv > 0){  // go back to the last move that was made
+      mv--;
+    }
+    if(moveList[mv].getPieceLastMoved() != null){
+      
+      int originalX = moveList[mv].getPieceLastMoved().getX();
+      int originalY= moveList[mv].getPieceLastMoved().getY();
+      
+      
+      getTiles()[originalX][originalY].setPiece(moveList[mv].getPieceTakenLastTurn());        //sets origional square piece to the piece taken last time
+      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setPiece(moveList[mv].getPieceLastMoved());                         //sets new square piece to the piece which moved
+      
+      
+      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setIcon(getTiles()[originalX][originalY].getIcon());  //sets the icon on the new square to the text of the old square
+      getTiles()[originalX][originalY].setIcon(takenPieceIcon);
+      
+      if(moveList[mv].getPieceTakenLastTurn() != null){
+        moveList[mv].getPieceTakenLastTurn().setPosition(originalX,originalY);
+      }
+      moveList[mv].getPieceLastMoved().setPosition(moveList[mv].getPieceLastMovedFromX(), moveList[mv].getPieceLastMovedFromY());
+      
+      
+      setWhoseMove((getWhoseMove() +1) % 2);
+      if(this.getWhoseMove() ==0){
+        actionMenu.setMoveText("White's Move");
+      }
+      else{
+        actionMenu.setMoveText("Black's Move");
+      }    //switch player move back
+    }
   }
   
   
@@ -275,122 +277,19 @@ public class Board extends JPanel{
    * Moves a piece if the move is valid (for checkmate only)
    */
   private void move( int x, int y, piece p){
-    //first store the piece that is about to be taken
-    pieceTakenLastTurn = null;
-    if(tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove()){
-      pieceTakenLastTurn = tiles[x][y].getPiece(); 
-      moveList[mv].setPieceTakenLastTurn(tiles[x][y].getPiece());
-    }
     
-    if(tiles[x][y].getPiece() == null || (tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove())){
+    if(this.isCheckMate ==false){
       
-      if(p.validMove(x , y) && p.type == "Knight" && p.getPlayer() == getWhoseMove()){            //case of valid move
-        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
-        
-        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
-        moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
-        
-        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-        moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
-        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
-        
-        
-        lookForCheck(getWhoseMove());
-        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){      //Make sure the move doesn't put the player in check
-          getTiles()[p.getX()][p.getY()].setPiece(p);        
-          getTiles()[x][y].setPiece(null);
-          
-          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-          getTiles()[x][y].setIcon(takenPieceIcon);
-          
-          
-          this.blackChecked = false;
-          this.whiteChecked = false;
-        }else{
-          this.pieceLastMoved = p;
-          moveList[mv].setPieceLastMoved(p);
-          this.pieceLastMovedFromX = p.getX();
-          moveList[mv].setPieceLastMovedFromX(p.getX());
-          this.pieceLastMovedFromY = p.getY();
-          moveList[mv].setPieceLastMovedFromY(p.getY());
-          p.setPosition(x , y);         //the piece now knows its own position
-          p.setMoved(p.getMoveCount()+1);
-          setWhoseMove((getWhoseMove() +1) % 2);
-          if(this.getWhoseMove() ==0){
-            actionMenu.setMoveText("White's Move");
-          }
-          else{
-            actionMenu.setMoveText("Black's Move");
-          }
-          lookForCheck(getWhoseMove());
-          mv++;
-        }
+      //first store the piece that is about to be taken
+      pieceTakenLastTurn = null;
+      if(tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove()){
+        pieceTakenLastTurn = tiles[x][y].getPiece(); 
+        moveList[mv].setPieceTakenLastTurn(tiles[x][y].getPiece());
       }
       
-      
-      if(p.validMove(x , y) && p.type == "King" && p.getPlayer() == getWhoseMove()){            //case of valid move
-        piece takenPiece = getTiles()[x][y].getPiece(); //save piece to be taken
-        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+      if(tiles[x][y].getPiece() == null || (tiles[x][y].getPiece() != null && tiles[x][y].getPiece().getPlayer() != getWhoseMove())){
         
-        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
-        moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
-        
-        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-        moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
-        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
-        
-        
-        int origionalX = p.getX();                                          //remember origional coordinates for piece
-        int origionalY = p.getY();
-        this.pieceLastMovedFromX = origionalX;
-        this.pieceLastMovedFromY = origionalY;
-        p.setPosition(x , y);                                               //bc of implementation of lookForCheck we have to update the kings postion
-        
-        lookForCheck(getWhoseMove());
-        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){ //Make sure the move doesn't put the player in check
-          getTiles()[origionalX][origionalY].setPiece(p);        
-          getTiles()[x][y].setPiece(takenPiece);
-          
-          getTiles()[origionalX][origionalY].setIcon(getTiles()[x][y].getIcon()); 
-          getTiles()[x][y].setIcon(takenPieceIcon);
-          
-          
-          this.blackChecked = false;
-          this.whiteChecked = false;
-          p.setPosition(origionalX,origionalY);
-        }else{
-          this.pieceLastMoved = p;
-          moveList[mv].setPieceLastMoved(p);
-          moveList[mv].setPieceLastMovedFromX(origionalX);
-          moveList[mv].setPieceLastMovedFromY(origionalY);
-          p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved(p.getMoveCount()+1);
-          setWhoseMove((getWhoseMove() +1) % 2);
-          if(this.getWhoseMove() ==0){
-            actionMenu.setMoveText("White's Move");
-          }
-          else{
-            actionMenu.setMoveText("Black's Move");
-          }
-          lookForCheck(getWhoseMove());
-          mv++;
-        }
-      }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
-        
-        castle((king)p , 0 , 0);
-        castle((king)p , 0 , 7);
-        castle((king)p , 7 , 0);
-        castle((king)p , 7 , 7);
-        lookForCheck(getWhoseMove());
-      }
-      
-      
-      
-      
-      if(x == p.getX()){
-        if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
+        if(p.validMove(x , y) && p.type == "Knight" && p.getPlayer() == getWhoseMove()){            //case of valid move
           getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
           getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
           
@@ -399,12 +298,11 @@ public class Board extends JPanel{
           
           getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
           moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
-          
           getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
           
           
           lookForCheck(getWhoseMove());
-          if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+          if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){      //Make sure the move doesn't put the player in check
             getTiles()[p.getX()][p.getY()].setPiece(p);        
             getTiles()[x][y].setPiece(null);
             
@@ -421,12 +319,7 @@ public class Board extends JPanel{
             moveList[mv].setPieceLastMovedFromX(p.getX());
             this.pieceLastMovedFromY = p.getY();
             moveList[mv].setPieceLastMovedFromY(p.getY());
-            p.setPosition(x , y);                                 //the piece now knows its own position
-            
-            if(p.getY()==7 || p.getY() ==0){
-              this.promotePawn(p);
-            }
-            
+            p.setPosition(x , y);         //the piece now knows its own position
             p.setMoved(p.getMoveCount()+1);
             setWhoseMove((getWhoseMove() +1) % 2);
             if(this.getWhoseMove() ==0){
@@ -439,12 +332,12 @@ public class Board extends JPanel{
             mv++;
           }
         }
-      }
-      else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
-        if(p.validMove(x , y) && p.type == "Pawn" && p.getPlayer() == getWhoseMove()){            //case of valid move
+        
+        
+        if(p.validMove(x , y) && p.type == "King" && p.getPlayer() == getWhoseMove()){            //case of valid move
+          piece takenPiece = getTiles()[x][y].getPiece(); //save piece to be taken
           getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
           getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
-          
           
           takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
           moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
@@ -453,6 +346,211 @@ public class Board extends JPanel{
           moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
           getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
           
+          
+          int origionalX = p.getX();                                          //remember origional coordinates for piece
+          int origionalY = p.getY();
+          this.pieceLastMovedFromX = origionalX;
+          this.pieceLastMovedFromY = origionalY;
+          p.setPosition(x , y);                                               //bc of implementation of lookForCheck we have to update the kings postion
+          
+          lookForCheck(getWhoseMove());
+          if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){ //Make sure the move doesn't put the player in check
+            getTiles()[origionalX][origionalY].setPiece(p);        
+            getTiles()[x][y].setPiece(takenPiece);
+            
+            getTiles()[origionalX][origionalY].setIcon(getTiles()[x][y].getIcon()); 
+            getTiles()[x][y].setIcon(takenPieceIcon);
+            
+            
+            this.blackChecked = false;
+            this.whiteChecked = false;
+            p.setPosition(origionalX,origionalY);
+          }else{
+            this.pieceLastMoved = p;
+            moveList[mv].setPieceLastMoved(p);
+            moveList[mv].setPieceLastMovedFromX(origionalX);
+            moveList[mv].setPieceLastMovedFromY(origionalY);
+            p.setPosition(x , y);                                 //the piece now knows its own position
+            p.setMoved(p.getMoveCount()+1);
+            setWhoseMove((getWhoseMove() +1) % 2);
+            if(this.getWhoseMove() ==0){
+              actionMenu.setMoveText("White's Move");
+            }
+            else{
+              actionMenu.setMoveText("Black's Move");
+            }
+            lookForCheck(getWhoseMove());
+            mv++;
+          }
+        }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
+          
+          castle((king)p , 0 , 0);
+          castle((king)p , 0 , 7);
+          castle((king)p , 7 , 0);
+          castle((king)p , 7 , 7);
+          lookForCheck(getWhoseMove());
+        }
+        
+        
+        
+        
+        if(x == p.getX()){
+          if(p.validMove(x , y) && p.type == "Pawn" && !isOccupied(x , y) && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
+            getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+            getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+            
+            takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+            moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
+            
+            getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+            moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
+            
+            getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+            
+            
+            lookForCheck(getWhoseMove());
+            if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+              getTiles()[p.getX()][p.getY()].setPiece(p);        
+              getTiles()[x][y].setPiece(null);
+              
+              getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+              getTiles()[x][y].setIcon(takenPieceIcon);
+              
+              
+              this.blackChecked = false;
+              this.whiteChecked = false;
+            }else{
+              this.pieceLastMoved = p;
+              moveList[mv].setPieceLastMoved(p);
+              this.pieceLastMovedFromX = p.getX();
+              moveList[mv].setPieceLastMovedFromX(p.getX());
+              this.pieceLastMovedFromY = p.getY();
+              moveList[mv].setPieceLastMovedFromY(p.getY());
+              p.setPosition(x , y);                                 //the piece now knows its own position
+              
+              if(p.getY()==7 || p.getY() ==0){
+                this.promotePawn(p);
+              }
+              
+              p.setMoved(p.getMoveCount()+1);
+              setWhoseMove((getWhoseMove() +1) % 2);
+              if(this.getWhoseMove() ==0){
+                actionMenu.setMoveText("White's Move");
+              }
+              else{
+                actionMenu.setMoveText("Black's Move");
+              }
+              lookForCheck(getWhoseMove());
+              mv++;
+            }
+          }
+        }
+        else if(Math.abs(x - p.getX()) == 1 && isOccupied(x , y)){
+          if(p.validMove(x , y) && p.type == "Pawn" && p.getPlayer() == getWhoseMove()){            //case of valid move
+            getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+            getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+            
+            
+            takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+            moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
+            
+            getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+            moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
+            getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+            
+            
+            lookForCheck(getWhoseMove());
+            if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+              getTiles()[p.getX()][p.getY()].setPiece(p);        
+              getTiles()[x][y].setPiece(null);
+              
+              getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+              getTiles()[x][y].setIcon(takenPieceIcon);
+              
+              this.blackChecked = false;
+              this.whiteChecked = false;
+            }else{
+              this.pieceLastMoved = p;
+              moveList[mv].setPieceLastMoved(p);
+              this.pieceLastMovedFromX = p.getX();
+              moveList[mv].setPieceLastMovedFromX(p.getX());
+              this.pieceLastMovedFromY = p.getY();
+              moveList[mv].setPieceLastMovedFromY(p.getY());
+              p.setPosition(x , y);                                 //the piece now knows its own position
+              
+              if(p.getY()==7 || p.getY() ==0){
+                this.promotePawn(p);
+              }
+              
+              p.setMoved(p.getMoveCount() + 1);
+              setWhoseMove((getWhoseMove() +1) % 2);
+              if(this.getWhoseMove() ==0){
+                actionMenu.setMoveText("White's Move");
+              }
+              else{
+                actionMenu.setMoveText("Black's Move");
+              }
+              lookForCheck(getWhoseMove());
+              mv++;
+            }
+          }
+        }
+        
+        
+        if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
+          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+          
+          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+          
+          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
+          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
+          
+          
+          lookForCheck(getWhoseMove());
+          if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
+            getTiles()[p.getX()][p.getY()].setPiece(p);        
+            getTiles()[x][y].setPiece(null);
+            
+            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+            getTiles()[x][y].setIcon(takenPieceIcon);
+            
+            
+            this.blackChecked = false;
+            this.whiteChecked = false;
+          }else{
+            this.pieceLastMoved = p;
+            moveList[mv].setPieceLastMoved(p);
+            this.pieceLastMovedFromX = p.getX();
+            moveList[mv].setPieceLastMovedFromX(p.getX());
+            this.pieceLastMovedFromY = p.getY();
+            moveList[mv].setPieceLastMovedFromY(p.getY());
+            p.setPosition(x , y);                                 //the piece now knows its own position
+            p.setMoved(p.getMoveCount()+1);
+            setWhoseMove((getWhoseMove() +1) % 2);
+            if(this.getWhoseMove() ==0){
+              actionMenu.setMoveText("White's Move");
+            }
+            else{
+              actionMenu.setMoveText("Black's Move");
+            }
+            lookForCheck(getWhoseMove());
+            mv++;
+          }
+        }
+        
+        
+        if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
+          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
+          
+          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+          moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
+          
+          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
+          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
           
           lookForCheck(getWhoseMove());
           if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
@@ -472,12 +570,7 @@ public class Board extends JPanel{
             this.pieceLastMovedFromY = p.getY();
             moveList[mv].setPieceLastMovedFromY(p.getY());
             p.setPosition(x , y);                                 //the piece now knows its own position
-            
-            if(p.getY()==7 || p.getY() ==0){
-              this.promotePawn(p);
-            }
-            
-            p.setMoved(p.getMoveCount() + 1);
+            p.setMoved(p.getMoveCount()+1);
             setWhoseMove((getWhoseMove() +1) % 2);
             if(this.getWhoseMove() ==0){
               actionMenu.setMoveText("White's Move");
@@ -489,166 +582,81 @@ public class Board extends JPanel{
             mv++;
           }
         }
-      }
-      
-      
-      if(p.validMove(x , y) && p.type == "Rook" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
-        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
-        
-        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
-        
-        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-        moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
-        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
         
         
-        lookForCheck(getWhoseMove());
-        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
-          getTiles()[p.getX()][p.getY()].setPiece(p);        
-          getTiles()[x][y].setPiece(null);
+        if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )&& p.getPlayer() == getWhoseMove()){            //case of valid move
+          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
+          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
           
-          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-          getTiles()[x][y].setIcon(takenPieceIcon);
+          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
+          moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
+          
+          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
+          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
+          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
           
           
-          this.blackChecked = false;
-          this.whiteChecked = false;
-        }else{
-          this.pieceLastMoved = p;
-          moveList[mv].setPieceLastMoved(p);
-          this.pieceLastMovedFromX = p.getX();
-          moveList[mv].setPieceLastMovedFromX(p.getX());
-          this.pieceLastMovedFromY = p.getY();
-          moveList[mv].setPieceLastMovedFromY(p.getY());
-          p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved(p.getMoveCount()+1);
-          setWhoseMove((getWhoseMove() +1) % 2);
-          if(this.getWhoseMove() ==0){
-            actionMenu.setMoveText("White's Move");
-          }
-          else{
-            actionMenu.setMoveText("Black's Move");
-          }
           lookForCheck(getWhoseMove());
-          mv++;
-        }
-      }
-      
-      
-      if(p.validMove(x , y) && p.type == "Bishop" && clearPath( x , y , p ) && p.getPlayer() == getWhoseMove()){            //case of valid move
-        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
-        
-        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
-        moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
-        
-        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-        moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
-        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
-        
-        lookForCheck(getWhoseMove());
-        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){   //Make sure the move doesn't put the player in check
-          getTiles()[p.getX()][p.getY()].setPiece(p);        
-          getTiles()[x][y].setPiece(null);
-          
-          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-          getTiles()[x][y].setIcon(takenPieceIcon);
-          
-          this.blackChecked = false;
-          this.whiteChecked = false;
-        }else{
-          this.pieceLastMoved = p;
-          moveList[mv].setPieceLastMoved(p);
-          this.pieceLastMovedFromX = p.getX();
-          moveList[mv].setPieceLastMovedFromX(p.getX());
-          this.pieceLastMovedFromY = p.getY();
-          moveList[mv].setPieceLastMovedFromY(p.getY());
-          p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved(p.getMoveCount()+1);
-          setWhoseMove((getWhoseMove() +1) % 2);
-          if(this.getWhoseMove() ==0){
-            actionMenu.setMoveText("White's Move");
+          if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){    //Make sure the move doesn't put the player in check
+            getTiles()[p.getX()][p.getY()].setPiece(p);        
+            getTiles()[x][y].setPiece(null);
+            
+            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
+            getTiles()[x][y].setIcon(takenPieceIcon);
+            
+            
+            this.blackChecked = false;
+            this.whiteChecked = false;
+          }else{
+            this.pieceLastMoved = p;
+            moveList[mv].setPieceLastMoved(p);
+            this.pieceLastMovedFromX = p.getX();
+            moveList[mv].setPieceLastMovedFromX(p.getX());
+            this.pieceLastMovedFromY = p.getY();
+            moveList[mv].setPieceLastMovedFromY(p.getY());
+            p.setPosition(x , y);                                 //the piece now knows its own position
+            p.setMoved(p.getMoveCount()+1);
+            setWhoseMove((getWhoseMove() +1) % 2);
+            if(this.getWhoseMove() ==0){
+              actionMenu.setMoveText("White's Move");
+            }
+            else{
+              actionMenu.setMoveText("Black's Move");
+            }
+            lookForCheck(getWhoseMove());
+            mv++;
           }
-          else{
-            actionMenu.setMoveText("Black's Move");
+        }
+        
+        if(this.whiteChecked == true){
+          
+          if(lookForCheckmate(0) == true){
+            //end the game
+            this.isCheckMate = true;
+            JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
+                                          JOptionPane.ERROR_MESSAGE);
+          }else{
+            
+            JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
+                                          JOptionPane.ERROR_MESSAGE);
           }
-          lookForCheck(getWhoseMove());
-          mv++;
         }
-      }
-      
-      
-      if(p.validMove(x , y) && p.type == "Queen" && clearPath( x , y , p )&& p.getPlayer() == getWhoseMove()){            //case of valid move
-        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null
-        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved
         
-        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece
-        moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());
-        
-        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square
-        moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());
-        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null
-        
-        
-        lookForCheck(getWhoseMove());
-        if((getWhoseMove() == 0 && this.whiteChecked == true) || (getWhoseMove() == 1 && this.blackChecked == true)){    //Make sure the move doesn't put the player in check
-          getTiles()[p.getX()][p.getY()].setPiece(p);        
-          getTiles()[x][y].setPiece(null);
+        if(this.blackChecked == true){
           
-          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); 
-          getTiles()[x][y].setIcon(takenPieceIcon);
-          
-          
-          this.blackChecked = false;
-          this.whiteChecked = false;
-        }else{
-          this.pieceLastMoved = p;
-          moveList[mv].setPieceLastMoved(p);
-          this.pieceLastMovedFromX = p.getX();
-          moveList[mv].setPieceLastMovedFromX(p.getX());
-          this.pieceLastMovedFromY = p.getY();
-          moveList[mv].setPieceLastMovedFromY(p.getY());
-          p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved(p.getMoveCount()+1);
-          setWhoseMove((getWhoseMove() +1) % 2);
-          if(this.getWhoseMove() ==0){
-            actionMenu.setMoveText("White's Move");
+          if(lookForCheckmate(1) == true){
+            //end the game
+            this.isCheckMate = true;
+            JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
+                                          JOptionPane.ERROR_MESSAGE);
+          }else{
+            
+            JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
+                                          JOptionPane.ERROR_MESSAGE);
           }
-          else{
-            actionMenu.setMoveText("Black's Move");
-          }
-          lookForCheck(getWhoseMove());
-          mv++;
         }
-      }
-      
-      if(this.whiteChecked == true){
         
-        if(lookForCheckmate(0) == true){
-          //end the game
-          JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
-                                        JOptionPane.ERROR_MESSAGE);
-        }else{
-          
-          JOptionPane.showMessageDialog(new JFrame(), "White is in Check", "Dialog",
-                                        JOptionPane.ERROR_MESSAGE);
-        }
       }
-      
-      if(this.blackChecked == true){
-        
-        if(lookForCheckmate(1) == true){
-          //end the game
-          JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
-                                        JOptionPane.ERROR_MESSAGE);
-        }else{
-          
-          JOptionPane.showMessageDialog(new JFrame(), "Black is in Check", "Dialog",
-                                        JOptionPane.ERROR_MESSAGE);
-        }
-      }
-      
     }
   }
   
