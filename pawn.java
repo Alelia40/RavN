@@ -23,7 +23,7 @@ public class pawn extends piece{
       if(distB == 1 && (distA == 0 || distA == 1 || distA == -1) )
         return true;
       //allow for a double jump forward on first pawn move
-      else if( getMoved() == false && distB == 2 && (distA == 0 || distA == 1 || distA == -1))
+      else if( getMoveCount() == 0 && distB == 2 && (distA == 0 || distA == 1 || distA == -1))
         return true;
       else
         return false;
@@ -33,7 +33,7 @@ public class pawn extends piece{
       if(distB == -1 && (distA == 0 || distA == 1 || distA == -1) )
         return true;
       //allow for a double jump forward on first pawn move
-      else if( getMoved() == false && distB == -2 && (distA == 0 || distA == 1 || distA == -1))
+      else if( getMoveCount() == 0 && distB == -2 && (distA == 0 || distA == 1 || distA == -1))
         return true;
       else
         return false;

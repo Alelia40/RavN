@@ -4,7 +4,8 @@ import java.lang.Math;
 
 public class piece{
   
-  private boolean hasMoved = false;
+  //0 for never moved
+  private int moveCount = 0;
   
   //field for player, 0 is white, 1 is black
   public int player;
@@ -26,12 +27,12 @@ public class piece{
   }
   
    //method to check if the pawn has been moved
-   public boolean getMoved(){
-    return hasMoved;
+   public int getMoveCount(){
+    return moveCount;
   }
   
-   public void setMoved(){
-     this.hasMoved = true;
+   public void setMoved(int x){
+     this.moveCount = x;
    }
    
   /**

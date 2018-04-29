@@ -27,8 +27,8 @@ public class testPawn extends testPiece {
     assertTrue(p2.validMove(2,3));
     assertTrue(p2.validMove(2,4));
     
-    p.setMoved();
-    p2.setMoved();
+    p.setMoved(p.getMoveCount()+1);
+    p2.setMoved(p2.getMoveCount()+1);
     
     assertTrue(p.validMove(1,6));
     assertFalse(p.validMove(1,5));
