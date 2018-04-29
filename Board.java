@@ -633,7 +633,7 @@ public class Board extends JPanel{
           if(lookForCheckmate(0) == true){
             //end the game
             this.isCheckMate = true;
-            JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
+            JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate, Black Wins!", "Dialog",
                                           JOptionPane.ERROR_MESSAGE);
           }else{
             
@@ -647,7 +647,7 @@ public class Board extends JPanel{
           if(lookForCheckmate(1) == true){
             //end the game
             this.isCheckMate = true;
-            JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
+            JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate, White Wins!", "Dialog",
                                           JOptionPane.ERROR_MESSAGE);
           }else{
             
