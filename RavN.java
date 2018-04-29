@@ -23,7 +23,7 @@ public class RavN extends JFrame{
            * What to do when the undo button is pressed
            */
           public void actionPerformed(ActionEvent e){
-            chessBoard.unduMoveButton();
+            chessBoard.unduMove();
           }
      });
      

@@ -182,7 +182,12 @@ public class Board extends JPanel{
       }
       pieceLastMoved.setPosition(pieceLastMovedFromX, pieceLastMovedFromY);
       
+      pieceLastMoved.setMoved(pieceLastMoved.getMoveCount() -1);
+      
+      //set the piece last moved to null
       this.pieceLastMoved = null;
+      
+      
       
       setWhoseMove((getWhoseMove() +1) % 2);
       if(this.getWhoseMove() ==0){
@@ -194,42 +199,43 @@ public class Board extends JPanel{
     }
   }
   
+  //decided to cut this method of accessing the move linkedlist in favor of a one move rewind until bugs can be worked out
   /**
    * Method that undoes the last move and switches the player turn
    */
   public void unduMoveButton(){
     
-    System.out.println(mv);
-    if(mv > 0){  // go back to the last move that was made
-      mv--;
-    }
-    if(moveList[mv].getPieceLastMoved() != null){
-      
-      int originalX = moveList[mv].getPieceLastMoved().getX();
-      int originalY= moveList[mv].getPieceLastMoved().getY();
-      
-      
-      getTiles()[originalX][originalY].setPiece(moveList[mv].getPieceTakenLastTurn());        //sets origional square piece to the piece taken last time
-      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setPiece(moveList[mv].getPieceLastMoved());                         //sets new square piece to the piece which moved
-      
-      
-      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setIcon(getTiles()[originalX][originalY].getIcon());  //sets the icon on the new square to the text of the old square
-      getTiles()[originalX][originalY].setIcon(takenPieceIcon);
-      
-      if(moveList[mv].getPieceTakenLastTurn() != null){
-        moveList[mv].getPieceTakenLastTurn().setPosition(originalX,originalY);
-      }
-      moveList[mv].getPieceLastMoved().setPosition(moveList[mv].getPieceLastMovedFromX(), moveList[mv].getPieceLastMovedFromY());
-      
-      
-      setWhoseMove((getWhoseMove() +1) % 2);
-      if(this.getWhoseMove() ==0){
-        actionMenu.setMoveText("White's Move");
-      }
-      else{
-        actionMenu.setMoveText("Black's Move");
-      }    //switch player move back
-    }
+     System.out.println(mv);
+     if(mv > 0){  // go back to the last move that was made
+     mv--;
+     }
+     if(moveList[mv].getPieceLastMoved() != null){
+     
+     int originalX = moveList[mv].getPieceLastMoved().getX();
+     int originalY= moveList[mv].getPieceLastMoved().getY();
+     
+     
+     getTiles()[originalX][originalY].setPiece(moveList[mv].getPieceTakenLastTurn());        //sets origional square piece to the piece taken last time
+     getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setPiece(moveList[mv].getPieceLastMoved());                         //sets new square piece to the piece which moved
+     
+     
+     getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setIcon(getTiles()[originalX][originalY].getIcon());  //sets the icon on the new square to the text of the old square
+     getTiles()[originalX][originalY].setIcon(takenPieceIcon);
+     
+     if(moveList[mv].getPieceTakenLastTurn() != null){
+     moveList[mv].getPieceTakenLastTurn().setPosition(originalX,originalY);
+     }
+     moveList[mv].getPieceLastMoved().setPosition(moveList[mv].getPieceLastMovedFromX(), moveList[mv].getPieceLastMovedFromY());
+     
+     
+     setWhoseMove((getWhoseMove() +1) % 2);
+     if(this.getWhoseMove() ==0){
+     actionMenu.setMoveText("White's Move");
+     }
+     else{
+     actionMenu.setMoveText("Black's Move");
+     }    //switch player move back
+     }
   }
   
   
@@ -309,7 +315,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromY = p.getY();
           moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);         //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -360,7 +366,7 @@ public class Board extends JPanel{
           moveList[mv].setPieceLastMovedFromX(origionalX);
           moveList[mv].setPieceLastMovedFromY(origionalY);
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -421,7 +427,7 @@ public class Board extends JPanel{
               this.promotePawn(p);
             }
             
-            p.setMoved();
+            p.setMoved(p.getMoveCount()+1);
             setWhoseMove((getWhoseMove() +1) % 2);
             if(this.getWhoseMove() ==0){
               actionMenu.setMoveText("White's Move");
@@ -471,7 +477,7 @@ public class Board extends JPanel{
               this.promotePawn(p);
             }
             
-            p.setMoved();
+            p.setMoved(p.getMoveCount() + 1);
             setWhoseMove((getWhoseMove() +1) % 2);
             if(this.getWhoseMove() ==0){
               actionMenu.setMoveText("White's Move");
@@ -516,7 +522,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromY = p.getY();
           moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -559,7 +565,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromY = p.getY();
           moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -604,7 +610,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromY = p.getY();
           moveList[mv].setPieceLastMovedFromY(p.getY());
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -744,10 +750,10 @@ public class Board extends JPanel{
       if(r.getPlayer() != k.getPlayer()){
         return false;
       }
-      else if(r.getMoved() == true){
+      else if(r.getMoveCount() > 0){
         return false;
       }
-      else if(k.getMoved() == true){
+      else if(k.getMoveCount() > 0){
         return false;
       }
       else if(clearPath(rookX,rookY,k) == false){
@@ -777,7 +783,7 @@ public class Board extends JPanel{
         getTiles()[2][0].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square
         getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null
         k.setPosition(2 , 0);                                 //the piece now knows its own position
-        k.setMoved();
+        k.setMoved(k.getMoveCount()+1);
       }
       else if(rookX == 7 && rookY == 0){
         move(5,0,r);
@@ -786,7 +792,7 @@ public class Board extends JPanel{
         getTiles()[6][0].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square
         getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null
         k.setPosition(6 , 0);                                 //the piece now knows its own position
-        k.setMoved();
+        k.setMoved(k.getMoveCount()+1);
       }
       else if(rookX == 0 && rookY ==7){
         move(3,7,r);
@@ -795,7 +801,7 @@ public class Board extends JPanel{
         getTiles()[2][7].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square
         getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null
         k.setPosition(2 , 7);                                 //the piece now knows its own position
-        k.setMoved();
+        k.setMoved(k.getMoveCount()+1);
       }
       else if(rookX == 7 && rookY ==7){
         move(5,7,r);
@@ -804,7 +810,7 @@ public class Board extends JPanel{
         getTiles()[6][7].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square
         getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null
         k.setPosition(6 , 7);                                 //the piece now knows its own position
-        k.setMoved();
+        k.setMoved(k.getMoveCount()+1);
       }
       
       
@@ -939,7 +945,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromX = p.getX();
           this.pieceLastMovedFromY = p.getY();
           p.setPosition(x , y);         //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -988,7 +994,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromY = origionalY;
           moveList[mv].setPieceLastMovedFromY(origionalY);
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -1037,7 +1043,7 @@ public class Board extends JPanel{
             this.pieceLastMovedFromX = p.getX();
             this.pieceLastMovedFromY = p.getY();
             p.setPosition(x , y);                                 //the piece now knows its own position
-            p.setMoved();
+            p.setMoved(p.getMoveCount()+1);
             setWhoseMove((getWhoseMove() +1) % 2);
             if(this.getWhoseMove() ==0){
               actionMenu.setMoveText("White's Move");
@@ -1075,7 +1081,7 @@ public class Board extends JPanel{
             this.pieceLastMovedFromX = p.getX();
             this.pieceLastMovedFromY = p.getY();
             p.setPosition(x , y);                                 //the piece now knows its own position
-            p.setMoved();
+            p.setMoved(p.getMoveCount()+1);
             setWhoseMove((getWhoseMove() +1) % 2);
             if(this.getWhoseMove() ==0){
               actionMenu.setMoveText("White's Move");
@@ -1115,7 +1121,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromX = p.getX();
           this.pieceLastMovedFromY = p.getY();
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -1152,7 +1158,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromX = p.getX();
           this.pieceLastMovedFromY = p.getY();
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");
@@ -1191,7 +1197,7 @@ public class Board extends JPanel{
           this.pieceLastMovedFromX = p.getX();
           this.pieceLastMovedFromY = p.getY();
           p.setPosition(x , y);                                 //the piece now knows its own position
-          p.setMoved();
+          p.setMoved(p.getMoveCount()+1);
           setWhoseMove((getWhoseMove() +1) % 2);
           if(this.getWhoseMove() ==0){
             actionMenu.setMoveText("White's Move");

@@ -16,11 +16,11 @@ public class testPiece extends TestCase {
 
    public void testMoved() {
      
-     assertFalse(p.getMoved());
+     assertEquals(p.getMoveCount(), 0);
      
-     p.setMoved();
+     p.setMoved(p.getMoveCount()+1);
      
-     assertTrue(p.getMoved());
+     assertEquals(p.getMoveCount(), 1);
      
   }
   

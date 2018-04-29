@@ -4,11 +4,16 @@ import java.lang.Math;
 
 public class piece{
   
+  private boolean hasMoved = false;
+  
   //field for player, 0 is white, 1 is black
   public int player;
+  
   //position fields for x and y locations
   public int positionX;
   public int positionY;
+  //keeps track of type of piece
+  public String type;
   
   //constructor for piece, takes position arguments and a player argument
   public piece(int x, int y, int plr){
@@ -20,7 +25,26 @@ public class piece{
     
   }
   
-  //method to return the player attached to a piece
+   //method to check if the pawn has been moved
+   public boolean getMoved(){
+    return hasMoved;
+  }
+  
+   public void setMoved(){
+     this.hasMoved = true;
+   }
+   
+  /**
+   * method to get the type of piece
+   */
+  public String getType(){
+    return type;
+  }
+  
+  
+  /**
+   * method to return the player attached to a piece
+   */
   public int getPlayer(){
     return player;
   }
@@ -41,6 +65,7 @@ public class piece{
     this.positionY = y;
   }
   
+ /** 
   //method to "take" another piece object by replacing it with this piece
   public void take(piece p){
     //save position
@@ -59,15 +84,17 @@ public class piece{
       System.out.println("Friendly Fire! Don't attack your own Pieces");
     }
   }
+  */
   
   /**
    * method to check if a given move is a valid move for the pieces
    */
   public boolean validMove(int x, int y){
-    return true;
-    //will be overwritten
+    return false;
+    //will be overrided
   }
   
+ 
  
   
 }
