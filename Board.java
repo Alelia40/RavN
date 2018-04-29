@@ -170,9 +170,6 @@ public class Board extends JPanel{
       int originalX = pieceLastMoved.getX();
       int originalY= pieceLastMoved.getY();
       
-      System.out.println(pieceLastMoved + "," + pieceTakenLastTurn);
-      System.out.println(pieceLastMovedFromX + "," + pieceLastMovedFromY);
-      
       getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to the piece taken last time
       getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved
       
@@ -202,7 +199,7 @@ public class Board extends JPanel{
    */
   public void unduMoveButton(){
     
-    
+    System.out.println(mv);
     if(mv > 0){  // go back to the last move that was made
       mv--;
     }
@@ -619,9 +616,6 @@ public class Board extends JPanel{
           mv++;
         }
       }
-      
-      System.out.println(this.pieceLastMovedFromX);
-      System.out.println(this.pieceLastMovedFromY);
       
       if(this.whiteChecked == true){
         
