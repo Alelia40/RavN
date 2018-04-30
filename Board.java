@@ -384,11 +384,27 @@ public class Board extends JPanel{
           }
         }else if(Math.abs(x - p.getX()) == 2 && p.type == "King" && p.getPlayer() == getWhoseMove()){
           
-          castle((king)p , 0 , 0);
-          castle((king)p , 0 , 7);
-          castle((king)p , 7 , 0);
-          castle((king)p , 7 , 7);
-          lookForCheck(getWhoseMove());
+       
+          if(getWhoseMove() == 0 && x == 2 && y == 7){
+            castle((king)p , 0 , 7);
+            lookForCheck(getWhoseMove());
+          }         
+          
+           if(getWhoseMove() == 1 && x == 2 && y == 0){
+            castle((king)p , 0 , 0);
+            lookForCheck(getWhoseMove());
+          }      
+          
+          if(getWhoseMove() == 0 && x == 6 && y == 7){
+            castle((king)p , 7 , 7);
+            lookForCheck(getWhoseMove());
+          }       
+          
+          if(getWhoseMove() == 1 && x == 6 && y == 0){
+            castle((king)p , 7 , 0);
+            lookForCheck(getWhoseMove());
+          }     
+          
         }
         
         

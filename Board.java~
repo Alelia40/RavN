@@ -633,7 +633,7 @@ public class Board extends JPanel{
           if(lookForCheckmate(0) == true){
             //end the game
             this.isCheckMate = true;
-            JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate", "Dialog",
+            JOptionPane.showMessageDialog(new JFrame(), "White is in Checkmate, Black Wins!", "Dialog",
                                           JOptionPane.ERROR_MESSAGE);
           }else{
             
@@ -647,7 +647,7 @@ public class Board extends JPanel{
           if(lookForCheckmate(1) == true){
             //end the game
             this.isCheckMate = true;
-            JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate", "Dialog",
+            JOptionPane.showMessageDialog(new JFrame(), "Black is in Checkmate, White Wins!", "Dialog",
                                           JOptionPane.ERROR_MESSAGE);
           }else{
             
@@ -885,6 +885,7 @@ public class Board extends JPanel{
       for(int j = 0; j < 8; j++){
         
         if(board[i][j].getPiece() != null && board[i][j].getPiece().getPlayer() != player){ //if we find a friendly piece check if it can attack the king next turn
+          //check for general pieces
           if(board[i][j].getPiece().validMove(kingX,kingY) == true && clearPath(kingX, kingY,board[i][j].getPiece()) && board[i][j].getPiece().getType() != "Knight"){
             
             if(player == 0){
@@ -895,6 +896,7 @@ public class Board extends JPanel{
             }
             
           }
+          //check for the case of a knight
           else if(board[i][j].getPiece().validMove(kingX,kingY) == true && board[i][j].getPiece().getType() == "Knight") {
             
             if(player == 0){
@@ -902,6 +904,18 @@ public class Board extends JPanel{
             }
             else{
               this.blackChecked = true;
+            }
+            
+          }
+          
+          //if the checking piece is a pawn in front of the king it is not a valid check
+          if(board[i][j].getPiece().validMove(kingX,kingY) == true && board[i][j].getPiece().getType() == "Pawn" && (kingX - i) == 0 && (kingY - j)<=2){
+            
+            if(player == 0){
+              this.whiteChecked = false;
+            }
+            else{
+              this.blackChecked = false;
             }
             
           }
