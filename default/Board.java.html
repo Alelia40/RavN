@@ -1,0 +1,1836 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Board.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Board.java</span></div><h1>Board.java</h1><pre class="source lang-java linenums">import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.lang.Math;
+
+public class Board extends JPanel{
+  
+<span class="fc" id="L8">  private Move[] moveList = new Move[300];</span>
+  
+<span class="fc" id="L10">  private int mv = 0;</span>
+  
+<span class="fc" id="L12">  private boolean isCheckMate = false;</span>
+  
+  private piece pieceLastMoved;
+  
+  private int pieceLastMovedFromX;
+  
+  private int pieceLastMovedFromY;
+  
+  private piece pieceTakenLastTurn;
+  
+  private Icon takenPieceIcon;
+  
+  private Icon movedPieceIcon;
+  
+  private tile[][] tiles; //jbuttons for the UI
+  
+  private tile init;  //initial button pressed with piece
+  
+<span class="fc" id="L30">  private int whoseMove = 0;      //whites turn to start</span>
+  
+<span class="fc" id="L32">  private boolean whiteChecked = false;</span>
+<span class="fc" id="L33">  private boolean blackChecked = false;</span>
+  
+  
+<span class="fc" id="L36">  public Board(){</span>
+    try {                                               //account for apple's graphics
+<span class="fc" id="L38">      UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());</span>
+    }
+    
+<span class="nc" id="L41">    catch (Exception e) {</span>
+<span class="fc" id="L42">    }</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">    for(int i = 0; i &lt; 300; i++){</span>
+<span class="fc" id="L44">      moveList[i] = new Move();</span>
+    }
+    //Container c = this.getContentPane();                //formats the JPanel to have the grid of game tiles over the information of who's turn it is
+<span class="fc" id="L47">    this.setSize(800,800);</span>
+<span class="fc" id="L48">    this.tiles = new tile[8][8];     //creates as many tiles as there are spaces on the board </span>
+<span class="fc" id="L49">    this.setLayout(new GridLayout(8,8)); //create a gridlayout on the container     </span>
+    
+<span class="fc" id="L51">    int count = 1;</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">    for (int index1 = 0 ; index1 &lt; 8 ; index1++){</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">      for (int index2 = 0 ; index2 &lt; 8 ; index2++){</span>
+<span class="fc" id="L54">        tiles[index2][index1] = new tile(index2,index1);</span>
+<span class="fc" id="L55">        tiles[index2][index1].addActionListener(new ActionListener() {</span>
+          /**
+           * What to do when a button is pressed
+           */
+          public void actionPerformed(ActionEvent e){
+<span class="nc" id="L60">            tile t = (tile)e.getSource();        //this is the tile that was pressed</span>
+<span class="nc" id="L61">            boolean isMoved = false;             //Serves as a flag so you don't move a piece and then reassign it as init</span>
+<span class="nc bnc" id="L62" title="All 4 branches missed.">            if(getInit() != null &amp;&amp; t.getPiece() == null){ //Case: Move to open space</span>
+<span class="nc" id="L63">              move(t.grabX(),t.grabY(),getInit().getPiece()); //moves a piece</span>
+<span class="nc" id="L64">              isMoved = true;</span>
+<span class="nc" id="L65">              setInit(null);                                //forgets the piece that was moved so another can be chosen</span>
+            } 
+<span class="nc bnc" id="L67" title="All 4 branches missed.">            else if(getInit() != null &amp;&amp; t.getPiece().getPlayer() != getInit().getPiece().getPlayer()){   //Case: Move onto enemy piece</span>
+<span class="nc" id="L68">              move(t.grabX(),t.grabY(),getInit().getPiece());</span>
+<span class="nc" id="L69">              isMoved = true;</span>
+<span class="nc" id="L70">              setInit(null);</span>
+            }
+<span class="nc bnc" id="L72" title="All 6 branches missed.">            if(t.getPiece() != null &amp;&amp; getInit() == null &amp;&amp; isMoved == false){  //Case: Select Piece to move</span>
+<span class="nc" id="L73">              setInit(t);                                //sets the piece to move</span>
+            }
+<span class="nc" id="L75">          }</span>
+        });
+        
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if((index1+index2)%2 == 1)</span>
+<span class="fc" id="L79">          tiles[index2][index1].setBackground(new Color(90,77,14));</span>
+        else
+<span class="fc" id="L81">          tiles[index2][index1].setBackground(new Color(176,160,77));</span>
+<span class="fc" id="L82">        this.add(tiles[index2][index1]);</span>
+      }
+    }
+    
+    
+<span class="fc bfc" id="L87" title="All 2 branches covered.">    for(int i = 0; i &lt; 8; i++){                   //make black pawns</span>
+<span class="fc" id="L88">      tiles[i][1].setPiece(new pawn(i,1,1));</span>
+<span class="fc" id="L89">      tiles[i][1].setIcon(new ImageIcon(&quot;Chess Icons/blackPawn.png&quot;));</span>
+    }      
+    
+<span class="fc bfc" id="L92" title="All 2 branches covered.">    for(int i = 0; i &lt; 8; i++){                     //make white pawns</span>
+<span class="fc" id="L93">      tiles[i][6].setPiece(new pawn(i,6,0));</span>
+<span class="fc" id="L94">      tiles[i][6].setIcon(new ImageIcon(&quot;Chess Icons/whitePawn.png&quot;));</span>
+    }     
+    
+<span class="fc" id="L97">    tiles[0][0].setPiece(new rook(0,0,1));         //make rooks</span>
+<span class="fc" id="L98">    tiles[7][0].setPiece(new rook(7,0,1));</span>
+<span class="fc" id="L99">    tiles[0][7].setPiece(new rook(0,7,0));</span>
+<span class="fc" id="L100">    tiles[7][7].setPiece(new rook(7,7,0));</span>
+    
+<span class="fc" id="L102">    tiles[0][0].setIcon(new ImageIcon(&quot;Chess Icons/blackRook.png&quot;));</span>
+<span class="fc" id="L103">    tiles[7][0].setIcon(new ImageIcon(&quot;Chess Icons/blackRook.png&quot;));</span>
+<span class="fc" id="L104">    tiles[0][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteRook.png&quot;));</span>
+<span class="fc" id="L105">    tiles[7][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteRook.png&quot;));</span>
+    
+    
+<span class="fc" id="L108">    tiles[1][0].setPiece(new knight(1,0,1));             //make knights</span>
+<span class="fc" id="L109">    tiles[6][0].setPiece(new knight(6,0,1));</span>
+<span class="fc" id="L110">    tiles[1][7].setPiece(new knight(1,7,0));</span>
+<span class="fc" id="L111">    tiles[6][7].setPiece(new knight(6,7,0));</span>
+    
+<span class="fc" id="L113">    tiles[1][0].setIcon(new ImageIcon(&quot;Chess Icons/blackKnight.png&quot;));</span>
+<span class="fc" id="L114">    tiles[6][0].setIcon(new ImageIcon(&quot;Chess Icons/blackKnight.png&quot;));</span>
+<span class="fc" id="L115">    tiles[1][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteKnight.png&quot;));</span>
+<span class="fc" id="L116">    tiles[6][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteKnight.png&quot;));</span>
+    
+    
+<span class="fc" id="L119">    tiles[2][0].setPiece(new bishop(2,0,1));            // make bishops</span>
+<span class="fc" id="L120">    tiles[5][0].setPiece(new bishop(5,0,1));</span>
+<span class="fc" id="L121">    tiles[2][7].setPiece(new bishop(2,7,0));</span>
+<span class="fc" id="L122">    tiles[5][7].setPiece(new bishop(5,7,0));</span>
+    
+<span class="fc" id="L124">    tiles[2][0].setIcon(new ImageIcon(&quot;Chess Icons/blackBishop.png&quot;));</span>
+<span class="fc" id="L125">    tiles[5][0].setIcon(new ImageIcon(&quot;Chess Icons/blackBishop.png&quot;));</span>
+<span class="fc" id="L126">    tiles[2][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteBishop.png&quot;));</span>
+<span class="fc" id="L127">    tiles[5][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteBishop.png&quot;));</span>
+    
+    
+    
+<span class="fc" id="L131">    tiles[4][0].setPiece(new king(4,0,1));             //make kings</span>
+<span class="fc" id="L132">    tiles[4][7].setPiece(new king(4,7,0));</span>
+    
+<span class="fc" id="L134">    tiles[4][0].setIcon(new ImageIcon(&quot;Chess Icons/blackKing.png&quot;));</span>
+<span class="fc" id="L135">    tiles[4][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteKing.png&quot;));</span>
+    
+    
+    
+<span class="fc" id="L139">    tiles[3][0].setPiece(new queen(3,0,1));            //make queens</span>
+<span class="fc" id="L140">    tiles[3][7].setPiece(new queen(3,7,0));</span>
+    
+<span class="fc" id="L142">    tiles[3][0].setIcon(new ImageIcon(&quot;Chess Icons/blackQueen.png&quot;));</span>
+<span class="fc" id="L143">    tiles[3][7].setIcon(new ImageIcon(&quot;Chess Icons/whiteQueen.png&quot;));</span>
+    
+<span class="fc" id="L145">    this.setVisible(true);</span>
+    
+<span class="fc" id="L147">  }</span>
+  
+  
+  /**
+   * Method that returns the tiles on the board
+   */
+  public tile[][] getTiles(){
+<span class="fc" id="L154">    return tiles;</span>
+  }
+  
+  public tile getInit(){
+<span class="nc" id="L158">    return init;</span>
+  }
+  
+  public void setInit(tile t){
+<span class="nc" id="L162">    init = t;</span>
+<span class="nc" id="L163">  }</span>
+  
+  
+  /**
+   * Method that undoes the last move
+   */
+  public void unduMove(){
+<span class="nc bnc" id="L170" title="All 4 branches missed.">    if(pieceLastMoved != null &amp;&amp; this.isCheckMate == false){</span>
+      
+<span class="nc" id="L172">      int originalX = pieceLastMoved.getX();</span>
+<span class="nc" id="L173">      int originalY= pieceLastMoved.getY();</span>
+      
+<span class="nc" id="L175">      getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].setPiece(pieceTakenLastTurn);        //sets origional square piece to the piece taken last time</span>
+<span class="nc" id="L176">      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setPiece(pieceLastMoved);                         //sets new square piece to the piece which moved</span>
+      
+<span class="nc" id="L178">      getTiles()[pieceLastMovedFromX][pieceLastMovedFromY].setIcon(getTiles()[pieceLastMoved.getX()][pieceLastMoved.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L179">      getTiles()[originalX][originalY].setIcon(takenPieceIcon);</span>
+      
+      //updates the location info for the pieces
+<span class="nc bnc" id="L182" title="All 2 branches missed.">      if(pieceTakenLastTurn != null){</span>
+<span class="nc" id="L183">        pieceTakenLastTurn.setPosition(originalX,originalY);</span>
+      }
+<span class="nc" id="L185">      pieceLastMoved.setPosition(pieceLastMovedFromX, pieceLastMovedFromY);</span>
+      
+<span class="nc" id="L187">      pieceLastMoved.setMoved(pieceLastMoved.getMoveCount() -1);</span>
+      
+      //set the piece last moved to null
+<span class="nc" id="L190">      this.pieceLastMoved = null;</span>
+      
+      
+      
+<span class="nc" id="L194">      setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">      if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L196">        actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+      }
+      else{
+<span class="nc" id="L199">        actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+      }    //switch player move back
+    }
+<span class="nc" id="L202">  }</span>
+  
+  //decided to cut this method of accessing the move linkedlist in favor of a one move rewind until bugs can be worked out
+  /**
+   * Method that undoes the last move and switches the player turn
+   */
+  public void unduMoveButton(){
+    
+<span class="nc" id="L210">    System.out.println(mv);</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">    if(mv &gt; 0){  // go back to the last move that was made</span>
+<span class="nc" id="L212">      mv--;</span>
+    }
+<span class="nc bnc" id="L214" title="All 2 branches missed.">    if(moveList[mv].getPieceLastMoved() != null){</span>
+      
+<span class="nc" id="L216">      int originalX = moveList[mv].getPieceLastMoved().getX();</span>
+<span class="nc" id="L217">      int originalY= moveList[mv].getPieceLastMoved().getY();</span>
+      
+      
+<span class="nc" id="L220">      getTiles()[originalX][originalY].setPiece(moveList[mv].getPieceTakenLastTurn());        //sets origional square piece to the piece taken last time</span>
+<span class="nc" id="L221">      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setPiece(moveList[mv].getPieceLastMoved());                         //sets new square piece to the piece which moved</span>
+      
+      
+<span class="nc" id="L224">      getTiles()[moveList[mv].getPieceLastMovedFromX()][moveList[mv].getPieceLastMovedFromY()].setIcon(getTiles()[originalX][originalY].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L225">      getTiles()[originalX][originalY].setIcon(takenPieceIcon);</span>
+      
+<span class="nc bnc" id="L227" title="All 2 branches missed.">      if(moveList[mv].getPieceTakenLastTurn() != null){</span>
+<span class="nc" id="L228">        moveList[mv].getPieceTakenLastTurn().setPosition(originalX,originalY);</span>
+      }
+<span class="nc" id="L230">      moveList[mv].getPieceLastMoved().setPosition(moveList[mv].getPieceLastMovedFromX(), moveList[mv].getPieceLastMovedFromY());</span>
+      
+      
+<span class="nc" id="L233">      setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">      if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L235">        actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+      }
+      else{
+<span class="nc" id="L238">        actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+      }    //switch player move back
+    }
+<span class="nc" id="L241">  }</span>
+  
+  
+  /**
+   * Method that undoes the last move and switches the player turn
+   */
+  public void forwardButton(){
+    
+    
+    
+<span class="nc" id="L251">  }</span>
+  
+  
+  /**
+   * helper method to promote the pawn at the end
+   */
+  public void promotePawn(piece p){
+<span class="nc bnc" id="L258" title="All 2 branches missed.">    if(p.getType() == &quot;Pawn&quot;){</span>
+<span class="nc" id="L259">      int pieceX = p.getX();</span>
+<span class="nc" id="L260">      int pieceY = p.getY();</span>
+      
+<span class="nc" id="L262">      int plr = p.getPlayer();</span>
+      
+<span class="nc" id="L264">      getTiles()[pieceX][pieceY].setPiece(new queen(pieceX,pieceY,plr));</span>
+      
+<span class="nc bnc" id="L266" title="All 2 branches missed.">      if(plr == 1){</span>
+<span class="nc" id="L267">        getTiles()[pieceX][pieceY].setIcon(new ImageIcon(&quot;Chess Icons/blackQueen.png&quot;));</span>
+      }
+<span class="nc bnc" id="L269" title="All 2 branches missed.">      else if(plr == 0){</span>
+<span class="nc" id="L270">        getTiles()[pieceX][pieceY].setIcon(new ImageIcon(&quot;Chess Icons/whiteQueen.png&quot;));</span>
+      }
+      
+    }
+<span class="nc" id="L274">  }</span>
+  
+  /**
+   * Moves a piece if the move is valid (for checkmate only)
+   */
+  public void move( int x, int y, piece p){
+    
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">    if(this.isCheckMate ==false){</span>
+      
+      //first store the piece that is about to be taken
+<span class="fc" id="L284">      pieceTakenLastTurn = null;</span>
+<span class="pc bpc" id="L285" title="3 of 4 branches missed.">      if(tiles[x][y].getPiece() != null &amp;&amp; tiles[x][y].getPiece().getPlayer() != getWhoseMove()){</span>
+<span class="nc" id="L286">        pieceTakenLastTurn = tiles[x][y].getPiece(); </span>
+<span class="nc" id="L287">        moveList[mv].setPieceTakenLastTurn(tiles[x][y].getPiece());</span>
+      }
+      
+<span class="pc bpc" id="L290" title="5 of 6 branches missed.">      if(tiles[x][y].getPiece() == null || (tiles[x][y].getPiece() != null &amp;&amp; tiles[x][y].getPiece().getPlayer() != getWhoseMove())){</span>
+        
+<span class="pc bpc" id="L292" title="4 of 6 branches missed.">        if(p.validMove(x , y) &amp;&amp; p.type == &quot;Knight&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L293">          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L294">          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+          
+<span class="nc" id="L296">          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+<span class="nc" id="L297">          moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());</span>
+          
+<span class="nc" id="L299">          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L300">          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());</span>
+<span class="nc" id="L301">          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+          
+          
+<span class="nc" id="L304">          lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L305" title="All 8 branches missed.">          if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){      //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L306">            getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L307">            getTiles()[x][y].setPiece(null);</span>
+            
+<span class="nc" id="L309">            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L310">            getTiles()[x][y].setIcon(takenPieceIcon);</span>
+            
+            
+<span class="nc" id="L313">            this.blackChecked = false;</span>
+<span class="nc" id="L314">            this.whiteChecked = false;</span>
+          }else{
+<span class="nc" id="L316">            this.pieceLastMoved = p;</span>
+<span class="nc" id="L317">            moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L318">            this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L319">            moveList[mv].setPieceLastMovedFromX(p.getX());</span>
+<span class="nc" id="L320">            this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L321">            moveList[mv].setPieceLastMovedFromY(p.getY());</span>
+<span class="nc" id="L322">            p.setPosition(x , y);         //the piece now knows its own position</span>
+<span class="nc" id="L323">            p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L324">            setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">            if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L326">              actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+            }
+            else{
+<span class="nc" id="L329">              actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+            }
+<span class="nc" id="L331">            lookForCheck(getWhoseMove());</span>
+<span class="nc" id="L332">            mv++;</span>
+          }
+        }
+        
+        
+<span class="pc bpc" id="L337" title="4 of 6 branches missed.">        if(p.validMove(x , y) &amp;&amp; p.type == &quot;King&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L338">          piece takenPiece = getTiles()[x][y].getPiece(); //save piece to be taken</span>
+<span class="nc" id="L339">          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L340">          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+          
+<span class="nc" id="L342">          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+<span class="nc" id="L343">          moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());</span>
+          
+<span class="nc" id="L345">          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L346">          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());</span>
+<span class="nc" id="L347">          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+          
+          
+<span class="nc" id="L350">          int origionalX = p.getX();                                          //remember origional coordinates for piece</span>
+<span class="nc" id="L351">          int origionalY = p.getY();</span>
+<span class="nc" id="L352">          this.pieceLastMovedFromX = origionalX;</span>
+<span class="nc" id="L353">          this.pieceLastMovedFromY = origionalY;</span>
+<span class="nc" id="L354">          p.setPosition(x , y);                                               //bc of implementation of lookForCheck we have to update the kings postion</span>
+          
+<span class="nc" id="L356">          lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L357" title="All 8 branches missed.">          if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){ //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L358">            getTiles()[origionalX][origionalY].setPiece(p);        </span>
+<span class="nc" id="L359">            getTiles()[x][y].setPiece(takenPiece);</span>
+            
+<span class="nc" id="L361">            getTiles()[origionalX][origionalY].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L362">            getTiles()[x][y].setIcon(takenPieceIcon);</span>
+            
+            
+<span class="nc" id="L365">            this.blackChecked = false;</span>
+<span class="nc" id="L366">            this.whiteChecked = false;</span>
+<span class="nc" id="L367">            p.setPosition(origionalX,origionalY);</span>
+          }else{
+<span class="nc" id="L369">            this.pieceLastMoved = p;</span>
+<span class="nc" id="L370">            moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L371">            moveList[mv].setPieceLastMovedFromX(origionalX);</span>
+<span class="nc" id="L372">            moveList[mv].setPieceLastMovedFromY(origionalY);</span>
+<span class="nc" id="L373">            p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L374">            p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L375">            setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">            if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L377">              actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+            }
+            else{
+<span class="nc" id="L380">              actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+            }
+<span class="nc" id="L382">            lookForCheck(getWhoseMove());</span>
+<span class="nc" id="L383">            mv++;</span>
+          }
+<span class="pc bpc" id="L385" title="5 of 6 branches missed.">        }else if(Math.abs(x - p.getX()) == 2 &amp;&amp; p.type == &quot;King&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){</span>
+          
+       
+<span class="nc bnc" id="L388" title="All 6 branches missed.">          if(getWhoseMove() == 0 &amp;&amp; x == 2 &amp;&amp; y == 7){</span>
+<span class="nc" id="L389">            castle((king)p , 0 , 7);</span>
+<span class="nc" id="L390">            lookForCheck(getWhoseMove());</span>
+          }         
+          
+<span class="nc bnc" id="L393" title="All 6 branches missed.">           if(getWhoseMove() == 1 &amp;&amp; x == 2 &amp;&amp; y == 0){</span>
+<span class="nc" id="L394">            castle((king)p , 0 , 0);</span>
+<span class="nc" id="L395">            lookForCheck(getWhoseMove());</span>
+          }      
+          
+<span class="nc bnc" id="L398" title="All 6 branches missed.">          if(getWhoseMove() == 0 &amp;&amp; x == 6 &amp;&amp; y == 7){</span>
+<span class="nc" id="L399">            castle((king)p , 7 , 7);</span>
+<span class="nc" id="L400">            lookForCheck(getWhoseMove());</span>
+          }       
+          
+<span class="nc bnc" id="L403" title="All 6 branches missed.">          if(getWhoseMove() == 1 &amp;&amp; x == 6 &amp;&amp; y == 0){</span>
+<span class="nc" id="L404">            castle((king)p , 7 , 0);</span>
+<span class="nc" id="L405">            lookForCheck(getWhoseMove());</span>
+          }     
+          
+        }
+        
+        
+        
+        
+<span class="pc bpc" id="L413" title="1 of 2 branches missed.">        if(x == p.getX()){</span>
+<span class="pc bpc" id="L414" title="5 of 10 branches missed.">          if(p.validMove(x , y) &amp;&amp; p.type == &quot;Pawn&quot; &amp;&amp; !isOccupied(x , y) &amp;&amp; clearPath( x , y , p ) &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L415">            getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L416">            getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+            
+<span class="nc" id="L418">            takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+<span class="nc" id="L419">            moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());</span>
+            
+<span class="nc" id="L421">            getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L422">            moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());</span>
+            
+<span class="nc" id="L424">            getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+            
+            
+<span class="nc" id="L427">            lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L428" title="All 8 branches missed.">            if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L429">              getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L430">              getTiles()[x][y].setPiece(null);</span>
+              
+<span class="nc" id="L432">              getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L433">              getTiles()[x][y].setIcon(takenPieceIcon);</span>
+              
+              
+<span class="nc" id="L436">              this.blackChecked = false;</span>
+<span class="nc" id="L437">              this.whiteChecked = false;</span>
+            }else{
+<span class="nc" id="L439">              this.pieceLastMoved = p;</span>
+<span class="nc" id="L440">              moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L441">              this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L442">              moveList[mv].setPieceLastMovedFromX(p.getX());</span>
+<span class="nc" id="L443">              this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L444">              moveList[mv].setPieceLastMovedFromY(p.getY());</span>
+<span class="nc" id="L445">              p.setPosition(x , y);                                 //the piece now knows its own position</span>
+              
+<span class="nc bnc" id="L447" title="All 4 branches missed.">              if(p.getY()==7 || p.getY() ==0){</span>
+<span class="nc" id="L448">                this.promotePawn(p);</span>
+              }
+              
+<span class="nc" id="L451">              p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L452">              setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L453" title="All 2 branches missed.">              if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L454">                actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+              }
+              else{
+<span class="nc" id="L457">                actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+              }
+<span class="nc" id="L459">              lookForCheck(getWhoseMove());</span>
+<span class="nc" id="L460">              mv++;</span>
+            }
+          }
+        }
+<span class="nc bnc" id="L464" title="All 4 branches missed.">        else if(Math.abs(x - p.getX()) == 1 &amp;&amp; isOccupied(x , y)){</span>
+<span class="nc bnc" id="L465" title="All 6 branches missed.">          if(p.validMove(x , y) &amp;&amp; p.type == &quot;Pawn&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L466">            getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L467">            getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+            
+            
+<span class="nc" id="L470">            takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+<span class="nc" id="L471">            moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());</span>
+            
+<span class="nc" id="L473">            getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L474">            moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());</span>
+<span class="nc" id="L475">            getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+            
+            
+<span class="nc" id="L478">            lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L479" title="All 8 branches missed.">            if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L480">              getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L481">              getTiles()[x][y].setPiece(null);</span>
+              
+<span class="nc" id="L483">              getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L484">              getTiles()[x][y].setIcon(takenPieceIcon);</span>
+              
+<span class="nc" id="L486">              this.blackChecked = false;</span>
+<span class="nc" id="L487">              this.whiteChecked = false;</span>
+            }else{
+<span class="nc" id="L489">              this.pieceLastMoved = p;</span>
+<span class="nc" id="L490">              moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L491">              this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L492">              moveList[mv].setPieceLastMovedFromX(p.getX());</span>
+<span class="nc" id="L493">              this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L494">              moveList[mv].setPieceLastMovedFromY(p.getY());</span>
+<span class="nc" id="L495">              p.setPosition(x , y);                                 //the piece now knows its own position</span>
+              
+<span class="nc bnc" id="L497" title="All 4 branches missed.">              if(p.getY()==7 || p.getY() ==0){</span>
+<span class="nc" id="L498">                this.promotePawn(p);</span>
+              }
+              
+<span class="nc" id="L501">              p.setMoved(p.getMoveCount() + 1);</span>
+<span class="nc" id="L502">              setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L503" title="All 2 branches missed.">              if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L504">                actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+              }
+              else{
+<span class="nc" id="L507">                actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+              }
+<span class="nc" id="L509">              lookForCheck(getWhoseMove());</span>
+<span class="nc" id="L510">              mv++;</span>
+            }
+          }
+        }
+        
+        
+<span class="pc bpc" id="L516" title="6 of 8 branches missed.">        if(p.validMove(x , y) &amp;&amp; p.type == &quot;Rook&quot; &amp;&amp; clearPath( x , y , p ) &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L517">          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L518">          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+          
+<span class="nc" id="L520">          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+          
+<span class="nc" id="L522">          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L523">          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());</span>
+<span class="nc" id="L524">          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+          
+          
+<span class="nc" id="L527">          lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L528" title="All 8 branches missed.">          if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L529">            getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L530">            getTiles()[x][y].setPiece(null);</span>
+            
+<span class="nc" id="L532">            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L533">            getTiles()[x][y].setIcon(takenPieceIcon);</span>
+            
+            
+<span class="nc" id="L536">            this.blackChecked = false;</span>
+<span class="nc" id="L537">            this.whiteChecked = false;</span>
+          }else{
+<span class="nc" id="L539">            this.pieceLastMoved = p;</span>
+<span class="nc" id="L540">            moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L541">            this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L542">            moveList[mv].setPieceLastMovedFromX(p.getX());</span>
+<span class="nc" id="L543">            this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L544">            moveList[mv].setPieceLastMovedFromY(p.getY());</span>
+<span class="nc" id="L545">            p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L546">            p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L547">            setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">            if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L549">              actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+            }
+            else{
+<span class="nc" id="L552">              actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+            }
+<span class="nc" id="L554">            lookForCheck(getWhoseMove());</span>
+<span class="nc" id="L555">            mv++;</span>
+          }
+        }
+        
+        
+<span class="pc bpc" id="L560" title="6 of 8 branches missed.">        if(p.validMove(x , y) &amp;&amp; p.type == &quot;Bishop&quot; &amp;&amp; clearPath( x , y , p ) &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L561">          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L562">          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+          
+<span class="nc" id="L564">          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+<span class="nc" id="L565">          moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());</span>
+          
+<span class="nc" id="L567">          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L568">          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());</span>
+<span class="nc" id="L569">          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+          
+<span class="nc" id="L571">          lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L572" title="All 8 branches missed.">          if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L573">            getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L574">            getTiles()[x][y].setPiece(null);</span>
+            
+<span class="nc" id="L576">            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L577">            getTiles()[x][y].setIcon(takenPieceIcon);</span>
+            
+<span class="nc" id="L579">            this.blackChecked = false;</span>
+<span class="nc" id="L580">            this.whiteChecked = false;</span>
+          }else{
+<span class="nc" id="L582">            this.pieceLastMoved = p;</span>
+<span class="nc" id="L583">            moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L584">            this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L585">            moveList[mv].setPieceLastMovedFromX(p.getX());</span>
+<span class="nc" id="L586">            this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L587">            moveList[mv].setPieceLastMovedFromY(p.getY());</span>
+<span class="nc" id="L588">            p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L589">            p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L590">            setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L591" title="All 2 branches missed.">            if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L592">              actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+            }
+            else{
+<span class="nc" id="L595">              actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+            }
+<span class="nc" id="L597">            lookForCheck(getWhoseMove());</span>
+<span class="nc" id="L598">            mv++;</span>
+          }
+        }
+        
+        
+<span class="pc bpc" id="L603" title="6 of 8 branches missed.">        if(p.validMove(x , y) &amp;&amp; p.type == &quot;Queen&quot; &amp;&amp; clearPath( x , y , p )&amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L604">          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L605">          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+          
+<span class="nc" id="L607">          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+<span class="nc" id="L608">          moveList[mv].setTakenPieceIcon(getTiles()[x][y].getIcon());</span>
+          
+<span class="nc" id="L610">          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L611">          moveList[mv].setMovedPieceIcon(getTiles()[p.getX()][p.getY()].getIcon());</span>
+<span class="nc" id="L612">          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+          
+          
+<span class="nc" id="L615">          lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L616" title="All 8 branches missed.">          if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){    //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L617">            getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L618">            getTiles()[x][y].setPiece(null);</span>
+            
+<span class="nc" id="L620">            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L621">            getTiles()[x][y].setIcon(takenPieceIcon);</span>
+            
+            
+<span class="nc" id="L624">            this.blackChecked = false;</span>
+<span class="nc" id="L625">            this.whiteChecked = false;</span>
+          }else{
+<span class="nc" id="L627">            this.pieceLastMoved = p;</span>
+<span class="nc" id="L628">            moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L629">            this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L630">            moveList[mv].setPieceLastMovedFromX(p.getX());</span>
+<span class="nc" id="L631">            this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L632">            moveList[mv].setPieceLastMovedFromY(p.getY());</span>
+<span class="nc" id="L633">            p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L634">            p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L635">            setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L636" title="All 2 branches missed.">            if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L637">              actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+            }
+            else{
+<span class="nc" id="L640">              actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+            }
+<span class="nc" id="L642">            lookForCheck(getWhoseMove());</span>
+<span class="nc" id="L643">            mv++;</span>
+          }
+        }
+        
+<span class="pc bpc" id="L647" title="1 of 2 branches missed.">        if(this.whiteChecked == true){</span>
+          
+<span class="nc bnc" id="L649" title="All 2 branches missed.">          if(lookForCheckmate(0) == true){</span>
+            //end the game
+<span class="nc" id="L651">            this.isCheckMate = true;</span>
+<span class="nc" id="L652">            JOptionPane.showMessageDialog(new JFrame(), &quot;White is in Checkmate, Black Wins!&quot;, &quot;Dialog&quot;,</span>
+                                          JOptionPane.ERROR_MESSAGE);
+          }else{
+            
+<span class="nc" id="L656">            JOptionPane.showMessageDialog(new JFrame(), &quot;White is in Check&quot;, &quot;Dialog&quot;,</span>
+                                          JOptionPane.ERROR_MESSAGE);
+          }
+        }
+        
+<span class="pc bpc" id="L661" title="1 of 2 branches missed.">        if(this.blackChecked == true){</span>
+          
+<span class="nc bnc" id="L663" title="All 2 branches missed.">          if(lookForCheckmate(1) == true){</span>
+            //end the game
+<span class="nc" id="L665">            this.isCheckMate = true;</span>
+<span class="nc" id="L666">            JOptionPane.showMessageDialog(new JFrame(), &quot;Black is in Checkmate, White Wins!&quot;, &quot;Dialog&quot;,</span>
+                                          JOptionPane.ERROR_MESSAGE);
+          }else{
+            
+<span class="nc" id="L670">            JOptionPane.showMessageDialog(new JFrame(), &quot;Black is in Check&quot;, &quot;Dialog&quot;,</span>
+                                          JOptionPane.ERROR_MESSAGE);
+          }
+        }
+        
+      }
+    }
+<span class="fc" id="L677">  }</span>
+  
+  
+  /**
+   * Method that checks if there is a clear path between the start location and end location
+   */
+  public boolean clearPath(int x, int y, piece p){
+<span class="fc" id="L684">    int initX = p.getX();</span>
+<span class="fc" id="L685">    int initY = p.getY();</span>
+<span class="fc bfc" id="L686" title="All 2 branches covered.">    if(Math.abs(y - initY) == Math.abs(x - initX) ){</span>
+<span class="pc bpc" id="L687" title="1 of 4 branches missed.">      if(x &gt; initX &amp;&amp; y &gt; initY){</span>
+<span class="fc bfc" id="L688" title="All 2 branches covered.">        for(int i = 1; i &lt; x - initX; i++){</span>
+<span class="pc bpc" id="L689" title="1 of 2 branches missed.">          if(isOccupied(initX + i , initY + i)){</span>
+<span class="nc" id="L690">            return false;</span>
+          }
+        }
+      }
+<span class="pc bpc" id="L694" title="1 of 4 branches missed.">      if(x &gt; initX &amp;&amp; y &lt; initY){</span>
+<span class="nc bnc" id="L695" title="All 2 branches missed.">        for(int i = 1; i &lt; x - initX; i++){</span>
+<span class="nc bnc" id="L696" title="All 2 branches missed.">          if(isOccupied(initX + i , initY - i)){</span>
+<span class="nc" id="L697">            return false;</span>
+          }
+        }
+      }
+<span class="pc bpc" id="L701" title="1 of 4 branches missed.">      if(x &lt; initX &amp;&amp; y &gt; initY){</span>
+<span class="fc bfc" id="L702" title="All 2 branches covered.">        for(int i = 1; i &lt; y - initY; i++){</span>
+<span class="pc bpc" id="L703" title="1 of 2 branches missed.">          if(isOccupied(initX - i , initY + i)){</span>
+<span class="nc" id="L704">            return false;</span>
+          }
+        }
+      }
+<span class="pc bpc" id="L708" title="1 of 4 branches missed.">      if(x &lt; initX &amp;&amp; y &lt; initY){</span>
+<span class="nc bnc" id="L709" title="All 2 branches missed.">        for(int i = 1; i &lt; initX - x; i++){</span>
+<span class="nc bnc" id="L710" title="All 2 branches missed.">          if(isOccupied(initX - i , initY - i)){</span>
+<span class="nc" id="L711">            return false;</span>
+          }
+        }
+      }
+      
+    }
+<span class="fc bfc" id="L717" title="All 2 branches covered.">    else if(x - initX != 0){</span>
+<span class="fc bfc" id="L718" title="All 2 branches covered.">      if(x &gt; initX){</span>
+<span class="pc bpc" id="L719" title="1 of 2 branches missed.">        for(int i = initX + 1 ; i &lt; x ; i++){</span>
+<span class="pc bpc" id="L720" title="1 of 2 branches missed.">          if(isOccupied(i , y)){</span>
+<span class="fc" id="L721">            return false;</span>
+          }
+        }
+      }
+<span class="pc bpc" id="L725" title="1 of 2 branches missed.">      if(x &lt; initX){</span>
+<span class="pc bpc" id="L726" title="1 of 2 branches missed.">        for(int i = x + 1 ; i &lt; initX ; i++){</span>
+<span class="pc bpc" id="L727" title="1 of 2 branches missed.">          if(isOccupied(i , y)){</span>
+<span class="fc" id="L728">            return false;</span>
+          }
+        }
+      }
+    }
+<span class="pc bpc" id="L733" title="1 of 2 branches missed.">    else if(y - initY != 0){</span>
+<span class="pc bpc" id="L734" title="1 of 2 branches missed.">      if(y &gt; initY){</span>
+<span class="fc bfc" id="L735" title="All 2 branches covered.">        for(int i = initY + 1 ; i &lt; y ; i++){</span>
+<span class="pc bpc" id="L736" title="1 of 2 branches missed.">          if(isOccupied(x , i)){</span>
+<span class="nc" id="L737">            return false;</span>
+          }
+        }
+      }
+<span class="pc bpc" id="L741" title="1 of 2 branches missed.">      if(y &lt; initY){</span>
+<span class="nc bnc" id="L742" title="All 2 branches missed.">        for(int i = y + 1 ; i &lt; initY ; i++){</span>
+<span class="nc bnc" id="L743" title="All 2 branches missed.">          if(isOccupied(x , i)){</span>
+<span class="nc" id="L744">            return false;</span>
+          }
+        }
+      }
+    }
+<span class="fc" id="L749">    return true;</span>
+  }
+  
+  /**
+   * Method that checks if a given tile is occupied by a piece
+   */
+  public boolean isOccupied(int x, int y){
+<span class="fc bfc" id="L756" title="All 2 branches covered.">    if(this.getTiles()[x][y].getPiece() == null){</span>
+<span class="fc" id="L757">      return false;</span>
+    }
+    else{
+<span class="fc" id="L760">      return true;</span>
+    }
+  }
+  
+  /**
+   * Method that checks for a legal catle move
+   */
+  public boolean legalCastle(rook r, king k){
+    
+<span class="pc bpc" id="L769" title="1 of 2 branches missed.">    if(r != null){</span>
+<span class="fc" id="L770">      int rookX = r.getX();</span>
+<span class="fc" id="L771">      int rookY = r.getY();</span>
+      
+      
+<span class="fc bfc" id="L774" title="All 2 branches covered.">      if(r.getPlayer() != k.getPlayer()){</span>
+<span class="fc" id="L775">        return false;</span>
+      }
+<span class="pc bpc" id="L777" title="1 of 2 branches missed.">      else if(r.getMoveCount() &gt; 0){</span>
+<span class="nc" id="L778">        return false;</span>
+      }
+<span class="pc bpc" id="L780" title="1 of 2 branches missed.">      else if(k.getMoveCount() &gt; 0){</span>
+<span class="nc" id="L781">        return false;</span>
+      }
+<span class="pc bpc" id="L783" title="1 of 2 branches missed.">      else if(clearPath(rookX,rookY,k) == false){</span>
+<span class="fc" id="L784">        return false;</span>
+      }
+      else{
+<span class="nc" id="L787">        return true;</span>
+      }
+    }
+<span class="nc" id="L790">    return false;</span>
+  }
+  
+  
+  /** 
+   * method that performs the castle
+   */
+  public void castle(king k, int rookX, int rookY){
+    
+<span class="nc" id="L799">    rook r = (rook)getTiles()[rookX][rookY].getPiece();</span>
+    
+<span class="nc bnc" id="L801" title="All 2 branches missed.">    if(legalCastle(r,k)){</span>
+      
+<span class="nc bnc" id="L803" title="All 4 branches missed.">      if(rookX ==0 &amp;&amp; rookY ==0){</span>
+<span class="nc" id="L804">        move(3,0,r);</span>
+<span class="nc" id="L805">        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L806">        getTiles()[2][0].setPiece(k);                         //sets new square piece to the piece which moved</span>
+<span class="nc" id="L807">        getTiles()[2][0].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square</span>
+<span class="nc" id="L808">        getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null</span>
+<span class="nc" id="L809">        k.setPosition(2 , 0);                                 //the piece now knows its own position</span>
+<span class="nc" id="L810">        k.setMoved(k.getMoveCount()+1);</span>
+      }
+<span class="nc bnc" id="L812" title="All 4 branches missed.">      else if(rookX == 7 &amp;&amp; rookY == 0){</span>
+<span class="nc" id="L813">        move(5,0,r);</span>
+<span class="nc" id="L814">        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L815">        getTiles()[6][0].setPiece(k);                         //sets new square piece to the piece which moved</span>
+<span class="nc" id="L816">        getTiles()[6][0].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square</span>
+<span class="nc" id="L817">        getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null</span>
+<span class="nc" id="L818">        k.setPosition(6 , 0);                                 //the piece now knows its own position</span>
+<span class="nc" id="L819">        k.setMoved(k.getMoveCount()+1);</span>
+      }
+<span class="nc bnc" id="L821" title="All 4 branches missed.">      else if(rookX == 0 &amp;&amp; rookY ==7){</span>
+<span class="nc" id="L822">        move(3,7,r);</span>
+<span class="nc" id="L823">        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L824">        getTiles()[2][7].setPiece(k);                         //sets new square piece to the piece which moved</span>
+<span class="nc" id="L825">        getTiles()[2][7].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square</span>
+<span class="nc" id="L826">        getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null</span>
+<span class="nc" id="L827">        k.setPosition(2 , 7);                                 //the piece now knows its own position</span>
+<span class="nc" id="L828">        k.setMoved(k.getMoveCount()+1);</span>
+      }
+<span class="nc bnc" id="L830" title="All 4 branches missed.">      else if(rookX == 7 &amp;&amp; rookY ==7){</span>
+<span class="nc" id="L831">        move(5,7,r);</span>
+<span class="nc" id="L832">        getTiles()[k.getX()][k.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L833">        getTiles()[6][7].setPiece(k);                         //sets new square piece to the piece which moved</span>
+<span class="nc" id="L834">        getTiles()[6][7].setIcon(getTiles()[k.getX()][k.getY()].getIcon());  //sets the text on the new square to the text of the old square</span>
+<span class="nc" id="L835">        getTiles()[k.getX()][k.getY()].setIcon(null);                          //sets the text of the old square to null</span>
+<span class="nc" id="L836">        k.setPosition(6 , 7);                                 //the piece now knows its own position</span>
+<span class="nc" id="L837">        k.setMoved(k.getMoveCount()+1);</span>
+      }
+      
+      
+    }
+    
+<span class="nc" id="L843">  }</span>
+  
+  /**
+   * look for a player's king
+   */
+  public piece findKing(int player){
+    
+<span class="fc" id="L850">    piece king = null;//variable for king</span>
+    
+<span class="fc bfc" id="L852" title="All 4 branches covered.">    if (player != 1 &amp;&amp; player !=0){</span>
+<span class="fc" id="L853">      return null;</span>
+    }
+    else{
+      
+<span class="fc" id="L857">      tile[][] board = getTiles();</span>
+      
+<span class="fc bfc" id="L859" title="All 2 branches covered.">      for(int i = 0; i &lt; 8; i++){</span>
+<span class="fc bfc" id="L860" title="All 2 branches covered.">        for(int j = 0; j &lt; 8; j++){</span>
+          
+<span class="fc bfc" id="L862" title="All 2 branches covered.">          if(board[i][j].getPiece() != null){</span>
+<span class="fc bfc" id="L863" title="All 4 branches covered.">            if(board[i][j].getPiece().getType().equals(&quot;King&quot;) == true &amp;&amp; board[i][j].getPiece().getPlayer() == player){</span>
+<span class="fc" id="L864">              king = board[i][j].getPiece();</span>
+            }
+            
+          }
+        }
+      }
+    }
+    
+<span class="fc" id="L872">    return king;</span>
+    
+  }
+  
+  /**
+   * method looking for check
+   */
+  public void lookForCheck(int player){
+    
+    //find the king of the currently defending player
+    
+    piece k; //king variable
+    
+<span class="nc" id="L885">    k = findKing(player);</span>
+    
+    
+    //location of king
+<span class="nc" id="L889">    int kingX = k.getX();</span>
+<span class="nc" id="L890">    int kingY = k.getY();</span>
+    
+    
+<span class="nc" id="L893">    tile[][] board = getTiles();</span>
+    
+    
+<span class="nc" id="L896">    setwhiteChecked(false);</span>
+<span class="nc" id="L897">    setblackChecked(false);</span>
+    
+    
+<span class="nc bnc" id="L900" title="All 2 branches missed.">    for(int i = 0; i &lt; 8; i++){</span>
+<span class="nc bnc" id="L901" title="All 2 branches missed.">      for(int j = 0; j &lt; 8; j++){</span>
+        
+<span class="nc bnc" id="L903" title="All 4 branches missed.">        if(board[i][j].getPiece() != null &amp;&amp; board[i][j].getPiece().getPlayer() != player){ //if we find a friendly piece check if it can attack the king next turn</span>
+          //check for general pieces
+<span class="nc bnc" id="L905" title="All 6 branches missed.">          if(board[i][j].getPiece().validMove(kingX,kingY) == true &amp;&amp; clearPath(kingX, kingY,board[i][j].getPiece()) &amp;&amp; board[i][j].getPiece().getType() != &quot;Knight&quot;){</span>
+            
+<span class="nc bnc" id="L907" title="All 2 branches missed.">            if(player == 0){</span>
+<span class="nc" id="L908">              this.whiteChecked = true;</span>
+            }
+            else{
+<span class="nc" id="L911">              this.blackChecked = true;</span>
+            }
+            
+          }
+          //check for the case of a knight
+<span class="nc bnc" id="L916" title="All 4 branches missed.">          else if(board[i][j].getPiece().validMove(kingX,kingY) == true &amp;&amp; board[i][j].getPiece().getType() == &quot;Knight&quot;) {</span>
+            
+<span class="nc bnc" id="L918" title="All 2 branches missed.">            if(player == 0){</span>
+<span class="nc" id="L919">              this.whiteChecked = true;</span>
+            }
+            else{
+<span class="nc" id="L922">              this.blackChecked = true;</span>
+            }
+            
+          }
+          
+          //if the checking piece is a pawn in front of the king it is not a valid check
+<span class="nc bnc" id="L928" title="All 8 branches missed.">          if(board[i][j].getPiece().validMove(kingX,kingY) == true &amp;&amp; board[i][j].getPiece().getType() == &quot;Pawn&quot; &amp;&amp; (kingX - i) == 0 &amp;&amp; (kingY - j)&lt;=2){</span>
+            
+<span class="nc bnc" id="L930" title="All 2 branches missed.">            if(player == 0){</span>
+<span class="nc" id="L931">              this.whiteChecked = false;</span>
+            }
+            else{
+<span class="nc" id="L934">              this.blackChecked = false;</span>
+            }
+            
+          }
+          
+        }
+        
+      }
+    }
+    
+<span class="nc" id="L944">  }</span>
+  
+  
+  
+  /**
+   * Moves a piece if the move is valid
+   */
+  public void testMove( int x, int y, piece p){
+    //first store the piece that is about to be taken
+<span class="nc" id="L953">    pieceTakenLastTurn = null;</span>
+<span class="nc bnc" id="L954" title="All 4 branches missed.">    if(tiles[x][y].getPiece() != null &amp;&amp; tiles[x][y].getPiece().getPlayer() != getWhoseMove()){</span>
+<span class="nc" id="L955">      pieceTakenLastTurn = tiles[x][y].getPiece(); </span>
+    }
+    
+<span class="nc bnc" id="L958" title="All 6 branches missed.">    if(tiles[x][y].getPiece() == null || (tiles[x][y].getPiece() != null &amp;&amp; tiles[x][y].getPiece().getPlayer() != getWhoseMove())){</span>
+      
+<span class="nc bnc" id="L960" title="All 6 branches missed.">      if(p.validMove(x , y) &amp;&amp; p.type == &quot;Knight&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L961">        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L962">        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+        
+<span class="nc" id="L964">        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+        
+<span class="nc" id="L966">        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L967">        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+        
+        
+<span class="nc" id="L970">        lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L971" title="All 8 branches missed.">        if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){      //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L972">          getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L973">          getTiles()[x][y].setPiece(null);</span>
+          
+<span class="nc" id="L975">          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L976">          getTiles()[x][y].setIcon(takenPieceIcon);</span>
+          
+          
+<span class="nc" id="L979">          this.blackChecked = false;</span>
+<span class="nc" id="L980">          this.whiteChecked = false;</span>
+        }else{
+<span class="nc" id="L982">          this.pieceLastMoved = p;</span>
+<span class="nc" id="L983">          this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L984">          this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L985">          p.setPosition(x , y);         //the piece now knows its own position</span>
+<span class="nc" id="L986">          p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L987">          setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L988" title="All 2 branches missed.">          if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L989">            actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+          }
+          else{
+<span class="nc" id="L992">            actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+          }
+<span class="nc" id="L994">          lookForCheck(getWhoseMove());</span>
+          
+        }
+      }
+      
+      
+<span class="nc bnc" id="L1000" title="All 6 branches missed.">      if(p.validMove(x , y) &amp;&amp; p.type == &quot;King&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L1001">        piece takenPiece = getTiles()[x][y].getPiece(); //save piece to be taken</span>
+<span class="nc" id="L1002">        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L1003">        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+        
+<span class="nc" id="L1005">        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+        
+<span class="nc" id="L1007">        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L1008">        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+        
+        
+<span class="nc" id="L1011">        int origionalX = p.getX();                                          //remember origional coordinates for piece</span>
+<span class="nc" id="L1012">        int origionalY = p.getY();</span>
+<span class="nc" id="L1013">        p.setPosition(x , y);                                               //bc of implementation of lookForCheck we have to update the kings postion</span>
+        
+<span class="nc" id="L1015">        lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L1016" title="All 8 branches missed.">        if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){ //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L1017">          getTiles()[origionalX][origionalY].setPiece(p);        </span>
+<span class="nc" id="L1018">          getTiles()[x][y].setPiece(takenPiece);</span>
+          
+<span class="nc" id="L1020">          getTiles()[origionalX][origionalY].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L1021">          getTiles()[x][y].setIcon(takenPieceIcon);</span>
+          
+          
+<span class="nc" id="L1024">          this.blackChecked = false;</span>
+<span class="nc" id="L1025">          this.whiteChecked = false;</span>
+<span class="nc" id="L1026">          p.setPosition(origionalX,origionalY);</span>
+        }else{
+<span class="nc" id="L1028">          this.pieceLastMoved = p;</span>
+<span class="nc" id="L1029">          moveList[mv].setPieceLastMoved(p);</span>
+<span class="nc" id="L1030">          this.pieceLastMovedFromX = origionalX;</span>
+<span class="nc" id="L1031">          moveList[mv].setPieceLastMovedFromX(origionalX);</span>
+<span class="nc" id="L1032">          this.pieceLastMovedFromY = origionalY;</span>
+<span class="nc" id="L1033">          moveList[mv].setPieceLastMovedFromY(origionalY);</span>
+<span class="nc" id="L1034">          p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L1035">          p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L1036">          setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L1037" title="All 2 branches missed.">          if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L1038">            actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+          }
+          else{
+<span class="nc" id="L1041">            actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+          }
+<span class="nc" id="L1043">          lookForCheck(getWhoseMove());</span>
+        }
+<span class="nc bnc" id="L1045" title="All 6 branches missed.">      }else if(Math.abs(x - p.getX()) == 2 &amp;&amp; p.type == &quot;King&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){</span>
+        
+<span class="nc" id="L1047">        castle((king)p , 0 , 0);</span>
+<span class="nc" id="L1048">        castle((king)p , 0 , 7);</span>
+<span class="nc" id="L1049">        castle((king)p , 7 , 0);</span>
+<span class="nc" id="L1050">        castle((king)p , 7 , 7);</span>
+<span class="nc" id="L1051">        lookForCheck(getWhoseMove());</span>
+      }
+      
+      
+      
+      
+<span class="nc bnc" id="L1057" title="All 2 branches missed.">      if(x == p.getX()){</span>
+<span class="nc bnc" id="L1058" title="All 10 branches missed.">        if(p.validMove(x , y) &amp;&amp; p.type == &quot;Pawn&quot; &amp;&amp; !isOccupied(x , y) &amp;&amp; clearPath( x , y , p ) &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L1059">          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L1060">          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+          
+<span class="nc" id="L1062">          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+          
+<span class="nc" id="L1064">          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L1065">          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+          
+          
+<span class="nc" id="L1068">          lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L1069" title="All 8 branches missed.">          if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L1070">            getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L1071">            getTiles()[x][y].setPiece(null);</span>
+            
+<span class="nc" id="L1073">            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L1074">            getTiles()[x][y].setIcon(takenPieceIcon);</span>
+            
+            
+<span class="nc" id="L1077">            this.blackChecked = false;</span>
+<span class="nc" id="L1078">            this.whiteChecked = false;</span>
+          }else{
+<span class="nc" id="L1080">            this.pieceLastMoved = p;</span>
+<span class="nc" id="L1081">            this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L1082">            this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L1083">            p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L1084">            p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L1085">            setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L1086" title="All 2 branches missed.">            if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L1087">              actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+            }
+            else{
+<span class="nc" id="L1090">              actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+            }
+<span class="nc" id="L1092">            lookForCheck(getWhoseMove());</span>
+          }
+        }
+      }
+<span class="nc bnc" id="L1096" title="All 4 branches missed.">      else if(Math.abs(x - p.getX()) == 1 &amp;&amp; isOccupied(x , y)){</span>
+<span class="nc bnc" id="L1097" title="All 6 branches missed.">        if(p.validMove(x , y) &amp;&amp; p.type == &quot;Pawn&quot; &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L1098">          getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L1099">          getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+          
+<span class="nc" id="L1101">          takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+          
+<span class="nc" id="L1103">          getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L1104">          getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+          
+          
+<span class="nc" id="L1107">          lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L1108" title="All 8 branches missed.">          if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L1109">            getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L1110">            getTiles()[x][y].setPiece(null);</span>
+            
+<span class="nc" id="L1112">            getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L1113">            getTiles()[x][y].setIcon(takenPieceIcon);</span>
+            
+<span class="nc" id="L1115">            this.blackChecked = false;</span>
+<span class="nc" id="L1116">            this.whiteChecked = false;</span>
+          }else{
+<span class="nc" id="L1118">            this.pieceLastMoved = p;</span>
+<span class="nc" id="L1119">            this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L1120">            this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L1121">            p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L1122">            p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L1123">            setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L1124" title="All 2 branches missed.">            if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L1125">              actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+            }
+            else{
+<span class="nc" id="L1128">              actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+            }
+<span class="nc" id="L1130">            lookForCheck(getWhoseMove());</span>
+          }
+        }
+      }
+      
+      
+<span class="nc bnc" id="L1136" title="All 8 branches missed.">      if(p.validMove(x , y) &amp;&amp; p.type == &quot;Rook&quot; &amp;&amp; clearPath( x , y , p ) &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L1137">        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L1138">        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+        
+<span class="nc" id="L1140">        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+        
+<span class="nc" id="L1142">        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L1143">        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+        
+        
+<span class="nc" id="L1146">        lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L1147" title="All 8 branches missed.">        if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L1148">          getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L1149">          getTiles()[x][y].setPiece(null);</span>
+          
+<span class="nc" id="L1151">          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L1152">          getTiles()[x][y].setIcon(takenPieceIcon);</span>
+          
+          
+<span class="nc" id="L1155">          this.blackChecked = false;</span>
+<span class="nc" id="L1156">          this.whiteChecked = false;</span>
+        }else{
+<span class="nc" id="L1158">          this.pieceLastMoved = p;</span>
+<span class="nc" id="L1159">          this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L1160">          this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L1161">          p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L1162">          p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L1163">          setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L1164" title="All 2 branches missed.">          if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L1165">            actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+          }
+          else{
+<span class="nc" id="L1168">            actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+          }
+<span class="nc" id="L1170">          lookForCheck(getWhoseMove());</span>
+        }
+      }
+      
+      
+<span class="nc bnc" id="L1175" title="All 8 branches missed.">      if(p.validMove(x , y) &amp;&amp; p.type == &quot;Bishop&quot; &amp;&amp; clearPath( x , y , p ) &amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L1176">        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L1177">        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+        
+<span class="nc" id="L1179">        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+        
+<span class="nc" id="L1181">        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L1182">        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+        
+<span class="nc" id="L1184">        lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L1185" title="All 8 branches missed.">        if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){   //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L1186">          getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L1187">          getTiles()[x][y].setPiece(null);</span>
+          
+<span class="nc" id="L1189">          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L1190">          getTiles()[x][y].setIcon(takenPieceIcon);</span>
+          
+<span class="nc" id="L1192">          this.blackChecked = false;</span>
+<span class="nc" id="L1193">          this.whiteChecked = false;</span>
+        }else{
+<span class="nc" id="L1195">          this.pieceLastMoved = p;</span>
+<span class="nc" id="L1196">          this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L1197">          this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L1198">          p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L1199">          p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L1200">          setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L1201" title="All 2 branches missed.">          if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L1202">            actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+          }
+          else{
+<span class="nc" id="L1205">            actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+          }
+<span class="nc" id="L1207">          lookForCheck(getWhoseMove());</span>
+        }
+      }
+      
+      
+<span class="nc bnc" id="L1212" title="All 8 branches missed.">      if(p.validMove(x , y) &amp;&amp; p.type == &quot;Queen&quot; &amp;&amp; clearPath( x , y , p )&amp;&amp; p.getPlayer() == getWhoseMove()){            //case of valid move</span>
+<span class="nc" id="L1213">        getTiles()[p.getX()][p.getY()].setPiece(null);        //sets origional square piece to null</span>
+<span class="nc" id="L1214">        getTiles()[x][y].setPiece(p);                         //sets new square piece to the piece which moved</span>
+        
+<span class="nc" id="L1216">        takenPieceIcon = getTiles()[x][y].getIcon();//save icon of taken piece</span>
+        
+<span class="nc" id="L1218">        getTiles()[x][y].setIcon(getTiles()[p.getX()][p.getY()].getIcon());  //sets the icon on the new square to the text of the old square</span>
+<span class="nc" id="L1219">        getTiles()[p.getX()][p.getY()].setIcon(null);                          //sets the icon of the old square to null</span>
+        
+        
+<span class="nc" id="L1222">        lookForCheck(getWhoseMove());</span>
+<span class="nc bnc" id="L1223" title="All 8 branches missed.">        if((getWhoseMove() == 0 &amp;&amp; this.whiteChecked == true) || (getWhoseMove() == 1 &amp;&amp; this.blackChecked == true)){    //Make sure the move doesn't put the player in check</span>
+<span class="nc" id="L1224">          getTiles()[p.getX()][p.getY()].setPiece(p);        </span>
+<span class="nc" id="L1225">          getTiles()[x][y].setPiece(null);</span>
+          
+<span class="nc" id="L1227">          getTiles()[p.getX()][p.getY()].setIcon(getTiles()[x][y].getIcon()); </span>
+<span class="nc" id="L1228">          getTiles()[x][y].setIcon(takenPieceIcon);</span>
+          
+          
+<span class="nc" id="L1231">          this.blackChecked = false;</span>
+<span class="nc" id="L1232">          this.whiteChecked = false;</span>
+        }else{
+<span class="nc" id="L1234">          this.pieceLastMoved = p;</span>
+<span class="nc" id="L1235">          this.pieceLastMovedFromX = p.getX();</span>
+<span class="nc" id="L1236">          this.pieceLastMovedFromY = p.getY();</span>
+<span class="nc" id="L1237">          p.setPosition(x , y);                                 //the piece now knows its own position</span>
+<span class="nc" id="L1238">          p.setMoved(p.getMoveCount()+1);</span>
+<span class="nc" id="L1239">          setWhoseMove((getWhoseMove() +1) % 2);</span>
+<span class="nc bnc" id="L1240" title="All 2 branches missed.">          if(this.getWhoseMove() ==0){</span>
+<span class="nc" id="L1241">            actionMenu.setMoveText(&quot;White's Move&quot;);</span>
+          }
+          else{
+<span class="nc" id="L1244">            actionMenu.setMoveText(&quot;Black's Move&quot;);</span>
+          }
+<span class="nc" id="L1246">          lookForCheck(getWhoseMove());</span>
+        }
+      }
+    }
+<span class="nc" id="L1250">  }</span>
+  
+  
+  public boolean lookForCheckmate(int player){
+<span class="nc" id="L1254">    tile[][] board = getTiles();</span>
+<span class="nc" id="L1255">    piece k = findKing(player);</span>
+<span class="nc" id="L1256">    int kXCoor = k.getX();</span>
+<span class="nc" id="L1257">    int kYCoor = k.getY();</span>
+<span class="nc" id="L1258">    piece plm = pieceLastMoved;</span>
+<span class="nc" id="L1259">    this.pieceLastMoved = null;     //set last piece moved to null in order to not make it dissapear </span>
+    
+    
+    //first see if we can move the king directly out of check
+<span class="nc bnc" id="L1263" title="All 4 branches missed.">    if(kXCoor == 0 &amp;&amp; kYCoor == 0){</span>
+      
+      //different directions
+<span class="nc" id="L1266">      testMove(kXCoor + 1, kYCoor , k);</span>
+<span class="nc" id="L1267">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1268" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1269">        unduMove();</span>
+<span class="nc" id="L1270">        return false;</span>
+<span class="nc bnc" id="L1271" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1272">        unduMove();</span>
+<span class="nc" id="L1273">        return false;</span>
+      }
+<span class="nc" id="L1275">      unduMove();</span>
+      
+<span class="nc" id="L1277">      testMove(kXCoor, kYCoor + 1, k);</span>
+<span class="nc" id="L1278">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1279" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1280">        unduMove();</span>
+<span class="nc" id="L1281">        return false;</span>
+<span class="nc bnc" id="L1282" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1283">        unduMove();</span>
+<span class="nc" id="L1284">        return false;</span>
+      }
+<span class="nc" id="L1286">      unduMove();</span>
+      
+<span class="nc" id="L1288">      testMove(kXCoor + 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1289">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1290" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1291">        unduMove();</span>
+<span class="nc" id="L1292">        return false;</span>
+<span class="nc bnc" id="L1293" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1294">        unduMove();</span>
+<span class="nc" id="L1295">        return false;</span>
+      }
+<span class="nc" id="L1297">      unduMove();</span>
+      
+      
+<span class="nc bnc" id="L1300" title="All 6 branches missed.">    }else if(kXCoor == 0 &amp;&amp; kYCoor &gt; 0 &amp;&amp; kYCoor &lt; 7){</span>
+      
+      //different directions
+<span class="nc" id="L1303">      testMove(kXCoor + 1, kYCoor , k);</span>
+<span class="nc" id="L1304">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1305" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1306">        unduMove();</span>
+<span class="nc" id="L1307">        return false;</span>
+<span class="nc bnc" id="L1308" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1309">        unduMove();</span>
+<span class="nc" id="L1310">        return false;</span>
+      }
+<span class="nc" id="L1312">      unduMove();</span>
+      
+<span class="nc" id="L1314">      testMove(kXCoor + 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1315">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1316" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1317">        unduMove();</span>
+<span class="nc" id="L1318">        return false;</span>
+<span class="nc bnc" id="L1319" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1320">        unduMove();</span>
+<span class="nc" id="L1321">        return false;</span>
+      }
+<span class="nc" id="L1323">      unduMove();</span>
+      
+<span class="nc" id="L1325">      testMove(kXCoor + 1, kYCoor - 1, k);</span>
+<span class="nc" id="L1326">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1327" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1328">        unduMove();</span>
+<span class="nc" id="L1329">        return false;</span>
+<span class="nc bnc" id="L1330" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1331">        unduMove();</span>
+<span class="nc" id="L1332">        return false;</span>
+      }
+<span class="nc" id="L1334">      unduMove();</span>
+      
+<span class="nc" id="L1336">      testMove(kXCoor, kYCoor + 1, k);</span>
+<span class="nc" id="L1337">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1338" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1339">        unduMove();</span>
+<span class="nc" id="L1340">        return false;</span>
+<span class="nc bnc" id="L1341" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1342">        unduMove();</span>
+<span class="nc" id="L1343">        return false;</span>
+      }
+<span class="nc" id="L1345">      unduMove();</span>
+      
+<span class="nc" id="L1347">      testMove(kXCoor, kYCoor - 1, k);</span>
+<span class="nc" id="L1348">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1349" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1350">        unduMove();</span>
+<span class="nc" id="L1351">        return false;</span>
+<span class="nc bnc" id="L1352" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1353">        unduMove();</span>
+<span class="nc" id="L1354">        return false;</span>
+      }
+<span class="nc" id="L1356">      unduMove();</span>
+      
+      
+<span class="nc bnc" id="L1359" title="All 4 branches missed.">    }else if(kXCoor == 0 &amp;&amp; kYCoor == 7){</span>
+      
+      //different directions
+<span class="nc" id="L1362">      testMove(kXCoor + 1, kYCoor , k);</span>
+<span class="nc" id="L1363">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1364" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1365">        unduMove();</span>
+<span class="nc" id="L1366">        return false;</span>
+<span class="nc bnc" id="L1367" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1368">        unduMove();</span>
+<span class="nc" id="L1369">        return false;</span>
+      }
+<span class="nc" id="L1371">      unduMove();</span>
+      
+<span class="nc" id="L1373">      testMove(kXCoor, kYCoor - 1, k);</span>
+<span class="nc" id="L1374">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1375" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1376">        unduMove();</span>
+<span class="nc" id="L1377">        return false;</span>
+<span class="nc bnc" id="L1378" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1379">        unduMove();</span>
+<span class="nc" id="L1380">        return false;</span>
+      }
+<span class="nc" id="L1382">      unduMove();</span>
+      
+<span class="nc" id="L1384">      testMove(kXCoor + 1, kYCoor - 1, k);</span>
+<span class="nc" id="L1385">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1386" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1387">        unduMove();</span>
+<span class="nc" id="L1388">        return false;</span>
+<span class="nc bnc" id="L1389" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1390">        unduMove();</span>
+<span class="nc" id="L1391">        return false;</span>
+      }
+<span class="nc" id="L1393">      unduMove();</span>
+      
+<span class="nc bnc" id="L1395" title="All 6 branches missed.">    }else if(kXCoor &gt; 0 &amp;&amp; kXCoor &lt; 7 &amp;&amp; kYCoor == 0){</span>
+      
+      //different directions
+<span class="nc" id="L1398">      testMove(kXCoor + 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1399">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1400" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1401">        unduMove();</span>
+<span class="nc" id="L1402">        return false;</span>
+<span class="nc bnc" id="L1403" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1404">        unduMove();</span>
+<span class="nc" id="L1405">        return false;</span>
+      }
+<span class="nc" id="L1407">      unduMove();</span>
+      
+<span class="nc" id="L1409">      testMove(kXCoor, kYCoor + 1, k);</span>
+<span class="nc" id="L1410">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1411" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1412">        unduMove();</span>
+<span class="nc" id="L1413">        return false;</span>
+<span class="nc bnc" id="L1414" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1415">        unduMove();</span>
+<span class="nc" id="L1416">        return false;</span>
+      }
+<span class="nc" id="L1418">      unduMove();</span>
+      
+<span class="nc" id="L1420">      testMove(kXCoor - 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1421">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1422" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1423">        unduMove();</span>
+<span class="nc" id="L1424">        return false;</span>
+<span class="nc bnc" id="L1425" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1426">        unduMove();</span>
+<span class="nc" id="L1427">        return false;</span>
+      }
+<span class="nc" id="L1429">      unduMove();</span>
+      
+<span class="nc" id="L1431">      testMove(kXCoor + 1, kYCoor, k);</span>
+<span class="nc" id="L1432">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1433" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1434">        unduMove();</span>
+<span class="nc" id="L1435">        return false;</span>
+<span class="nc bnc" id="L1436" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1437">        unduMove();</span>
+<span class="nc" id="L1438">        return false;</span>
+      }
+<span class="nc" id="L1440">      unduMove();</span>
+      
+<span class="nc" id="L1442">      testMove(kXCoor - 1 , kYCoor, k);</span>
+<span class="nc" id="L1443">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1444" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1445">        unduMove();</span>
+<span class="nc" id="L1446">        return false;</span>
+<span class="nc bnc" id="L1447" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1448">        unduMove();</span>
+<span class="nc" id="L1449">        return false;</span>
+      }
+<span class="nc" id="L1451">      unduMove();</span>
+      
+<span class="nc bnc" id="L1453" title="All 6 branches missed.">    }else if(kXCoor &gt; 0 &amp;&amp; kXCoor &lt; 7 &amp;&amp; kYCoor == 7){</span>
+      
+      //different directions
+<span class="nc" id="L1456">      testMove(kXCoor + 1, kYCoor - 1, k);</span>
+<span class="nc" id="L1457">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1458" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1459">        unduMove();</span>
+<span class="nc" id="L1460">        return false;</span>
+<span class="nc bnc" id="L1461" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1462">        unduMove();</span>
+<span class="nc" id="L1463">        return false;</span>
+      }
+<span class="nc" id="L1465">      unduMove();</span>
+      
+<span class="nc" id="L1467">      testMove(kXCoor, kYCoor - 1, k);</span>
+<span class="nc" id="L1468">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1469" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1470">        unduMove();</span>
+<span class="nc" id="L1471">        return false;</span>
+<span class="nc bnc" id="L1472" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1473">        unduMove();</span>
+<span class="nc" id="L1474">        return false;</span>
+      }
+<span class="nc" id="L1476">      unduMove();</span>
+      
+<span class="nc" id="L1478">      testMove(kXCoor - 1, kYCoor - 1, k);</span>
+<span class="nc" id="L1479">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1480" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1481">        unduMove();</span>
+<span class="nc" id="L1482">        return false;</span>
+<span class="nc bnc" id="L1483" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){</span>
+<span class="nc" id="L1484">        unduMove();</span>
+<span class="nc" id="L1485">        return false;</span>
+      }
+<span class="nc" id="L1487">      unduMove();</span>
+      
+<span class="nc" id="L1489">      testMove(kXCoor + 1, kYCoor, k);</span>
+<span class="nc" id="L1490">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1491" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1492">        unduMove();</span>
+<span class="nc" id="L1493">        return false;</span>
+<span class="nc bnc" id="L1494" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1495">        unduMove();</span>
+<span class="nc" id="L1496">        return false;</span>
+      }
+<span class="nc" id="L1498">      unduMove();</span>
+      
+<span class="nc" id="L1500">      testMove(kXCoor - 1 , kYCoor, k);</span>
+<span class="nc" id="L1501">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1502" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1503">        unduMove();</span>
+<span class="nc" id="L1504">        return false;</span>
+<span class="nc bnc" id="L1505" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1506">        unduMove();</span>
+<span class="nc" id="L1507">        return false;</span>
+      }
+<span class="nc" id="L1509">      unduMove();</span>
+      
+<span class="nc bnc" id="L1511" title="All 8 branches missed.">    }else if(kXCoor &gt; 0 &amp;&amp; kXCoor &lt; 7 &amp;&amp; kYCoor &gt; 0 &amp;&amp; kYCoor &lt; 7){</span>
+      
+      //different directions
+<span class="nc" id="L1514">      testMove(kXCoor + 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1515">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1516" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1517">        unduMove();</span>
+<span class="nc" id="L1518">        return false;</span>
+<span class="nc bnc" id="L1519" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1520">        unduMove();</span>
+<span class="nc" id="L1521">        return false;</span>
+      }
+<span class="nc" id="L1523">      unduMove();</span>
+      
+<span class="nc" id="L1525">      testMove(kXCoor, kYCoor + 1, k);</span>
+<span class="nc" id="L1526">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1527" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1528">        unduMove();</span>
+<span class="nc" id="L1529">        return false;</span>
+<span class="nc bnc" id="L1530" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1531">        unduMove();</span>
+<span class="nc" id="L1532">        return false;</span>
+      }
+<span class="nc" id="L1534">      unduMove();</span>
+      
+<span class="nc" id="L1536">      testMove(kXCoor - 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1537">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1538" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1539">        unduMove();</span>
+<span class="nc" id="L1540">        return false;</span>
+<span class="nc bnc" id="L1541" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1542">        unduMove();</span>
+<span class="nc" id="L1543">        return false;</span>
+      }
+<span class="nc" id="L1545">      unduMove();</span>
+      
+<span class="nc" id="L1547">      testMove(kXCoor + 1, kYCoor, k);</span>
+<span class="nc" id="L1548">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1549" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1550">        unduMove();</span>
+<span class="nc" id="L1551">        return false;</span>
+<span class="nc bnc" id="L1552" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1553">        unduMove();</span>
+<span class="nc" id="L1554">        return false;</span>
+      }
+<span class="nc" id="L1556">      unduMove();</span>
+      
+<span class="nc" id="L1558">      testMove(kXCoor - 1 , kYCoor, k);</span>
+<span class="nc" id="L1559">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1560" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1561">        unduMove();</span>
+<span class="nc" id="L1562">        return false;</span>
+<span class="nc bnc" id="L1563" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1564">        unduMove();</span>
+<span class="nc" id="L1565">        return false;</span>
+      }
+<span class="nc" id="L1567">      unduMove();</span>
+      
+<span class="nc" id="L1569">      testMove(kXCoor + 1, kYCoor - 1, k);</span>
+<span class="nc" id="L1570">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1571" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1572">        unduMove();</span>
+<span class="nc" id="L1573">        return false;</span>
+<span class="nc bnc" id="L1574" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1575">        unduMove();</span>
+<span class="nc" id="L1576">        return false;</span>
+      }
+<span class="nc" id="L1578">      unduMove();</span>
+      
+<span class="nc" id="L1580">      testMove(kXCoor , kYCoor - 1, k);</span>
+<span class="nc" id="L1581">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1582" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1583">        unduMove();</span>
+<span class="nc" id="L1584">        return false;</span>
+<span class="nc bnc" id="L1585" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1586">        unduMove();</span>
+<span class="nc" id="L1587">        return false;</span>
+      }
+<span class="nc" id="L1589">      unduMove();</span>
+      
+<span class="nc" id="L1591">      testMove(kXCoor - 1, kYCoor - 1, k);</span>
+<span class="nc" id="L1592">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1593" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1594">        unduMove();</span>
+<span class="nc" id="L1595">        return false;</span>
+<span class="nc bnc" id="L1596" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1597">        unduMove();</span>
+<span class="nc" id="L1598">        return false;</span>
+      }
+<span class="nc" id="L1600">      unduMove();</span>
+<span class="nc bnc" id="L1601" title="All 4 branches missed.">    }else if(kXCoor == 7 &amp;&amp; kYCoor == 0){</span>
+      
+      //different directions
+<span class="nc" id="L1604">      testMove(kXCoor - 1, kYCoor , k);</span>
+<span class="nc" id="L1605">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1606" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1607">        unduMove();</span>
+<span class="nc" id="L1608">        return false;</span>
+<span class="nc bnc" id="L1609" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1610">        unduMove();</span>
+<span class="nc" id="L1611">        return false;</span>
+      }
+<span class="nc" id="L1613">      unduMove();</span>
+      
+<span class="nc" id="L1615">      testMove(kXCoor, kYCoor + 1, k);</span>
+<span class="nc" id="L1616">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1617" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1618">        unduMove();</span>
+<span class="nc" id="L1619">        return false;</span>
+<span class="nc bnc" id="L1620" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1621">        unduMove();</span>
+<span class="nc" id="L1622">        return false;</span>
+      }
+<span class="nc" id="L1624">      unduMove();</span>
+      
+<span class="nc" id="L1626">      testMove(kXCoor - 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1627">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1628" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1629">        unduMove();</span>
+<span class="nc" id="L1630">        return false;</span>
+<span class="nc bnc" id="L1631" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1632">        unduMove();</span>
+<span class="nc" id="L1633">        return false;</span>
+      }
+<span class="nc" id="L1635">      unduMove();</span>
+      
+<span class="nc bnc" id="L1637" title="All 4 branches missed.">    }else if(kXCoor == 7 &amp;&amp; kYCoor == 7){</span>
+      
+      //different directions
+<span class="nc" id="L1640">      testMove(kXCoor - 1, kYCoor , k);</span>
+<span class="nc" id="L1641">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1642" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1643">        unduMove();</span>
+<span class="nc" id="L1644">        return false;</span>
+<span class="nc bnc" id="L1645" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1646">        unduMove();</span>
+<span class="nc" id="L1647">        return false;</span>
+      }
+<span class="nc" id="L1649">      unduMove();</span>
+      
+<span class="nc" id="L1651">      testMove(kXCoor, kYCoor - 1, k);</span>
+<span class="nc" id="L1652">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1653" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1654">        unduMove();</span>
+<span class="nc" id="L1655">        return false;</span>
+<span class="nc bnc" id="L1656" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1657">        unduMove();</span>
+<span class="nc" id="L1658">        return false;</span>
+      }
+<span class="nc" id="L1660">      unduMove();</span>
+      
+<span class="nc" id="L1662">      testMove(kXCoor - 1, kYCoor - 1, k);</span>
+<span class="nc" id="L1663">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1664" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1665">        unduMove();</span>
+<span class="nc" id="L1666">        return false;</span>
+<span class="nc bnc" id="L1667" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1668">        unduMove();</span>
+<span class="nc" id="L1669">        return false;</span>
+      }
+<span class="nc" id="L1671">      unduMove();</span>
+      
+<span class="nc bnc" id="L1673" title="All 6 branches missed.">    }else if(kXCoor == 7 &amp;&amp; kYCoor &gt; 0 &amp;&amp; kYCoor &lt; 7){</span>
+      
+      //different directions
+<span class="nc" id="L1676">      testMove(kXCoor , kYCoor + 1, k);</span>
+<span class="nc" id="L1677">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1678" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1679">        unduMove();</span>
+<span class="nc" id="L1680">        return false;</span>
+<span class="nc bnc" id="L1681" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1682">        unduMove();</span>
+<span class="nc" id="L1683">        return false;</span>
+      }
+<span class="nc" id="L1685">      unduMove();</span>
+      
+<span class="nc" id="L1687">      testMove(kXCoor, kYCoor - 1, k);</span>
+<span class="nc" id="L1688">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1689" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1690">        unduMove();</span>
+<span class="nc" id="L1691">        return false;</span>
+<span class="nc bnc" id="L1692" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1693">        unduMove();</span>
+<span class="nc" id="L1694">        return false;</span>
+      }
+<span class="nc" id="L1696">      unduMove();</span>
+      
+<span class="nc" id="L1698">      testMove(kXCoor + 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1699">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1700" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1701">        unduMove();</span>
+<span class="nc" id="L1702">        return false;</span>
+<span class="nc bnc" id="L1703" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1704">        unduMove();</span>
+<span class="nc" id="L1705">        return false;</span>
+      }
+<span class="nc" id="L1707">      unduMove();</span>
+      
+<span class="nc" id="L1709">      testMove(kXCoor, kYCoor + 1, k);</span>
+<span class="nc" id="L1710">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1711" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1712">        unduMove();</span>
+<span class="nc" id="L1713">        return false;</span>
+<span class="nc bnc" id="L1714" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1715">        unduMove();</span>
+<span class="nc" id="L1716">        return false;</span>
+      }
+<span class="nc" id="L1718">      unduMove();</span>
+      
+<span class="nc" id="L1720">      testMove(kXCoor - 1, kYCoor + 1, k);</span>
+<span class="nc" id="L1721">      lookForCheck(player);</span>
+<span class="nc bnc" id="L1722" title="All 4 branches missed.">      if(whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1723">        unduMove();</span>
+<span class="nc" id="L1724">        return false;</span>
+<span class="nc bnc" id="L1725" title="All 4 branches missed.">      }else if(blackChecked == false &amp;&amp; player == 1){ </span>
+<span class="nc" id="L1726">        unduMove();</span>
+<span class="nc" id="L1727">        return false;</span>
+      }
+<span class="nc" id="L1729">      unduMove();</span>
+      
+    }
+    
+    
+    //Next we can see if any piece can take the attacking piece or block
+    
+    
+    
+<span class="nc bnc" id="L1738" title="All 2 branches missed.">    for(int i = 0; i &lt; 8; i++){</span>
+<span class="nc bnc" id="L1739" title="All 2 branches missed.">      for(int j = 0; j &lt; 8; j++){</span>
+        //for every space we need to see if there is a piece 
+<span class="nc bnc" id="L1741" title="All 4 branches missed.">        if(board[i][j].getPiece() != null &amp;&amp; board[i][j].getPiece().getPlayer() == player){</span>
+          //and if there is see if any possible moves take the king out of check
+          
+          // Following code is glitchy and causes stack overflow exceptions  */
+<span class="nc bnc" id="L1745" title="All 2 branches missed.">          for(int v = 0; v &lt; 8; v++){</span>
+<span class="nc bnc" id="L1746" title="All 2 branches missed.">            for(int c = 0; c &lt; 8; c++){</span>
+<span class="nc bnc" id="L1747" title="All 4 branches missed.">              if(board[i][j].getPiece() != null &amp;&amp; board[i][j].getPiece().validMove(v,c) == true){</span>
+                
+<span class="nc bnc" id="L1749" title="All 4 branches missed.">                if(board[v][c].getPiece() != null &amp;&amp; board[v][c].getPiece().getPlayer() != board[i][j].getPiece().getPlayer()){</span>
+                  
+<span class="nc" id="L1751">                  testMove(v,c,board[i][j].getPiece());                                      </span>
+<span class="nc" id="L1752">                  lookForCheck(player);</span>
+<span class="nc bnc" id="L1753" title="All 4 branches missed.">                  if(this.whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1754">                    unduMove();</span>
+<span class="nc" id="L1755">                    return false;</span>
+                  }
+<span class="nc bnc" id="L1757" title="All 4 branches missed.">                  if(this.blackChecked == false &amp;&amp; player == 1){</span>
+<span class="nc" id="L1758">                    unduMove();</span>
+<span class="nc" id="L1759">                    return false;</span>
+                  }
+<span class="nc" id="L1761">                  whiteChecked = false;</span>
+<span class="nc" id="L1762">                  blackChecked = false;</span>
+<span class="nc" id="L1763">                  unduMove();</span>
+                }
+<span class="nc bnc" id="L1765" title="All 2 branches missed.">                if(board[v][c].getPiece() == null){</span>
+                  
+<span class="nc" id="L1767">                  testMove(v,c,board[i][j].getPiece());                                      </span>
+<span class="nc" id="L1768">                  lookForCheck(player);</span>
+<span class="nc bnc" id="L1769" title="All 4 branches missed.">                  if(this.whiteChecked == false &amp;&amp; player == 0){</span>
+<span class="nc" id="L1770">                    unduMove();</span>
+<span class="nc" id="L1771">                    return false;</span>
+                  }
+<span class="nc bnc" id="L1773" title="All 4 branches missed.">                  if(this.blackChecked == false &amp;&amp; player == 1){</span>
+<span class="nc" id="L1774">                    unduMove();</span>
+<span class="nc" id="L1775">                    return false;</span>
+                  }
+<span class="nc" id="L1777">                  whiteChecked = false;</span>
+<span class="nc" id="L1778">                  blackChecked = false;</span>
+<span class="nc" id="L1779">                  unduMove();</span>
+                }
+                
+              }
+            }
+          } 
+          
+          
+        }
+        
+      }
+    }
+<span class="nc" id="L1791">    return true;</span>
+    
+    
+  }
+  
+  
+  
+  
+  
+  /**
+   * getter setters for checked statuses
+   */
+  
+  public boolean getwhiteChecked(){
+<span class="fc" id="L1805">    return this.whiteChecked;</span>
+  }
+  
+  public boolean getblackChecked(){
+<span class="fc" id="L1809">    return this.blackChecked;</span>
+  }
+  
+  public void setwhiteChecked(boolean x){
+<span class="fc" id="L1813">    this.whiteChecked = x;</span>
+<span class="fc" id="L1814">  }</span>
+  
+  public void setblackChecked(boolean x){
+<span class="fc" id="L1817">    this.blackChecked = x;</span>
+<span class="fc" id="L1818">  }</span>
+  
+  
+  
+  /**
+   * getter setters for whoseMove
+   */
+  public int getWhoseMove(){
+<span class="fc" id="L1826">    return whoseMove;</span>
+  }
+  
+  public void setWhoseMove(int wm){
+<span class="nc" id="L1830">    whoseMove = wm;</span>
+<span class="nc" id="L1831">  }</span>
+  
+  
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

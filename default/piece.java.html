@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>piece.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">piece.java</span></div><h1>piece.java</h1><pre class="source lang-java linenums">
+//import math functions, which will be passed to subclasses for motion behavior
+import java.lang.Math;
+
+public class piece{
+  
+  //0 for never moved
+<span class="fc" id="L8">  private int moveCount = 0;</span>
+  
+  //field for player, 0 is white, 1 is black
+  public int player;
+  
+  //position fields for x and y locations
+  public int positionX;
+  public int positionY;
+  //keeps track of type of piece
+  public String type;
+  
+  //constructor for piece, takes position arguments and a player argument
+<span class="fc" id="L20">  public piece(int x, int y, int plr){</span>
+    
+<span class="fc" id="L22">    this.player = plr;</span>
+    
+<span class="fc" id="L24">    this.positionX = x;</span>
+<span class="fc" id="L25">    this.positionY = y;</span>
+    
+<span class="fc" id="L27">  }</span>
+  
+   //method to check if the pawn has been moved
+   public int getMoveCount(){
+<span class="fc" id="L31">    return moveCount;</span>
+  }
+  
+   public void setMoved(int x){
+<span class="fc" id="L35">     this.moveCount = x;</span>
+<span class="fc" id="L36">   }</span>
+   
+  /**
+   * method to get the type of piece
+   */
+  public String getType(){
+<span class="fc" id="L42">    return type;</span>
+  }
+  
+  
+  /**
+   * method to return the player attached to a piece
+   */
+  public int getPlayer(){
+<span class="fc" id="L50">    return player;</span>
+  }
+  
+  //method to get the piece's x position
+  public int getX(){
+<span class="fc" id="L55">    return positionX;</span>
+  }
+  
+  //method to get the piece's y position
+  public int getY(){
+<span class="fc" id="L60">    return positionY;</span>
+  }
+  
+  //method to set the piece's position
+  public void setPosition(int x, int y){
+<span class="fc" id="L65">    this.positionX = x;</span>
+<span class="fc" id="L66">    this.positionY = y;</span>
+<span class="fc" id="L67">  }</span>
+  
+ /** 
+  //method to &quot;take&quot; another piece object by replacing it with this piece
+  public void take(piece p){
+    //save position
+    int x = p.getX();
+    int y = p.getY();
+    
+    //if the piece is not a fiendly allow the motion
+    if(p.getPlayer() != this.getPlayer()){
+      //remove piece
+      p.setPosition(-1,-1);
+      //place the capturing piece in the new space
+      this.setPosition(x,y);
+    }
+    else{
+      //perform some error behavior
+      System.out.println(&quot;Friendly Fire! Don't attack your own Pieces&quot;);
+    }
+  }
+  */
+  
+  /**
+   * method to check if a given move is a valid move for the pieces
+   */
+  public boolean validMove(int x, int y){
+<span class="nc" id="L94">    return false;</span>
+    //will be overrided
+  }
+  
+ 
+ 
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

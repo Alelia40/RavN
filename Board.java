@@ -276,7 +276,7 @@ public class Board extends JPanel{
   /**
    * Moves a piece if the move is valid (for checkmate only)
    */
-  private void move( int x, int y, piece p){
+  public void move( int x, int y, piece p){
     
     if(this.isCheckMate ==false){
       

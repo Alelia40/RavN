@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>king.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">king.java</span></div><h1>king.java</h1><pre class="source lang-java linenums">import java.lang.Math;
+public class king extends piece{
+  
+
+  
+  public king(int x, int y, int plr){
+<span class="fc" id="L7">    super(x,y, plr);</span>
+    
+<span class="fc" id="L9">    type = &quot;King&quot;;</span>
+<span class="fc" id="L10">  }</span>
+ 
+
+  
+  //helper method to get the distance of any position from the current position
+  @Override
+  public boolean validMove(int x, int y){
+<span class="fc" id="L17">    int distA = Math.abs(this.getX() - x); </span>
+<span class="fc" id="L18">    int distB = Math.abs(this.getY() - y);</span>
+    
+    //as long as both distance fields are less than or equal to 1, any combination would amount to a valid king move
+<span class="fc bfc" id="L21" title="All 4 branches covered.">    if(distA &gt; 1 || distB &gt; 1)</span>
+<span class="fc" id="L22">      return false;</span>
+    else
+<span class="fc" id="L24">      return true;</span>
+  }
+  
+  /**
+  //method to castle
+  public void castle(){
+    
+  }
+  */
+  
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>rook.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">rook.java</span></div><h1>rook.java</h1><pre class="source lang-java linenums">public class rook extends piece{
+  
+ 
+  
+  public rook(int x, int y, int plr){
+<span class="fc" id="L6">    super(x,y, plr);</span>
+   
+<span class="fc" id="L8">    type = &quot;Rook&quot;;</span>
+<span class="fc" id="L9">  }</span>
+  
+  
+  //helper method to check for valid move by using distance
+  @Override
+  public boolean validMove(int x, int y){
+<span class="fc" id="L15">    int distA = Math.abs(this.getX() - x); </span>
+<span class="fc" id="L16">    int distB = Math.abs(this.getY() - y);</span>
+    
+    //if the destination is only horizontally distant it is a valid move
+<span class="pc bpc" id="L19" title="1 of 4 branches missed.">    if(distA == 0 &amp;&amp; distB &gt; 0)</span>
+<span class="fc" id="L20">      return true;</span>
+    //if the destination is only vertically distant it is a valid move
+<span class="pc bpc" id="L22" title="1 of 4 branches missed.">    else if(distB ==0 &amp;&amp; distA &gt; 0)</span>
+<span class="fc" id="L23">      return true;</span>
+    else
+<span class="fc" id="L25">      return false;</span>
+  }
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>pawn.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">pawn.java</span></div><h1>pawn.java</h1><pre class="source lang-java linenums">public class pawn extends piece{
+  
+ 
+  
+  public pawn(int x, int y, int plr){
+<span class="fc" id="L6">    super(x,y,plr);</span>
+   
+<span class="fc" id="L8">    type = &quot;Pawn&quot;;</span>
+<span class="fc" id="L9">  }</span>
+  
+
+  
+  
+  //method to check for a valid traaversal move for the pawn
+  @Override
+  public boolean validMove(int x, int y){
+<span class="fc" id="L17">    int distA = Math.abs(this.getX() - x); </span>
+<span class="fc" id="L18">    int distB = (this.getY() - y);</span>
+    
+    //we need to check for valid moves for both white and black pawns
+<span class="fc bfc" id="L21" title="All 2 branches covered.">    if( getPlayer() == 0){</span>
+      //if the space is only minus one space away vertically then this is a correct traversal move
+<span class="pc bpc" id="L23" title="5 of 8 branches missed.">      if(distB == 1 &amp;&amp; (distA == 0 || distA == 1 || distA == -1) )</span>
+<span class="fc" id="L24">        return true;</span>
+      //allow for a double jump forward on first pawn move
+<span class="pc bpc" id="L26" title="6 of 10 branches missed.">      else if( getMoveCount() == 0 &amp;&amp; distB == 2 &amp;&amp; (distA == 0 || distA == 1 || distA == -1))</span>
+<span class="fc" id="L27">        return true;</span>
+      else
+<span class="fc" id="L29">        return false;</span>
+    }
+    else{
+      //if the space is only plus one space away vertically then this is a correct traversal move
+<span class="pc bpc" id="L33" title="5 of 8 branches missed.">      if(distB == -1 &amp;&amp; (distA == 0 || distA == 1 || distA == -1) )</span>
+<span class="fc" id="L34">        return true;</span>
+      //allow for a double jump forward on first pawn move
+<span class="pc bpc" id="L36" title="6 of 10 branches missed.">      else if( getMoveCount() == 0 &amp;&amp; distB == -2 &amp;&amp; (distA == 0 || distA == 1 || distA == -1))</span>
+<span class="fc" id="L37">        return true;</span>
+      else
+<span class="fc" id="L39">        return false;</span>
+    }
+    
+  }
+  
+  
+  
+  
+  
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

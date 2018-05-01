@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>actionMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">actionMenu.java</span></div><h1>actionMenu.java</h1><pre class="source lang-java linenums">/**
+ * a class that represents a toolbar with fast forward, and undo buttons and a display of whose move it is 
+ */
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class actionMenu extends JToolBar{
+  
+   private JButton undoButton;
+   private JButton forwardButton;
+   private static JTextArea playerMove;
+  
+<span class="nc" id="L15">  public actionMenu(){</span>
+    
+<span class="nc" id="L17">    undoButton = new JButton(&quot;Undo Move&quot;);  </span>
+<span class="nc" id="L18">     forwardButton = new JButton(&quot;Fast Forward&quot;);</span>
+<span class="nc" id="L19">     playerMove = new JTextArea();</span>
+<span class="nc" id="L20">     this.add(playerMove);</span>
+<span class="nc" id="L21">     playerMove.setText(&quot;White's Move&quot;);</span>
+<span class="nc" id="L22">     this.add(undoButton);</span>
+<span class="nc" id="L23">     this.add(forwardButton);</span>
+<span class="nc" id="L24">     this.addSeparator();</span>
+<span class="nc" id="L25">     this.setBackground(new Color(207,220,227));</span>
+    
+<span class="nc" id="L27">  }</span>
+  
+  public JButton getundoButton(){
+<span class="nc" id="L30">    return this.undoButton;</span>
+  }
+  
+   public JButton getforwardButton(){
+<span class="nc" id="L34">    return this.forwardButton;</span>
+  }
+  
+  public static void setMoveText(String s){
+<span class="nc" id="L38">    playerMove.setText(s);</span>
+<span class="nc" id="L39">  }</span>
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
